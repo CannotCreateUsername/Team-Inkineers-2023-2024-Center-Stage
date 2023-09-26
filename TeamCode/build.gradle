@@ -35,4 +35,11 @@ dependencies {
 
     implementation "com.acmerobotics.roadrunner:ftc:0.1.6"
     implementation "com.acmerobotics.dashboard:dashboard:0.4.13"
+
+    // Open CV
+    implementation 'org.openftc:opencv-repackaged-bundled-dylibs:4.7.0-A'
+
+    // FTC Lib
+    implementation 'org.ftclib.ftclib:vision:2.0.1' // vision
+    implementation 'org.ftclib.ftclib:core:2.0.1' // core
 }
