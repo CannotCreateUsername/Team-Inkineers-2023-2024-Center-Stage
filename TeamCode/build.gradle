@@ -42,4 +42,7 @@ dependencies {
     // FTC Lib
     implementation 'org.ftclib.ftclib:vision:2.0.1' // vision
     implementation 'org.ftclib.ftclib:core:2.0.1' // core
+
+    // April Tags
+    // implementation 'org.openftc:apriltag:2.0.0'
 }
