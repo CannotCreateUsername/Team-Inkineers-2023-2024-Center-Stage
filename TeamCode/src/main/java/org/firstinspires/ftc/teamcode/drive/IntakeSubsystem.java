@@ -22,10 +22,10 @@ public class IntakeSubsystem {
         OUT
     }
 
-    double Kp = .05;
+    private final static double Kp = .05;
 
-    public DcMotor intakeBar = null;
-    public CRServo intakeWheel = null;
+    private DcMotor intakeBar = null;
+    private CRServo intakeWheel = null;
 
     IntakeBarState intakeBarState;
     IntakeState intakeState;
@@ -33,10 +33,10 @@ public class IntakeSubsystem {
 
     double currentTarget;
 
-    public void init(@NonNull HardwareMap hardwareMap) {
+    public IntakeSubsystem(@NonNull HardwareMap hardwareMap) {
         intakeBar = hardwareMap.get(DcMotor.class, "intakeBar");
         intakeBar.setDirection(DcMotorSimple.Direction.REVERSE);
-        intakeBar.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        intakeBar.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         intakeBar.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         intakeBar.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
@@ -107,4 +107,6 @@ public class IntakeSubsystem {
     public void runToPosition(int position) {
         runToPosition(position, 0.5);
     }
+
+    public String getIntakeState() { return intakeBarState.name() + intakeState.name(); }
 }
