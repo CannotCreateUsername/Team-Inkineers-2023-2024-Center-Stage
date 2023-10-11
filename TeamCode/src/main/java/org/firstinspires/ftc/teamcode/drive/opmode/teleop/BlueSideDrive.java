@@ -50,7 +50,7 @@ public class BlueSideDrive extends LinearOpMode {
             telemetry.addData("DEEZ NUTS", "under-where!? xdddDDddddd lol.");
             telemetry.addData("Intake State", intakeSubsystem.getIntakeState());
             telemetry.addData("Lift State", armSubsystem.getLiftState());
-            telemetry.addData("Load State", armSubsystem.getLiftState());
+            telemetry.addData("Load State", armSubsystem.getLoadState());
             telemetry.update();
         }
     }
