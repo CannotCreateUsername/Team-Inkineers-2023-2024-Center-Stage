@@ -12,17 +12,21 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 @TeleOp(name = "CV Test", group = "Concept")
 public class PipelineTest extends LinearOpMode {
 
-    // Live preview thing
-    int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-
-    // Grab the webcam from the config files
-    WebcamName webcam1 = hardwareMap.get(WebcamName.class, "webcam1");
-
-    // Create an OpenCV camera using webcam1
-    OpenCvCamera camera1 = OpenCvCameraFactory.getInstance().createWebcam(webcam1, cameraMonitorViewId);
+    OpenCvCamera camera1;
 
     @Override
     public void runOpMode() throws InterruptedException {
+        // Live preview thing
+        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        // Grab the webcam from the config files
+        WebcamName webcam1 = hardwareMap.get(WebcamName.class, "webcam1");
+        // Create an OpenCV camera using webcam1
+        camera1 = OpenCvCameraFactory.getInstance().createWebcam(webcam1, cameraMonitorViewId);
+
+        // Attach the pipeline
+        BlueOctopusPipeline octopusPipeline = new BlueOctopusPipeline();
+        camera1.setPipeline(octopusPipeline);
+
         camera1.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
         {
             @Override
@@ -38,9 +42,11 @@ public class PipelineTest extends LinearOpMode {
             }
         });
 
-        BlueOctopusPipeline octopusPipeline = new BlueOctopusPipeline();
-        camera1.setPipeline(octopusPipeline);
 
         waitForStart();
+        while (opModeIsActive()) {
+
+            telemetry.update();
+        }
     }
 }

@@ -2,9 +2,15 @@ package org.firstinspires.ftc.teamcode.cv;
 
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
+import org.opencv.core.MatOfPoint;
+import org.opencv.core.MatOfPoint2f;
+import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class BlueOctopusPipeline extends OpenCvPipeline {
 
@@ -41,6 +47,23 @@ public class BlueOctopusPipeline extends OpenCvPipeline {
         Mat thresh = new Mat();
 
         Core.inRange(mat, lowHSV, highHSV, thresh);
+
+        Mat edges = new Mat();
+        Imgproc.Canny(thresh, edges, 100, 200);
+
+        List<MatOfPoint> contours = new ArrayList<>();
+        Mat hierarchy = new Mat();
+        Imgproc.findContours(edges, contours, hierarchy, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
+
+        MatOfPoint2f[] contoursPoly  = new MatOfPoint2f[contours.size()];
+        Rect[] boundRect = new Rect[contours.size()];
+        for (int i = 0; i < contours.size(); i++) {
+            contoursPoly[i] = new MatOfPoint2f();
+            Imgproc.approxPolyDP(new MatOfPoint2f(contours.get(i).toArray()), contoursPoly[i], 3, true);
+            boundRect[i] = Imgproc.boundingRect(new MatOfPoint(contoursPoly[i].toArray()));
+        }
+
+
 
         return mat;
     }
