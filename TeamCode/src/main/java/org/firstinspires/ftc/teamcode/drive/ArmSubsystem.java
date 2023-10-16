@@ -15,14 +15,14 @@ public class ArmSubsystem {
         REST
     }
     public enum DropState {
-        LOADED,
-        UNLOADED
+        DROP_OFF,
+        PICK_UP
     }
 
     private final static double Kp = .05;
 
     private DcMotor slides = null;
-    private Servo dropper = null;
+    private Servo virtualBar = null;
 
     SlideState slideState;
     DropState dropState;
@@ -36,10 +36,10 @@ public class ArmSubsystem {
         slides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         slides.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        dropper = hardwareMap.get(Servo.class, "flipper");
+        virtualBar = hardwareMap.get(Servo.class, "bar");
 
         slideState = SlideState.REST;
-        dropState = DropState.UNLOADED;
+        dropState = DropState.PICK_UP;
     }
 
     public double powerPID(double power) {
@@ -84,18 +84,19 @@ public class ArmSubsystem {
         }
 
         switch (dropState) {
-            case UNLOADED:
-                dropper.setPosition(1);
+            case PICK_UP:
+                virtualBar.setPosition(1);
                 if (gamepad1.isDown(GamepadKeys.Button.X)) {
-                    dropState = DropState.LOADED;
+                    dropState = DropState.DROP_OFF;
                 }
-            case LOADED:
-                dropper.setPosition(0);
+            case DROP_OFF:
+                virtualBar.setPosition(0);
                 if (gamepad1.wasJustReleased(GamepadKeys.Button.X)) {
-                    dropState = DropState.UNLOADED;
+                    dropState = DropState.PICK_UP;
                 }
         }
     }
+
 
     public void runToPosition(int position, double power) {
         currentTarget = position;
