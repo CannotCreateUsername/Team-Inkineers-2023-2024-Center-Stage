@@ -41,8 +41,6 @@ public class BlueSideDrive extends LinearOpMode {
 
             // Intake control loop
             intakeSubsystem.runIntake(gamepadEx1);
-            // Intake bar control loop
-            intakeSubsystem.runIntakeLift(gamepadEx1);
             // Arm control loop
             armSubsystem.run(gamepadEx1);
 

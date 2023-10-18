@@ -2,18 +2,13 @@ package org.firstinspires.ftc.teamcode.cv;
 
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
-import org.opencv.core.MatOfPoint;
-import org.opencv.core.MatOfPoint2f;
 import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
 
-import java.util.ArrayList;
-import java.util.List;
-
-public class BlueOctopusPipeline extends OpenCvPipeline {
+public class RedOctopusPipeline extends OpenCvPipeline {
 
     // Camera resolution (check camera)
     public static final int WIDTH = 640;
@@ -52,8 +47,8 @@ public class BlueOctopusPipeline extends OpenCvPipeline {
         // We create a HSV range for blue to detect the team prop
         // NOTE: In OpenCV's implementation,
         // Hue values are half the real value
-        Scalar lowHSV = new Scalar(105, 255*.75, 255*.3); // lower bound HSV for blue
-        Scalar highHSV = new Scalar(130, 255, 255); // higher bound HSV for blue
+        Scalar lowHSV = new Scalar(0, 100, 100); // lower bound HSV for red
+        Scalar highHSV = new Scalar(130, 255, 255); // higher bound HSV for red
 
         Mat blueMask = new Mat();
         Core.inRange(mat, lowHSV, highHSV, blueMask);

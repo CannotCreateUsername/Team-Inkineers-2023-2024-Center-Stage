@@ -9,8 +9,8 @@ import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
-@TeleOp(name = "CV Test", group = "Concept")
-public class PipelineTest extends LinearOpMode {
+@TeleOp(name = "Pipeline Test Blue", group = "Concept")
+public class PipelineTestBlue extends LinearOpMode {
 
     OpenCvCamera camera1;
 
@@ -19,7 +19,7 @@ public class PipelineTest extends LinearOpMode {
         // Live preview thing
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         // Grab the webcam from the config files
-        WebcamName webcam1 = hardwareMap.get(WebcamName.class, "webcam1");
+        WebcamName webcam1 = hardwareMap.get(WebcamName.class, "Webcam 1");
         // Create an OpenCV camera using webcam1
         camera1 = OpenCvCameraFactory.getInstance().createWebcam(webcam1, cameraMonitorViewId);
 
@@ -33,19 +33,22 @@ public class PipelineTest extends LinearOpMode {
             public void onOpened()
             {
                 // Usually this is where you'll want to start streaming from the camera (see section 4)
-                camera1.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
+                // If resolution does not match, it will crash
+                camera1.startStreaming(640, 480, OpenCvCameraRotation.UPRIGHT);
             }
             @Override
             public void onError(int errorCode)
             {
                 // This will be called should the camera not open
+                telemetry.addData("faile", "bad");
+                telemetry.update();
             }
         });
 
 
         waitForStart();
         while (opModeIsActive()) {
-
+            telemetry.addData("ZOne", octopusPipeline.getLocation());
             telemetry.update();
         }
     }
