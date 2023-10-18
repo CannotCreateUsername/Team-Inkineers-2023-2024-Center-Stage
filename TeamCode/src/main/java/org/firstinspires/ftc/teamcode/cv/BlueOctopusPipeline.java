@@ -72,8 +72,10 @@ public class BlueOctopusPipeline extends OpenCvPipeline {
             location = SpikeLocation.NONE;
         }
 
+        // Release mats to conserve memory
         hsv.release();
         blueMask.release();
+
         return input;
     }
 

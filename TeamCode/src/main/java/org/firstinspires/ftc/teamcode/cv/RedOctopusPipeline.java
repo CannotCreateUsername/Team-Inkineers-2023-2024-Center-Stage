@@ -35,11 +35,11 @@ public class RedOctopusPipeline extends OpenCvPipeline {
     @Override
     public Mat processFrame(Mat input) {
 
-        Mat mat = new Mat();
-        Imgproc.cvtColor(input, mat, Imgproc.COLOR_RGB2HSV);
+        Mat hsv = new Mat();
+        Imgproc.cvtColor(input, hsv, Imgproc.COLOR_RGB2HSV);
 
         // if something is wrong, we assume there's no team prop
-        if (mat.empty()) {
+        if (hsv.empty()) {
             location = SpikeLocation.NONE;
             return input;
         }
@@ -50,29 +50,33 @@ public class RedOctopusPipeline extends OpenCvPipeline {
         Scalar lowHSV = new Scalar(0, 100, 100); // lower bound HSV for red
         Scalar highHSV = new Scalar(130, 255, 255); // higher bound HSV for red
 
-        Mat blueMask = new Mat();
-        Core.inRange(mat, lowHSV, highHSV, blueMask);
+        Mat redMask = new Mat();
+        Core.inRange(hsv, lowHSV, highHSV, redMask);
 
         // Calculate the sum of non-zero elements in each region
-        double leftSum = Core.sumElems(blueMask.submat(new Rect(leftRegionStart, 0, leftRegionEnd - leftRegionStart, HEIGHT))).val[0];
-        double centerSum = Core.sumElems(blueMask.submat(new Rect(centerRegionStart, 0, centerRegionEnd - centerRegionStart, HEIGHT))).val[0];
-        double rightSum = Core.sumElems(blueMask.submat(new Rect(rightRegionStart, 0, rightRegionEnd - rightRegionStart, HEIGHT))).val[0];
+        double leftSum = Core.sumElems(redMask.submat(new Rect(leftRegionStart, 0, leftRegionEnd - leftRegionStart, HEIGHT))).val[0];
+        double centerSum = Core.sumElems(redMask.submat(new Rect(centerRegionStart, 0, centerRegionEnd - centerRegionStart, HEIGHT))).val[0];
+        double rightSum = Core.sumElems(redMask.submat(new Rect(rightRegionStart, 0, rightRegionEnd - rightRegionStart, HEIGHT))).val[0];
 
         // Detect if a red object is in one of the three regions
         if (leftSum > 0) {
-            Imgproc.rectangle(mat, new Point(leftRegionStart, 0), new Point(leftRegionEnd, HEIGHT), new Scalar(0, 255, 255), 2);
+            Imgproc.rectangle(hsv, new Point(leftRegionStart, 0), new Point(leftRegionEnd, HEIGHT), new Scalar(0, 255, 255), 2);
             location = SpikeLocation.LEFT;
         } else if (centerSum > 0) {
-            Imgproc.rectangle(mat, new Point(centerRegionStart, 0), new Point(centerRegionEnd, HEIGHT), new Scalar(0, 255, 255), 2);
+            Imgproc.rectangle(hsv, new Point(centerRegionStart, 0), new Point(centerRegionEnd, HEIGHT), new Scalar(0, 255, 255), 2);
             location = SpikeLocation.MIDDLE;
         } else if (rightSum > 0) {
-            Imgproc.rectangle(mat, new Point(rightRegionStart, 0), new Point(rightRegionEnd, HEIGHT), new Scalar(0, 255, 255), 2);
+            Imgproc.rectangle(hsv, new Point(rightRegionStart, 0), new Point(rightRegionEnd, HEIGHT), new Scalar(0, 255, 255), 2);
             location = SpikeLocation.RIGHT;
         } else {
             location = SpikeLocation.NONE;
         }
 
-        return mat;
+        // Release mats to conserve memory
+        hsv.release();
+        redMask.release();
+
+        return input;
     }
 
     public SpikeLocation getLocation() { return this.location; }
