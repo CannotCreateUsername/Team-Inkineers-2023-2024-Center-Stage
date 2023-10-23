@@ -23,6 +23,9 @@ public class BlueOctopusPipeline extends OpenCvPipeline {
     }
 
     SpikeLocation location;
+    private double leftSum = 0;
+    private double centerSum = 0;
+    private double rightSum = 0;
 
     // Define regions for left, center, and right thirds
     int leftRegionStart = 0;
@@ -54,19 +57,19 @@ public class BlueOctopusPipeline extends OpenCvPipeline {
         Core.inRange(hsv, lowHSV, highHSV, blueMask);
 
         // Calculate the sum of non-zero elements in each region
-        double leftSum = Core.sumElems(blueMask.submat(new Rect(leftRegionStart, 0, leftRegionEnd - leftRegionStart, HEIGHT))).val[0];
-        double centerSum = Core.sumElems(blueMask.submat(new Rect(centerRegionStart, 0, centerRegionEnd - centerRegionStart, HEIGHT))).val[0];
-        double rightSum = Core.sumElems(blueMask.submat(new Rect(rightRegionStart, 0, rightRegionEnd - rightRegionStart, HEIGHT))).val[0];
+        leftSum = Core.sumElems(blueMask.submat(new Rect(leftRegionStart, 0, leftRegionEnd - leftRegionStart, HEIGHT))).val[0];
+        centerSum = Core.sumElems(blueMask.submat(new Rect(centerRegionStart, 0, centerRegionEnd - centerRegionStart, HEIGHT))).val[0];
+        rightSum = Core.sumElems(blueMask.submat(new Rect(rightRegionStart, 0, rightRegionEnd - rightRegionStart, HEIGHT))).val[0];
 
         // Detect if a red object is in one of the three regions
-        if (leftSum > 0) {
-            Imgproc.rectangle(hsv, new Point(leftRegionStart, 0), new Point(leftRegionEnd, HEIGHT), new Scalar(0, 255, 255), 2);
+        if (leftSum > 0 && leftSum > centerSum && leftSum > rightSum) {
+            Imgproc.rectangle(input, new Point(leftRegionStart, 0), new Point(leftRegionEnd, HEIGHT), new Scalar(0, 255, 255), 2);
             location = SpikeLocation.LEFT;
-        } else if (centerSum > 0) {
-            Imgproc.rectangle(hsv, new Point(centerRegionStart, 0), new Point(centerRegionEnd, HEIGHT), new Scalar(0, 255, 255), 2);
+        } else if (centerSum > 0 && centerSum > leftSum && centerSum > rightSum) {
+            Imgproc.rectangle(input, new Point(centerRegionStart, 0), new Point(centerRegionEnd, HEIGHT), new Scalar(0, 255, 255), 2);
             location = SpikeLocation.MIDDLE;
-        } else if (rightSum > 0) {
-            Imgproc.rectangle(hsv, new Point(rightRegionStart, 0), new Point(rightRegionEnd, HEIGHT), new Scalar(0, 255, 255), 2);
+        } else if (rightSum > 0 && rightSum > leftSum && rightSum > centerSum) {
+            Imgproc.rectangle(input, new Point(rightRegionStart, 0), new Point(rightRegionEnd, HEIGHT), new Scalar(0, 255, 255), 2);
             location = SpikeLocation.RIGHT;
         } else {
             location = SpikeLocation.NONE;
@@ -80,4 +83,7 @@ public class BlueOctopusPipeline extends OpenCvPipeline {
     }
 
     public SpikeLocation getLocation() { return this.location; }
+    public double getLeftSum() { return this.leftSum; }
+    public double getCenterSum() { return this.centerSum; }
+    public double getRightSum() { return this.rightSum; }
 }

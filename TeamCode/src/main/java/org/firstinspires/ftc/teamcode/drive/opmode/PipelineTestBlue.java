@@ -48,7 +48,10 @@ public class PipelineTestBlue extends LinearOpMode {
 
         waitForStart();
         while (opModeIsActive()) {
-            telemetry.addData("ZOne", octopusPipeline.getLocation());
+            telemetry.addData("Zone", octopusPipeline.getLocation());
+            telemetry.addData("Pixels in left", octopusPipeline.getLeftSum());
+            telemetry.addData("Pixels in middle", octopusPipeline.getCenterSum());
+            telemetry.addData("Pixels in right", octopusPipeline.getRightSum());
             telemetry.update();
         }
     }
