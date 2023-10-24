@@ -16,7 +16,7 @@ public class RedOctopusPipeline extends OpenCvPipeline {
     public static final int HEIGHT = 480;
 
     // Variables for team prop location
-    enum SpikeLocation {
+    public enum SpikeLocation {
         LEFT,
         MIDDLE,
         RIGHT,

@@ -20,7 +20,7 @@ public class IntakeSubsystem {
 
     private final static double Kp = .05;
 
-    private CRServo intake = null;
+    private DcMotor intake = null;
 
     IntakeState intakeState;
 
@@ -28,7 +28,7 @@ public class IntakeSubsystem {
     double currentTarget;
 
     public IntakeSubsystem(@NonNull HardwareMap hardwareMap) {
-        intake = hardwareMap.get(CRServo.class, "intake");
+        intake = hardwareMap.get(DcMotor.class, "intake");
         intakeState = IntakeState.IDLE;
     }
 

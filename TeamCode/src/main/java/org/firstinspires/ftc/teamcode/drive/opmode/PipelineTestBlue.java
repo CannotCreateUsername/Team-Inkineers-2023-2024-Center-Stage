@@ -40,7 +40,7 @@ public class PipelineTestBlue extends LinearOpMode {
             public void onError(int errorCode)
             {
                 // This will be called should the camera not open
-                telemetry.addData("faile", "bad");
+                telemetry.addData("fail", "bad");
                 telemetry.update();
             }
         });
