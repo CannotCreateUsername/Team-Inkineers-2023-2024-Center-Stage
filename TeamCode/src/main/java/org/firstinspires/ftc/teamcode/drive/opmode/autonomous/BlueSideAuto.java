@@ -2,17 +2,13 @@ package org.firstinspires.ftc.teamcode.drive.opmode.autonomous;
 
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.Pose2d;
-import com.acmerobotics.roadrunner.Trajectory;
-import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
-import com.acmerobotics.roadrunner.TrajectoryBuilder;
+import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.cv.BlueOctopusPipeline;
-import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
@@ -28,6 +24,24 @@ public class BlueSideAuto extends LinearOpMode {
         // Initialize the drive
         Pose2d startPose = new Pose2d(0, 0, Math.toRadians(0));
         MecanumDrive drive = new MecanumDrive(hardwareMap, startPose);
+
+        // Run to the left spike location
+        Action runToLeftProp = drive.actionBuilder(drive.pose)
+                .lineToY(24)
+                .lineToX(-12)
+                .lineToX(12)
+                .build();
+        // Run to the center spike location
+        Action runToCenterProp = drive.actionBuilder(drive.pose)
+                .lineToY(28)
+                .lineToY(-4)
+                .build();
+        // Run to the right spike location
+        Action runToRightProp = drive.actionBuilder(drive.pose)
+                .lineToY(24)
+                .lineToX(12)
+                .lineToX(-12)
+                .build();
 
         // Live preview thing
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
@@ -56,10 +70,21 @@ public class BlueSideAuto extends LinearOpMode {
             }
         });
 
+        telemetry.addData("Detection", octopusPipeline.getLocation());
+        telemetry.update();
         waitForStart();
+        if (isStopRequested()) return;
+
         switch (octopusPipeline.getLocation()) {
             case NONE:
-
+                Actions.runBlocking(runToCenterProp);
+            case LEFT:
+                Actions.runBlocking(runToLeftProp);
+            case MIDDLE:
+                Actions.runBlocking(runToCenterProp);
+            case RIGHT:
+                Actions.runBlocking(runToRightProp);
         }
+
     }
 }
