@@ -11,8 +11,8 @@ import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.drive.GamepadHelper;
 import org.firstinspires.ftc.teamcode.drive.IntakeSubsystem;
 
-@TeleOp(name = "Blue Drive", group = "Linear Opmode")
-public class BlueSideDrive extends LinearOpMode {
+@TeleOp(name = "Red Drive", group = "Linear Opmode")
+public class RedSideDrive extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -41,8 +41,8 @@ public class BlueSideDrive extends LinearOpMode {
             // Take gamepad input and pass it into the mecanum drive function
             drive.setDrivePowers(new PoseVelocity2d
                     (new Vector2d(
-                            leftStickX.getRampingValue(gamepad1.left_stick_x),
-                            -leftStickY.getRampingValue(gamepad1.left_stick_y)),
+                            -leftStickX.getRampingValue(gamepad1.left_stick_x),
+                            leftStickY.getRampingValue(gamepad1.left_stick_y)),
                             rightStickX.getRampingValue(gamepad1.right_stick_x)
                     )
             );
