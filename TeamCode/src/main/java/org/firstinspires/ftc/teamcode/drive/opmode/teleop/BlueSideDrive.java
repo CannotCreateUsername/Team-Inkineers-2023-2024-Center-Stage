@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.MecanumDrive;
-import org.firstinspires.ftc.teamcode.drive.ArmSubsystem;
+import org.firstinspires.ftc.teamcode.drive.GamepadHelper;
 import org.firstinspires.ftc.teamcode.drive.IntakeSubsystem;
 
 @TeleOp(name = "Whats under there", group = "Linear Opmode")
@@ -27,15 +27,23 @@ public class BlueSideDrive extends LinearOpMode {
         // Initialize arm code
         //ArmSubsystem armSubsystem = new ArmSubsystem(hardwareMap);
 
+        // Initialize speed ramping
+        GamepadHelper leftStickX = new GamepadHelper();
+        leftStickX.init();
+        GamepadHelper leftStickY = new GamepadHelper();
+        leftStickY.init();
+        GamepadHelper rightStickX = new GamepadHelper();
+        rightStickX.init();
+
         waitForStart();
         while (opModeIsActive()) {
 
             // Take gamepad input and pass it into the mecanum drive function
             drive.setDrivePowers(new PoseVelocity2d
                     (new Vector2d(
-                            -gamepad1.left_stick_y*.8,
-                            -gamepad1.left_stick_x*.8),
-                            -gamepad1.right_stick_x*.8
+                            leftStickY.getRampingValue(gamepad1.left_stick_y),
+                            leftStickX.getRampingValue(gamepad1.left_stick_x)),
+                            rightStickX.getRampingValue(gamepad1.right_stick_x)
                     )
             );
 
@@ -47,6 +55,7 @@ public class BlueSideDrive extends LinearOpMode {
             // Telemetry
             telemetry.addData("DEEZ NUTS", "under-where!? xdddDDddddd lol.");
             telemetry.addData("Intake State", intakeSubsystem.getIntakeState());
+            telemetry.addData("Is right trigger down?", intakeSubsystem.isRtDown());
             //telemetry.addData("Lift State", armSubsystem.getLiftState());
             //telemetry.addData("Load State", armSubsystem.getLoadState());
             telemetry.update();
