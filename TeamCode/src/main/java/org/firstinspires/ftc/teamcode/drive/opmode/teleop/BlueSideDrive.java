@@ -25,7 +25,7 @@ public class BlueSideDrive extends LinearOpMode {
         IntakeSubsystem intakeSubsystem = new IntakeSubsystem(hardwareMap);
 
         // Initialize arm code
-        ArmSubsystem armSubsystem = new ArmSubsystem(hardwareMap);
+        //ArmSubsystem armSubsystem = new ArmSubsystem(hardwareMap);
 
         waitForStart();
         while (opModeIsActive()) {
@@ -33,22 +33,22 @@ public class BlueSideDrive extends LinearOpMode {
             // Take gamepad input and pass it into the mecanum drive function
             drive.setDrivePowers(new PoseVelocity2d
                     (new Vector2d(
-                            -gamepad1.left_stick_y,
-                            -gamepad1.left_stick_x),
-                            -gamepad1.right_stick_x
+                            -gamepad1.left_stick_y*.8,
+                            -gamepad1.left_stick_x*.8),
+                            -gamepad1.right_stick_x*.8
                     )
             );
 
             // Intake control loop
             intakeSubsystem.runIntake(gamepadEx1);
             // Arm control loop
-            armSubsystem.run(gamepadEx1);
+            //armSubsystem.run(gamepadEx1);
 
             // Telemetry
             telemetry.addData("DEEZ NUTS", "under-where!? xdddDDddddd lol.");
             telemetry.addData("Intake State", intakeSubsystem.getIntakeState());
-            telemetry.addData("Lift State", armSubsystem.getLiftState());
-            telemetry.addData("Load State", armSubsystem.getLoadState());
+            //telemetry.addData("Lift State", armSubsystem.getLiftState());
+            //telemetry.addData("Load State", armSubsystem.getLoadState());
             telemetry.update();
         }
     }
