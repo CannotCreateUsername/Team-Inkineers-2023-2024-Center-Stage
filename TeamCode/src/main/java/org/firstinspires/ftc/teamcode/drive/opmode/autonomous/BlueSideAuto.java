@@ -42,6 +42,12 @@ public class BlueSideAuto extends LinearOpMode {
                 .lineToX(12)
                 .lineToX(-12)
                 .build();
+        // Run to the center of the backdrop
+        Action runToBackdrop = drive.actionBuilder(drive.pose)
+                .lineToX(-36)
+                .build();
+
+
 
         // Live preview thing
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
@@ -85,6 +91,6 @@ public class BlueSideAuto extends LinearOpMode {
             case RIGHT:
                 Actions.runBlocking(runToRightProp);
         }
-
+        Actions.runBlocking(runToBackdrop);
     }
 }
