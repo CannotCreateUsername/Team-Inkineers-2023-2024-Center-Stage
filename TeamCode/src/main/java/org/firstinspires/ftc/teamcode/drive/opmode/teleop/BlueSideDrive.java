@@ -41,9 +41,9 @@ public class BlueSideDrive extends LinearOpMode {
             // Take gamepad input and pass it into the mecanum drive function
             drive.setDrivePowers(new PoseVelocity2d
                     (new Vector2d(
-                            leftStickX.getRampingValue(gamepad1.left_stick_x),
-                            -leftStickY.getRampingValue(gamepad1.left_stick_y)),
-                            rightStickX.getRampingValue(gamepad1.right_stick_x)
+                            -leftStickX.getRampingValue(gamepad1.left_stick_x),
+                            leftStickY.getRampingValue(gamepad1.left_stick_y)),
+                            -rightStickX.getRampingValue(gamepad1.right_stick_x)
                     )
             );
 
