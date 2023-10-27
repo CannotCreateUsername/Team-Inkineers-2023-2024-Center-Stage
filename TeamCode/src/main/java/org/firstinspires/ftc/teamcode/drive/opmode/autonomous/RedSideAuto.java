@@ -15,8 +15,8 @@ import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
-@Autonomous(name = "Blue Alliance Auto", group = "Linear Opmode")
-public class BlueSideAuto extends LinearOpMode {
+@Autonomous(name = "Red Alliance Auto", group = "Linear Opmode")
+public class RedSideAuto extends LinearOpMode {
 
     OpenCvCamera camera1;
 
@@ -49,7 +49,7 @@ public class BlueSideAuto extends LinearOpMode {
                 .build();
         // Run to the center of the backdrop
         Action park = drive.actionBuilder(drive.pose)
-                .strafeToConstantHeading(new Vector2d(0, -36))
+                .strafeToConstantHeading(new Vector2d(0, 36))
                 .build();
 
 
