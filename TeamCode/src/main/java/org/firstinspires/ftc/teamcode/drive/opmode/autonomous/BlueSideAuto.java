@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.drive.opmode.autonomous;
 
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -27,18 +28,18 @@ public class BlueSideAuto extends LinearOpMode {
 
         // Run to the left spike location
         Action runToLeftProp = drive.actionBuilder(drive.pose)
-                .lineToY(24)
+                .splineToConstantHeading(new Vector2d(0, 24), 0)
                 .lineToX(-12)
                 .lineToX(12)
                 .build();
         // Run to the center spike location
         Action runToCenterProp = drive.actionBuilder(drive.pose)
-                .lineToY(28)
+                .splineToConstantHeading(new Vector2d(0, 28), 0)
                 .lineToY(-4)
                 .build();
         // Run to the right spike location
         Action runToRightProp = drive.actionBuilder(drive.pose)
-                .lineToY(24)
+                .splineToConstantHeading(new Vector2d(0, 24), 0)
                 .lineToX(12)
                 .lineToX(-12)
                 .build();

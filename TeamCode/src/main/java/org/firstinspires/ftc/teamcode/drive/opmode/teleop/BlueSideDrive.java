@@ -13,10 +13,22 @@ import org.firstinspires.ftc.teamcode.drive.IntakeSubsystem;
 
 @TeleOp(name = "Blue Drive", group = "Linear Opmode")
 public class BlueSideDrive extends LinearOpMode {
+    enum TurnState {
+        STRAIGHT,
+        ROTATED
+    }
+    TurnState turnState;
+
+    double leftXInput;
+    double leftYInput;
+    double rightXInput;
 
     @Override
     public void runOpMode() throws InterruptedException {
+        turnState = TurnState.ROTATED;
+
         GamepadEx gamepadEx1 = new GamepadEx(gamepad1);
+        // GamepadEx gamepadEx2 = new GamepadEx(gamepad2);
 
         // Initialize the drive code
         MecanumDrive drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, Math.toRadians(0)));
@@ -37,13 +49,31 @@ public class BlueSideDrive extends LinearOpMode {
 
         waitForStart();
         while (opModeIsActive()) {
+            switch (turnState) {
+                case ROTATED:
+                    leftXInput = -leftStickY.getRampingValue(gamepad1.left_stick_y);
+                    leftYInput = leftStickX.getRampingValue(gamepad1.left_stick_x);
+                    rightXInput = rightStickX.getRampingValue(gamepad1.right_stick_x);
+                    if (gamepad1.y) {
+                        turnState = TurnState.STRAIGHT;
+                    }
+                    break;
+                case STRAIGHT:
+                    leftXInput = leftStickX.getRampingValue(gamepad1.left_stick_x);
+                    leftYInput = leftStickY.getRampingValue(gamepad1.left_stick_y);
+                    rightXInput = rightStickX.getRampingValue(gamepad1.right_stick_x);
+                    if (gamepad1.x) {
+                        turnState = TurnState.ROTATED;
+                    }
+                    break;
+            }
 
             // Take gamepad input and pass it into the mecanum drive function
             drive.setDrivePowers(new PoseVelocity2d
                     (new Vector2d(
-                            -leftStickX.getRampingValue(gamepad1.left_stick_x),
-                            leftStickY.getRampingValue(gamepad1.left_stick_y)),
-                            -rightStickX.getRampingValue(gamepad1.right_stick_x)
+                            -leftYInput,
+                            -leftXInput),
+                            -rightXInput
                     )
             );
 
@@ -54,6 +84,7 @@ public class BlueSideDrive extends LinearOpMode {
 
             // Telemetry
             telemetry.addData("Intake State", intakeSubsystem.getIntakeState());
+            telemetry.addData("Turn State", turnState.name());
             //telemetry.addData("Lift State", armSubsystem.getLiftState());
             //telemetry.addData("Load State", armSubsystem.getLoadState());
             telemetry.update();
