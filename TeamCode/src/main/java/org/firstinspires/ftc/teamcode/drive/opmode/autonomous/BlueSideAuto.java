@@ -33,7 +33,7 @@ public class BlueSideAuto extends LinearOpMode {
                 .strafeToConstantHeading(new Vector2d(24, 0))
                 .strafeToConstantHeading(new Vector2d(24, -16))
                 .strafeToConstantHeading(new Vector2d(16, -16))
-                .strafeToConstantHeading(new Vector2d(16, 0))
+                .strafeToConstantHeading(new Vector2d(0, -36))
                 .build();
         // Run to the center spike location
         Action runToCenterProp = drive.actionBuilder(drive.pose)
@@ -45,13 +45,8 @@ public class BlueSideAuto extends LinearOpMode {
                 .strafeToConstantHeading(new Vector2d(24, 0))
                 .strafeToConstantHeading(new Vector2d(24, 16))
                 .strafeToConstantHeading(new Vector2d(16, 16))
-                .strafeToConstantHeading(new Vector2d(16, 0))
-                .build();
-        // Run to the center of the backdrop
-        Action park = drive.actionBuilder(drive.pose)
                 .strafeToConstantHeading(new Vector2d(0, -36))
                 .build();
-
 
 
         // Live preview thing
@@ -104,6 +99,5 @@ public class BlueSideAuto extends LinearOpMode {
                 Actions.runBlocking(runToRightProp);
                 break;
         }
-        Actions.runBlocking(park);
     }
 }

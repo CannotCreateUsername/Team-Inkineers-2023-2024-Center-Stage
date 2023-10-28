@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
-import org.firstinspires.ftc.teamcode.cv.BlueOctopusPipeline;
+import org.firstinspires.ftc.teamcode.cv.RedOctopusPipeline;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
@@ -33,7 +33,7 @@ public class RedSideAuto extends LinearOpMode {
                 .strafeToConstantHeading(new Vector2d(24, 0))
                 .strafeToConstantHeading(new Vector2d(24, -16))
                 .strafeToConstantHeading(new Vector2d(16, -16))
-                .strafeToConstantHeading(new Vector2d(16, 0))
+                .strafeToConstantHeading(new Vector2d(0, 36))
                 .build();
         // Run to the center spike location
         Action runToCenterProp = drive.actionBuilder(drive.pose)
@@ -45,14 +45,8 @@ public class RedSideAuto extends LinearOpMode {
                 .strafeToConstantHeading(new Vector2d(24, 0))
                 .strafeToConstantHeading(new Vector2d(24, 16))
                 .strafeToConstantHeading(new Vector2d(16, 16))
-                .strafeToConstantHeading(new Vector2d(16, 0))
-                .build();
-        // Run to the center of the backdrop
-        Action park = drive.actionBuilder(drive.pose)
                 .strafeToConstantHeading(new Vector2d(0, 36))
                 .build();
-
-
 
         // Live preview thing
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
@@ -62,7 +56,7 @@ public class RedSideAuto extends LinearOpMode {
         camera1 = OpenCvCameraFactory.getInstance().createWebcam(webcam1, cameraMonitorViewId);
 
         // Attach the pipeline
-        BlueOctopusPipeline octopusPipeline = new BlueOctopusPipeline();
+        RedOctopusPipeline octopusPipeline = new RedOctopusPipeline();
         camera1.setPipeline(octopusPipeline);
 
         camera1.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
@@ -104,6 +98,5 @@ public class RedSideAuto extends LinearOpMode {
                 Actions.runBlocking(runToRightProp);
                 break;
         }
-        Actions.runBlocking(park);
     }
 }
