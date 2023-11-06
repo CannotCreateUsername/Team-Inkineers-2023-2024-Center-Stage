@@ -39,6 +39,7 @@ public class BlueSideAutoBackdrop extends LinearOpMode {
         Action runToCenterProp = drive.actionBuilder(drive.pose)
                 .strafeToConstantHeading(new Vector2d(32, 0))
                 .strafeToConstantHeading(new Vector2d(24, 0))
+                .strafeToConstantHeading(new Vector2d(0, -36))
                 .build();
         // Run to the right spike location
         Action runToRightProp = drive.actionBuilder(drive.pose)
@@ -81,11 +82,6 @@ public class BlueSideAutoBackdrop extends LinearOpMode {
         waitForStart();
         timer1.reset();
         if (isStopRequested()) return;
-
-        while (timer1.seconds() < 4) {
-            telemetry.addData("Detection:", octopusPipeline.getLocation());
-            telemetry.update();
-        }
 
         switch (octopusPipeline.getLocation()) {
             case NONE:

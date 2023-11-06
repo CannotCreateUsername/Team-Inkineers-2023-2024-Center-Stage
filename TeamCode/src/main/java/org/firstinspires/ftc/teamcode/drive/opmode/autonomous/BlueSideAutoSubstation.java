@@ -33,7 +33,6 @@ public class BlueSideAutoSubstation extends LinearOpMode {
                 .strafeToConstantHeading(new Vector2d(24, 0))
                 .strafeToConstantHeading(new Vector2d(24, -16))
                 .strafeToConstantHeading(new Vector2d(16, -16))
-                .strafeToConstantHeading(new Vector2d(0, -36))
                 .build();
         // Run to the center spike location
         Action runToCenterProp = drive.actionBuilder(drive.pose)
@@ -45,9 +44,11 @@ public class BlueSideAutoSubstation extends LinearOpMode {
                 .strafeToConstantHeading(new Vector2d(24, 0))
                 .strafeToConstantHeading(new Vector2d(24, 16))
                 .strafeToConstantHeading(new Vector2d(16, 16))
-                .strafeToConstantHeading(new Vector2d(0, -36))
                 .build();
-
+        // Park in backstage
+        Action park = drive.actionBuilder(startPose)
+                .strafeToConstantHeading(new Vector2d(16, -32))
+                .build();
 
         // Live preview thing
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
@@ -82,11 +83,6 @@ public class BlueSideAutoSubstation extends LinearOpMode {
         timer1.reset();
         if (isStopRequested()) return;
 
-        while (timer1.seconds() < 4) {
-            telemetry.addData("Detection:", octopusPipeline.getLocation());
-            telemetry.update();
-        }
-
         switch (octopusPipeline.getLocation()) {
             case NONE:
             case MIDDLE:
@@ -99,5 +95,7 @@ public class BlueSideAutoSubstation extends LinearOpMode {
                 Actions.runBlocking(runToRightProp);
                 break;
         }
+
+        Actions.runBlocking(park);
     }
 }
