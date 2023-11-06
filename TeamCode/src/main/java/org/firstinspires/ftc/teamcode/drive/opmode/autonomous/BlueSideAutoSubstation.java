@@ -15,8 +15,8 @@ import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
-@Autonomous(name = "Blue Alliance Auto", group = "Linear Opmode")
-public class BlueSideAuto extends LinearOpMode {
+@Autonomous(name = "Blue Alliance Backdrop Auto", group = "Backdrop Side")
+public class BlueSideAutoSubstation extends LinearOpMode {
 
     OpenCvCamera camera1;
 
