@@ -9,9 +9,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 public class ArmSubsystem {
     public enum SlideState {
-        TOP,
-        MIDDLE,
-        BOTTOM,
+        RUNNING,
+        PAUSED,
         REST
     }
     public enum DropState {
@@ -55,34 +54,29 @@ public class ArmSubsystem {
         }
     }
 
-    public void run(GamepadEx gamepad1) {
+    public void runSlides(GamepadEx gamepad1) {
         switch (slideState) {
             case REST:
                 runToPosition(0);
-                if (gamepad1.wasJustPressed(GamepadKeys.Button.RIGHT_BUMPER)) {
-                    slideState = SlideState.BOTTOM;
+                if (gamepad1.isDown(GamepadKeys.Button.RIGHT_BUMPER)) {
+                    slideState = SlideState.RUNNING;
                 }
-            case BOTTOM:
-                runToPosition(100);
-                if (gamepad1.wasJustPressed(GamepadKeys.Button.RIGHT_BUMPER)) {
-                    slideState = SlideState.MIDDLE;
+            case RUNNING:
+                runToPosition(slides.getCurrentPosition()+5);
+                if (gamepad1.wasJustReleased(GamepadKeys.Button.RIGHT_BUMPER)) {
+                    slideState = SlideState.PAUSED;
                 } else if (gamepad1.wasJustReleased(GamepadKeys.Button.LEFT_BUMPER)) {
                     slideState = SlideState.REST;
                 }
-            case MIDDLE:
+            case PAUSED:
                 runToPosition(200);
-                if (gamepad1.wasJustPressed(GamepadKeys.Button.RIGHT_BUMPER)) {
-                    slideState = SlideState.TOP;
-                } else if (gamepad1.wasJustReleased(GamepadKeys.Button.LEFT_BUMPER)) {
-                    slideState = SlideState.BOTTOM;
-                }
-            case TOP:
-                runToPosition(300);
-                if (gamepad1.wasJustReleased(GamepadKeys.Button.LEFT_BUMPER)) {
-                    slideState = SlideState.BOTTOM;
+                if (gamepad1.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER)) {
+                    slideState = SlideState.REST;
                 }
         }
+    }
 
+    public void runFourBar(GamepadEx gamepad1) {
         switch (dropState) {
             case PICK_UP:
                 virtualBar.setPosition(1);

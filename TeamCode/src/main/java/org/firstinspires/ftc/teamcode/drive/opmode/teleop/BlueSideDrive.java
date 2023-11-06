@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.MecanumDrive;
+import org.firstinspires.ftc.teamcode.drive.ArmSubsystem;
 import org.firstinspires.ftc.teamcode.drive.GamepadHelper;
 import org.firstinspires.ftc.teamcode.drive.IntakeSubsystem;
 
@@ -37,7 +38,7 @@ public class BlueSideDrive extends LinearOpMode {
         IntakeSubsystem intakeSubsystem = new IntakeSubsystem(hardwareMap);
 
         // Initialize arm code
-        //ArmSubsystem armSubsystem = new ArmSubsystem(hardwareMap);
+        ArmSubsystem armSubsystem = new ArmSubsystem(hardwareMap);
 
         // Initialize speed ramping
         GamepadHelper leftStickX = new GamepadHelper();
@@ -80,13 +81,14 @@ public class BlueSideDrive extends LinearOpMode {
             // Intake control loop
             intakeSubsystem.runIntake(gamepadEx1);
             // Arm control loop
-            //armSubsystem.run(gamepadEx1);
+            armSubsystem.runSlides(gamepadEx1);
+            armSubsystem.runFourBar(gamepadEx1);
 
             // Telemetry
             telemetry.addData("Intake State", intakeSubsystem.getIntakeState());
             telemetry.addData("Turn State", turnState.name());
-            //telemetry.addData("Lift State", armSubsystem.getLiftState());
-            //telemetry.addData("Load State", armSubsystem.getLoadState());
+            telemetry.addData("Lift State", armSubsystem.getLiftState());
+            telemetry.addData("Load State", armSubsystem.getLoadState());
             telemetry.update();
         }
     }
