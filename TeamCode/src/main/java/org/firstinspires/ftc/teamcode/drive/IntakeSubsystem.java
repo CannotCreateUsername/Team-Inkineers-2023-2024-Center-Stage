@@ -61,4 +61,6 @@ public class IntakeSubsystem {
 
     public String getIntakeState() { return intakeState.name(); }
     public boolean isRtDown() { return rtReader.isDown(); }
+
+    // Autonomous Functions
 }

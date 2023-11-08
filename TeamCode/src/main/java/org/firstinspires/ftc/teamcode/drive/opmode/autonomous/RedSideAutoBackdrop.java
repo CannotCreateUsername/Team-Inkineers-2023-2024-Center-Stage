@@ -66,8 +66,6 @@ public class RedSideAutoBackdrop extends LinearOpMode {
                 // Usually this is where you'll want to start streaming from the camera (see section 4)
                 // If resolution does not match, it will crash
                 camera1.startStreaming(640, 480, OpenCvCameraRotation.UPRIGHT);
-                telemetry.addData("Detection", octopusPipeline.getLocation());
-                telemetry.update();
             }
 
             @Override
@@ -77,6 +75,12 @@ public class RedSideAutoBackdrop extends LinearOpMode {
                 telemetry.update();
             }
         });
+
+        // Display Telemetry
+        while (!isStopRequested() && !opModeIsActive()) {
+            telemetry.addData("Detection", octopusPipeline.getLocation());
+            telemetry.update();
+        }
 
         waitForStart();
         timer1.reset();

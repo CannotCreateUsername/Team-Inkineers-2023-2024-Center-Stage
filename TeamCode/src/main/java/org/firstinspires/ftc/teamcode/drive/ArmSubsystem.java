@@ -1,5 +1,9 @@
 package org.firstinspires.ftc.teamcode.drive;
 
+import androidx.annotation.NonNull;
+
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+import com.acmerobotics.roadrunner.Action;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -22,6 +26,9 @@ public class ArmSubsystem {
 
     private DcMotor slides = null;
     private Servo virtualBar = null;
+
+    public final int DROP = 1;
+    public final int LOAD = 0;
 
     SlideState slideState;
     DropState dropState;
@@ -69,7 +76,7 @@ public class ArmSubsystem {
                     slideState = SlideState.REST;
                 }
             case PAUSED:
-                runToPosition(200);
+                runToPosition(slides.getCurrentPosition());
                 if (gamepad1.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER)) {
                     slideState = SlideState.REST;
                 }
@@ -79,12 +86,12 @@ public class ArmSubsystem {
     public void runFourBar(GamepadEx gamepad1) {
         switch (dropState) {
             case PICK_UP:
-                virtualBar.setPosition(1);
+                virtualBar.setPosition(LOAD);
                 if (gamepad1.isDown(GamepadKeys.Button.X)) {
                     dropState = DropState.DROP_OFF;
                 }
             case DROP_OFF:
-                virtualBar.setPosition(0);
+                virtualBar.setPosition(DROP);
                 if (gamepad1.wasJustReleased(GamepadKeys.Button.X)) {
                     dropState = DropState.PICK_UP;
                 }
@@ -105,4 +112,16 @@ public class ArmSubsystem {
 
     public String getLiftState() { return slideState.name(); }
     public String getLoadState() { return dropState.name(); }
+
+    // Autonomous Functions
+    public Action dropYellowPixel() {
+        return new Action() {
+            @Override
+            public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+                runToPosition(200);
+                virtualBar.setPosition(DROP);
+                return false;
+            }
+        }
+    }
 }
