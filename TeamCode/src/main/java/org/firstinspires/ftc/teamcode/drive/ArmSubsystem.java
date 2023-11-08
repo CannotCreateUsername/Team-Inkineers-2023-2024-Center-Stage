@@ -21,10 +21,6 @@ public class ArmSubsystem {
         PAUSED,
         REST
     }
-    public enum DropState {
-        DROP_OFF,
-        PICK_UP
-    }
     public enum OuttakeState {
         OUT,
         IN,
@@ -41,7 +37,6 @@ public class ArmSubsystem {
     public final int LOAD = 0;
 
     SlideState slideState;
-    DropState dropState;
     OuttakeState outtakeState;
 
     double currentTarget;
@@ -65,7 +60,6 @@ public class ArmSubsystem {
 
         // Initialize finite state machines
         slideState = SlideState.REST;
-        dropState = DropState.PICK_UP;
         outtakeState = OuttakeState.IDLE;
 
         timer = new ElapsedTime();
@@ -171,7 +165,6 @@ public class ArmSubsystem {
 
     // Telemetry
     public String getLiftState() { return slideState.name(); }
-    public String getLoadState() { return dropState.name(); }
 
     // Autonomous Functions
     public Action dropYellowPixel() {

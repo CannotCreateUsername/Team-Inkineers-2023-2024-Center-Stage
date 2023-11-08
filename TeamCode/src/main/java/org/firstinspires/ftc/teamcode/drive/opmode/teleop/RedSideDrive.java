@@ -88,7 +88,6 @@ public class RedSideDrive extends LinearOpMode {
             telemetry.addData("Intake State", intakeSubsystem.getIntakeState());
             telemetry.addData("Turn State", turnState.name());
             telemetry.addData("Lift State", armSubsystem.getLiftState());
-            telemetry.addData("Load State", armSubsystem.getLoadState());
             telemetry.update();
         }
     }
