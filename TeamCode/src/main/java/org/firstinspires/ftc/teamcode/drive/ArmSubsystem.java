@@ -167,14 +167,13 @@ public class ArmSubsystem {
     public String getLiftState() { return slideState.name(); }
 
     // Autonomous Functions
+
     public Action dropYellowPixel() {
-        return new Action() {
-            @Override
-            public boolean run(@NonNull TelemetryPacket telemetryPacket) {
-                runToPosition(200);
-                virtualBar.setPosition(DROP);
-                return false;
-            }
-        }
+        return telemetryPacket -> {
+            runToPosition(200);
+            virtualBar.setPosition(DROP);
+            outtake.setPower(-1);
+            return true;
+        };
     }
 }

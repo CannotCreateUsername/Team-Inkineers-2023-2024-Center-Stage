@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.drive.opmode.teleop;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.acmerobotics.roadrunner.Vector2d;
+import com.acmerobotics.roadrunner.ftc.Actions;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -77,6 +78,11 @@ public class BlueSideDrive extends LinearOpMode {
                             -rightXInput
                     )
             );
+
+            // For testing actions
+            if (gamepad1.a) {
+                Actions.runBlocking(armSubsystem.dropYellowPixel());
+            }
 
             // Intake control loop
             intakeSubsystem.runIntake(gamepadEx1);
