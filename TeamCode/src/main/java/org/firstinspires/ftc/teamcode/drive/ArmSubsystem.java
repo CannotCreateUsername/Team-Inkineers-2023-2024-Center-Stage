@@ -167,11 +167,13 @@ public class ArmSubsystem {
     // Autonomous Functions
 
     public Action dropYellowPixel() {
+        ElapsedTime dropTimer = new ElapsedTime();
         return telemetryPacket -> {
+            dropTimer.reset();
             runToPosition(200);
             virtualBar.setPosition(DROP);
             outtake.setPower(-1);
-            return true;
+            return dropTimer.seconds() < 2;
         };
     }
 }
