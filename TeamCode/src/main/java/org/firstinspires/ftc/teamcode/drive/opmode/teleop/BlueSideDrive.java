@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.drive.opmode.teleop;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.acmerobotics.roadrunner.Vector2d;
-import com.acmerobotics.roadrunner.ftc.Actions;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -30,7 +29,7 @@ public class BlueSideDrive extends LinearOpMode {
         turnState = TurnState.ROTATED;
 
         GamepadEx gamepadEx1 = new GamepadEx(gamepad1);
-        GamepadEx gamepadEx2 = new GamepadEx(gamepad2);
+//        GamepadEx gamepadEx2 = new GamepadEx(gamepad2);
 
         // Initialize the drive code
         MecanumDrive drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, Math.toRadians(0)));
@@ -79,16 +78,11 @@ public class BlueSideDrive extends LinearOpMode {
                     )
             );
 
-            // For testing actions
-            if (gamepad1.a) {
-                Actions.runBlocking(armSubsystem.dropYellowPixel());
-            }
-
             // Intake control loop
             intakeSubsystem.runIntake(gamepadEx1);
             // Arm control loop
             armSubsystem.runArm(gamepadEx1);
-            armSubsystem.runOuttake(gamepadEx2);
+            armSubsystem.runOuttake(gamepadEx1);
 
             // Telemetry
             telemetry.addData("Intake State", intakeSubsystem.getIntakeState());

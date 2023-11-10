@@ -31,7 +31,7 @@ public class ArmSubsystem {
     private final Servo virtualBar;
     private final CRServo outtake;
 
-    public final int DROP = 1;
+    public final int DROP = -1;
     public final int LOAD = 0;
 
     SlideState slideState;
@@ -79,72 +79,75 @@ public class ArmSubsystem {
     public void runArm(GamepadEx gamepad1) {
         switch (slideState) {
             case REST:
-                if (gamepad1.isDown(GamepadKeys.Button.RIGHT_BUMPER)) {
-                    runToPosition(100);
+                if (gamepad1.wasJustReleased(GamepadKeys.Button.RIGHT_BUMPER)) {
+                    runToPosition(200);
                     slideState = SlideState.READY;
                     timer.reset();
+                } else {
+                    runToPosition(10);
                 }
                 break;
             case READY:
-                if (gamepad1.isDown(GamepadKeys.Button.RIGHT_BUMPER)) {
+                if (gamepad1.wasJustPressed(GamepadKeys.Button.RIGHT_BUMPER)) {
                     slideState = SlideState.RUNNING;
                 } else if (gamepad1.wasJustReleased(GamepadKeys.Button.LEFT_BUMPER)) {
                     virtualBar.setPosition(LOAD);
-                    runToPosition(0);
                     slideState = SlideState.REST;
                     timer.reset();
                 }
                 if (timer.seconds() > 1) {
                     virtualBar.setPosition(DROP);
                 }
+
                 break;
             case RUNNING:
-                runToPosition(slides.getCurrentPosition()+2);
-                if (gamepad1.wasJustReleased(GamepadKeys.Button.RIGHT_BUMPER)) {
+                if (gamepad1.isDown(GamepadKeys.Button.RIGHT_BUMPER)) {
+                    runToPosition(slides.getCurrentPosition()+100);
+                } else if (gamepad1.wasJustReleased(GamepadKeys.Button.RIGHT_BUMPER)) {
                     slideState = SlideState.PAUSED;
                 } else if (gamepad1.wasJustReleased(GamepadKeys.Button.LEFT_BUMPER)) {
                     virtualBar.setPosition(LOAD);
-                    runToPosition(0);
                     slideState = SlideState.REST;
                     timer.reset();
                 }
                 break;
             case PAUSED:
-                runToPosition(slides.getCurrentPosition());
                 if (gamepad1.isDown(GamepadKeys.Button.RIGHT_BUMPER)) {
                     slideState = SlideState.RUNNING;
                 } else if (gamepad1.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER)) {
                     virtualBar.setPosition(LOAD);
-                    runToPosition(0);
                     slideState = SlideState.REST;
                     timer.reset();
                 }
                 break;
         }
+
+        gamepad1.readButtons();
     }
 
-    public void runOuttake(GamepadEx gamepad2) {
-        rtReader = new TriggerReader(gamepad2, GamepadKeys.Trigger.RIGHT_TRIGGER);
-        ltReader = new TriggerReader(gamepad2, GamepadKeys.Trigger.LEFT_TRIGGER);
+    public void runOuttake(GamepadEx gamepad1) {
+        rtReader = new TriggerReader(gamepad1, GamepadKeys.Trigger.RIGHT_TRIGGER);
+        ltReader = new TriggerReader(gamepad1, GamepadKeys.Trigger.LEFT_TRIGGER);
         switch (outtakeState) {
             case IDLE:
-                outtake.setPower(0);
-                if (ltReader.isDown()) {
-                    outtakeState = OuttakeState.OUT;
-                } else if (rtReader.isDown()) {
+                if (rtReader.isDown()) {
                     outtakeState = OuttakeState.IN;
+                    outtake.setPower(-1);
+                } else if (ltReader.isDown() && !rtReader.isDown()) {
+                    outtakeState = OuttakeState.OUT;
                 }
                 break;
             case IN:
-                outtake.setPower(1);
-                if (ltReader.wasJustReleased()) {
+                if (!rtReader.isDown()) {
                     outtakeState = OuttakeState.IDLE;
+                    outtake.setPower(0);
                 }
                 break;
             case OUT:
-                outtake.setPower(-1);
-                if (rtReader.wasJustReleased()) {
+                outtake.setPower(1);
+                if (!ltReader.isDown()) {
                     outtakeState = OuttakeState.IDLE;
+                    outtake.setPower(0);
                 }
                 break;
         }
@@ -153,6 +156,7 @@ public class ArmSubsystem {
     public void runToPosition(int position, double power) {
         currentTarget = position;
         slides.setTargetPosition(position);
+        slides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         slides.setPower(powerPID(power));
     }
 
@@ -163,6 +167,10 @@ public class ArmSubsystem {
 
     // Telemetry
     public String getLiftState() { return slideState.name(); }
+    public int getSlidePosition() { return slides.getCurrentPosition(); }
+    public double getV4bPosition() { return virtualBar.getPosition(); }
+    public double getArmTimer() { return timer.seconds(); }
+    public String getOuttakeState() { return outtakeState.name(); }
 
     // Autonomous Functions
 
