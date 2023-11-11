@@ -26,7 +26,6 @@ public class IntakeSubsystem {
     public IntakeSubsystem(@NonNull HardwareMap hardwareMap) {
         intake = hardwareMap.get(DcMotor.class, "intake");
         intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        intake.setDirection(DcMotorSimple.Direction.REVERSE);
 
         intakeState = IntakeState.IDLE;
     }
@@ -38,7 +37,7 @@ public class IntakeSubsystem {
             case IDLE:
                 if (rtReader.isDown()) {
                     intakeState = IntakeState.IN;
-                    intake.setPower(1);
+                    intake.setPower(0.5);
                 } else if (ltReader.isDown() && !rtReader.isDown()) {
                     intakeState = IntakeState.OUT;
                 }
@@ -50,7 +49,7 @@ public class IntakeSubsystem {
                 }
                 break;
             case OUT:
-                intake.setPower(-1);
+                intake.setPower(-0.5);
                 if (!ltReader.isDown()) {
                     intakeState = IntakeState.IDLE;
                     intake.setPower(0);

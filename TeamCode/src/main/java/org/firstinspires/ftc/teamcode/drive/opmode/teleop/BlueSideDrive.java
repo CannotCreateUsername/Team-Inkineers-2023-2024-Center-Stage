@@ -4,6 +4,7 @@ import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
+import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -55,7 +56,7 @@ public class BlueSideDrive extends LinearOpMode {
                     leftXInput = -leftStickY.getRampingValue(gamepad1.left_stick_y);
                     leftYInput = leftStickX.getRampingValue(gamepad1.left_stick_x);
                     rightXInput = rightStickX.getRampingValue(gamepad1.right_stick_x);
-                    if (gamepad1.y) {
+                    if (gamepadEx1.wasJustReleased(GamepadKeys.Button.Y)) {
                         turnState = TurnState.STRAIGHT;
                     }
                     break;
@@ -63,7 +64,7 @@ public class BlueSideDrive extends LinearOpMode {
                     leftXInput = leftStickX.getRampingValue(gamepad1.left_stick_x);
                     leftYInput = leftStickY.getRampingValue(gamepad1.left_stick_y);
                     rightXInput = rightStickX.getRampingValue(gamepad1.right_stick_x);
-                    if (gamepad1.x) {
+                    if (gamepadEx1.wasJustReleased(GamepadKeys.Button.Y)) {
                         turnState = TurnState.ROTATED;
                     }
                     break;
@@ -83,6 +84,8 @@ public class BlueSideDrive extends LinearOpMode {
             // Arm control loop
             armSubsystem.runArm(gamepadEx1);
             armSubsystem.runOuttake(gamepadEx1);
+
+            gamepadEx1.readButtons();
 
             // Telemetry
             telemetry.addData("Intake State", intakeSubsystem.getIntakeState());

@@ -34,6 +34,7 @@ public class ArmTest extends LinearOpMode {
             telemetry.addData("Arm Timer", armSubsystem.getArmTimer());
             telemetry.addData("Outtake State", armSubsystem.getOuttakeState());
             telemetry.addData("Intake State", intakeSubsystem.getIntakeState());
+            telemetry.addData("Reversed?", armSubsystem.isReversed());
             telemetry.update();
         }
     }

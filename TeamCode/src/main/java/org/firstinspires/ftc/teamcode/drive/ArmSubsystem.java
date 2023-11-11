@@ -32,12 +32,13 @@ public class ArmSubsystem {
     private final CRServo outtake;
 
     public final int DROP = -1;
-    public final int LOAD = 0;
+    public final int LOAD = 1;
 
     SlideState slideState;
     OuttakeState outtakeState;
 
-    double currentTarget;
+    private double currentTarget;
+    private boolean reversed = false;
 
     ElapsedTime timer;
 
@@ -55,6 +56,8 @@ public class ArmSubsystem {
         slides.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         slides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         slides.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        virtualBar.setPosition(LOAD);
 
         // Initialize finite state machines
         slideState = SlideState.REST;
@@ -77,32 +80,36 @@ public class ArmSubsystem {
     }
 
     public void runArm(GamepadEx gamepad1) {
+        int SLIDE_LIMIT = 1800;
         switch (slideState) {
             case REST:
                 if (gamepad1.wasJustReleased(GamepadKeys.Button.RIGHT_BUMPER)) {
-                    runToPosition(200);
                     slideState = SlideState.READY;
                     timer.reset();
-                } else {
-                    runToPosition(10);
+                }
+                if (timer.seconds() > 1.5) {
+                    runToPosition(50);
                 }
                 break;
             case READY:
+                runToPosition(200, 0.2);
                 if (gamepad1.wasJustPressed(GamepadKeys.Button.RIGHT_BUMPER)) {
                     slideState = SlideState.RUNNING;
                 } else if (gamepad1.wasJustReleased(GamepadKeys.Button.LEFT_BUMPER)) {
                     virtualBar.setPosition(LOAD);
                     slideState = SlideState.REST;
                     timer.reset();
-                }
-                if (timer.seconds() > 1) {
+                } else if (timer.seconds() > 0.5) {
                     virtualBar.setPosition(DROP);
                 }
-
                 break;
             case RUNNING:
-                if (gamepad1.isDown(GamepadKeys.Button.RIGHT_BUMPER)) {
-                    runToPosition(slides.getCurrentPosition()+100);
+                if (gamepad1.isDown(GamepadKeys.Button.RIGHT_BUMPER) && slides.getCurrentPosition() < SLIDE_LIMIT) {
+                    if (reversed) {
+                        runToPosition(slides.getCurrentPosition()-100);
+                    } else {
+                        runToPosition(slides.getCurrentPosition()+100);
+                    }
                 } else if (gamepad1.wasJustReleased(GamepadKeys.Button.RIGHT_BUMPER)) {
                     slideState = SlideState.PAUSED;
                 } else if (gamepad1.wasJustReleased(GamepadKeys.Button.LEFT_BUMPER)) {
@@ -121,7 +128,9 @@ public class ArmSubsystem {
                 }
                 break;
         }
-
+        if (gamepad1.wasJustPressed(GamepadKeys.Button.X)) {
+            reversed = !reversed;
+        }
         gamepad1.readButtons();
     }
 
@@ -162,7 +171,7 @@ public class ArmSubsystem {
 
     // Run to position at default power
     public void runToPosition(int position) {
-        runToPosition(position, 0.5);
+        runToPosition(position, 0.4);
     }
 
     // Telemetry
@@ -171,6 +180,7 @@ public class ArmSubsystem {
     public double getV4bPosition() { return virtualBar.getPosition(); }
     public double getArmTimer() { return timer.seconds(); }
     public String getOuttakeState() { return outtakeState.name(); }
+    public boolean isReversed() { return reversed; }
 
     // Autonomous Functions
 
