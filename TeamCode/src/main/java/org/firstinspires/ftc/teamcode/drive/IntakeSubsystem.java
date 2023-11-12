@@ -25,6 +25,7 @@ public class IntakeSubsystem {
 
     public IntakeSubsystem(@NonNull HardwareMap hardwareMap) {
         intake = hardwareMap.get(DcMotor.class, "intake");
+        intake.setDirection(DcMotorSimple.Direction.REVERSE);
         intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
         intakeState = IntakeState.IDLE;
