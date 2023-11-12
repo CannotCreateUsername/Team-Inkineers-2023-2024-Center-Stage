@@ -1,25 +1,39 @@
 package org.firstinspires.ftc.teamcode.drive;
 
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
+import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 public class EndgameSubsystems {
-    private enum DroneState {
-        READY,
-        LAUNCHED
-    }
 
-    DroneState droneState;
+    /** @noinspection FieldCanBeLocal*/ // Drone Launcher Positions
+    private final double TAKEOFF = 1;
+    /** @noinspection FieldCanBeLocal*/ // Lmao die warnings
+    private final double LAUNCHED = -1;
 
-    private final Servo drone;
+    private final Servo droneLauncher;
 
     public EndgameSubsystems(HardwareMap hardwareMap) {
-        drone = hardwareMap.get(Servo.class, "drone");
+        droneLauncher = hardwareMap.get(Servo.class, "drone");
+        droneLauncher.setPosition(TAKEOFF);
+
     }
 
     public void run(GamepadEx gamepad) {
-
+        if (gamepad.wasJustReleased(GamepadKeys.Button.DPAD_UP)) {
+            droneLauncher.setPosition(LAUNCHED);
+        } else if (gamepad.wasJustPressed(GamepadKeys.Button.DPAD_DOWN)) {
+            droneLauncher.setPosition(TAKEOFF);
+        }
         gamepad.readButtons();
+    }
+
+    public String getLauncherState() {
+        if (droneLauncher.getPosition() == LAUNCHED) {
+            return "LAUNCHED";
+        } else {
+            return "TAKEOFF";
+        }
     }
 }

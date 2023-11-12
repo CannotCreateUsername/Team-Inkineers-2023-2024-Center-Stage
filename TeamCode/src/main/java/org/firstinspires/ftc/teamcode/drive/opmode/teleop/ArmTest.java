@@ -6,9 +6,10 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.drive.ArmSubsystem;
+import org.firstinspires.ftc.teamcode.drive.EndgameSubsystems;
 import org.firstinspires.ftc.teamcode.drive.IntakeSubsystem;
 
-@TeleOp(name = "Arm testing", group = "Linear opmode")
+@TeleOp(name = "Arm Testing", group = "Linear opmode")
 public class ArmTest extends LinearOpMode {
 
     @Override
@@ -17,6 +18,7 @@ public class ArmTest extends LinearOpMode {
 
         ArmSubsystem armSubsystem = new ArmSubsystem(hardwareMap);
         IntakeSubsystem intakeSubsystem = new IntakeSubsystem(hardwareMap);
+        EndgameSubsystems endgameSubsystems = new EndgameSubsystems(hardwareMap);
 
         waitForStart();
         while (opModeIsActive()) {
@@ -27,6 +29,7 @@ public class ArmTest extends LinearOpMode {
             armSubsystem.runArm(gamepadEx1);
             armSubsystem.runOuttake(gamepadEx1);
             intakeSubsystem.runIntake(gamepadEx1);
+            endgameSubsystems.run(gamepadEx1);
 
             telemetry.addData("Slide State", armSubsystem.getLiftState());
             telemetry.addData("Slide Position", armSubsystem.getSlidePosition());
@@ -35,6 +38,7 @@ public class ArmTest extends LinearOpMode {
             telemetry.addData("Outtake State", armSubsystem.getOuttakeState());
             telemetry.addData("Intake State", intakeSubsystem.getIntakeState());
             telemetry.addData("Reversed?", armSubsystem.isReversed());
+            telemetry.addData("Drone Launch State", endgameSubsystems.getLauncherState());
             telemetry.update();
         }
     }

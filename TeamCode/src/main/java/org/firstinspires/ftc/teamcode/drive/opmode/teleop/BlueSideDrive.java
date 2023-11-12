@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.drive.ArmSubsystem;
+import org.firstinspires.ftc.teamcode.drive.EndgameSubsystems;
 import org.firstinspires.ftc.teamcode.drive.GamepadHelper;
 import org.firstinspires.ftc.teamcode.drive.IntakeSubsystem;
 
@@ -36,10 +37,13 @@ public class BlueSideDrive extends LinearOpMode {
         MecanumDrive drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, Math.toRadians(0)));
 
         // Initialize intake code
-        IntakeSubsystem intakeSubsystem = new IntakeSubsystem(hardwareMap);
+        IntakeSubsystem intake = new IntakeSubsystem(hardwareMap);
 
         // Initialize arm code
-        ArmSubsystem armSubsystem = new ArmSubsystem(hardwareMap);
+        ArmSubsystem arm = new ArmSubsystem(hardwareMap);
+
+        //Initialize drone launcher and hanging code
+        EndgameSubsystems endgame = new EndgameSubsystems(hardwareMap);
 
         // Initialize speed ramping
         GamepadHelper leftStickX = new GamepadHelper();
@@ -79,18 +83,24 @@ public class BlueSideDrive extends LinearOpMode {
                     )
             );
 
-            // Intake control loop
-            intakeSubsystem.runIntake(gamepadEx1);
+            // Run Robot Subsystems
             // Arm control loop
-            armSubsystem.runArm(gamepadEx1);
-            armSubsystem.runOuttake(gamepadEx1);
+            arm.runArm(gamepadEx1);
+            arm.runOuttake(gamepadEx1);
+            // Intake control loop
+            intake.runIntake(gamepadEx1);
+            // Endgame control loop
+            endgame.run(gamepadEx1);
 
+
+            // Read gamepad buttons for gamepadEx
             gamepadEx1.readButtons();
 
             // Telemetry
-            telemetry.addData("Intake State", intakeSubsystem.getIntakeState());
+            telemetry.addData("Intake State", intake.getIntakeState());
             telemetry.addData("Turn State", turnState.name());
-            telemetry.addData("Lift State", armSubsystem.getLiftState());
+            telemetry.addData("Lift State", arm.getLiftState());
+            telemetry.addData("Drone Launch State", endgame.getLauncherState());
             telemetry.update();
         }
     }
