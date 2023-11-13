@@ -36,11 +36,11 @@ public class BlueSideDrive extends LinearOpMode {
         // Initialize the drive code
         MecanumDrive drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, Math.toRadians(0)));
 
-        // Initialize intake code
-        IntakeSubsystem intake = new IntakeSubsystem(hardwareMap);
+        // Initialize intakeSubsystem code
+        IntakeSubsystem intakeSubsystem = new IntakeSubsystem(hardwareMap);
 
         // Initialize arm code
-        ArmSubsystem arm = new ArmSubsystem(hardwareMap);
+        ArmSubsystem armSubsystem = new ArmSubsystem(hardwareMap);
 
         //Initialize drone launcher and hanging code
         EndgameSubsystems endgame = new EndgameSubsystems(hardwareMap);
@@ -85,10 +85,10 @@ public class BlueSideDrive extends LinearOpMode {
 
             // Run Robot Subsystems
             // Arm control loop
-            arm.runArm(gamepadEx1);
-            arm.runOuttake(gamepadEx1);
+            armSubsystem.runArm(gamepadEx1);
+            armSubsystem.runOuttake(gamepadEx1);
             // Intake control loop
-            intake.runIntake(gamepadEx1);
+            intakeSubsystem.runIntake(gamepadEx1);
             // Endgame control loop
             endgame.run(gamepadEx1);
 
@@ -97,10 +97,11 @@ public class BlueSideDrive extends LinearOpMode {
             gamepadEx1.readButtons();
 
             // Telemetry
-            telemetry.addData("Intake State", intake.getIntakeState());
+            telemetry.addData("Intake State", intakeSubsystem.getIntakeState());
             telemetry.addData("Turn State", turnState.name());
-            telemetry.addData("Lift State", arm.getLiftState());
+            telemetry.addData("Lift State", armSubsystem.getLiftState());
             telemetry.addData("Drone Launch State", endgame.getLauncherState());
+            telemetry.addData("Bumper", armSubsystem.rightBumperDown());
             telemetry.update();
         }
     }

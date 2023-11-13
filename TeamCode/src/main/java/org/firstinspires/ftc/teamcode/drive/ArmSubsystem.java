@@ -79,6 +79,8 @@ public class ArmSubsystem {
         }
     }
 
+    boolean a;
+
     public void runArm(GamepadEx gamepad1) {
         int SLIDE_LIMIT = 1800;
         switch (slideState) {
@@ -131,7 +133,7 @@ public class ArmSubsystem {
         if (gamepad1.wasJustPressed(GamepadKeys.Button.X)) {
             reversed = !reversed;
         }
-        gamepad1.readButtons();
+        a = gamepad1.isDown(GamepadKeys.Button.RIGHT_BUMPER);
     }
 
     public void runOuttake(GamepadEx gamepad1) {
@@ -175,6 +177,7 @@ public class ArmSubsystem {
     }
 
     // Telemetry
+    public boolean rightBumperDown() { return a; }
     public String getLiftState() { return slideState.name(); }
     public int getSlidePosition() { return slides.getCurrentPosition(); }
     public double getV4bPosition() { return virtualBar.getPosition(); }
