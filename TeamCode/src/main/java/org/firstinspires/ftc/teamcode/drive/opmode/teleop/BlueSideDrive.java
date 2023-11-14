@@ -93,9 +93,6 @@ public class BlueSideDrive extends LinearOpMode {
             endgame.run(gamepadEx1);
 
 
-            // Read gamepad buttons for gamepadEx
-            gamepadEx1.readButtons();
-
             // Telemetry
             telemetry.addData("Intake State", intakeSubsystem.getIntakeState());
             telemetry.addData("Turn State", turnState.name());
