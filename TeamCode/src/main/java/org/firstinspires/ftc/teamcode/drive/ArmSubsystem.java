@@ -34,6 +34,8 @@ public class ArmSubsystem {
     public final int DROP = -1;
     public final int LOAD = 1;
 
+    private double liftMultiplier = 1;
+
     SlideState slideState;
     OuttakeState outtakeState;
 
@@ -85,6 +87,7 @@ public class ArmSubsystem {
         int SLIDE_LIMIT = 1800;
         switch (slideState) {
             case REST:
+                liftMultiplier = 1;
                 if (gamepad1.wasJustReleased(GamepadKeys.Button.RIGHT_BUMPER)) {
                     slideState = SlideState.READY;
                     timer.reset();
@@ -94,6 +97,7 @@ public class ArmSubsystem {
                 }
                 break;
             case READY:
+                liftMultiplier = 1;
                 runToPosition(200, 0.2);
                 if (gamepad1.wasJustPressed(GamepadKeys.Button.RIGHT_BUMPER)) {
                     slideState = SlideState.RUNNING;
@@ -106,6 +110,7 @@ public class ArmSubsystem {
                 }
                 break;
             case RUNNING:
+                liftMultiplier = 1 - ((float) SLIDE_LIMIT/slides.getCurrentPosition()) + 0.2;
                 if (gamepad1.isDown(GamepadKeys.Button.RIGHT_BUMPER) && slides.getCurrentPosition() < SLIDE_LIMIT) {
                     if (reversed) {
                         runToPosition(slides.getCurrentPosition()-100);
@@ -121,6 +126,7 @@ public class ArmSubsystem {
                 }
                 break;
             case PAUSED:
+                liftMultiplier = 1 - ((float) SLIDE_LIMIT/slides.getCurrentPosition()) + 0.2;
                 if (gamepad1.isDown(GamepadKeys.Button.RIGHT_BUMPER)) {
                     slideState = SlideState.RUNNING;
                 } else if (gamepad1.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER)) {
@@ -135,6 +141,9 @@ public class ArmSubsystem {
         }
         a = gamepad1.isDown(GamepadKeys.Button.RIGHT_BUMPER);
     }
+
+    // Decrease driving speed for more control when the slides are lifted
+    public double getPowerMultiplier() { return liftMultiplier; }
 
     public void runOuttake(GamepadEx gamepad1) {
         rtReader = new TriggerReader(gamepad1, GamepadKeys.Trigger.RIGHT_TRIGGER);

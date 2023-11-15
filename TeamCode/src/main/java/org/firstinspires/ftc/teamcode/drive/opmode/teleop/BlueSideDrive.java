@@ -37,10 +37,10 @@ public class BlueSideDrive extends LinearOpMode {
         MecanumDrive drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, Math.toRadians(0)));
 
         // Initialize intakeSubsystem code
-        IntakeSubsystem intakeSubsystem = new IntakeSubsystem(hardwareMap);
+        IntakeSubsystem intake = new IntakeSubsystem(hardwareMap);
 
         // Initialize arm code
-        ArmSubsystem armSubsystem = new ArmSubsystem(hardwareMap);
+        ArmSubsystem arm = new ArmSubsystem(hardwareMap);
 
         //Initialize drone launcher and hanging code
         EndgameSubsystems endgame = new EndgameSubsystems(hardwareMap);
@@ -73,6 +73,9 @@ public class BlueSideDrive extends LinearOpMode {
                     }
                     break;
             }
+            leftXInput *= arm.getPowerMultiplier();
+            leftYInput *= arm.getPowerMultiplier();
+            rightXInput*= arm.getPowerMultiplier();
 
             // Take gamepad input and pass it into the mecanum drive function
             drive.setDrivePowers(new PoseVelocity2d
@@ -85,20 +88,20 @@ public class BlueSideDrive extends LinearOpMode {
 
             // Run Robot Subsystems
             // Arm control loop
-            armSubsystem.runArm(gamepadEx1);
-            armSubsystem.runOuttake(gamepadEx1);
+            arm.runArm(gamepadEx1);
+            arm.runOuttake(gamepadEx1);
             // Intake control loop
-            intakeSubsystem.runIntake(gamepadEx1);
+            intake.runIntake(gamepadEx1);
             // Endgame control loop
             endgame.run(gamepadEx1);
 
 
             // Telemetry
-            telemetry.addData("Intake State", intakeSubsystem.getIntakeState());
+            telemetry.addData("Intake State", intake.getIntakeState());
             telemetry.addData("Turn State", turnState.name());
-            telemetry.addData("Lift State", armSubsystem.getLiftState());
+            telemetry.addData("Lift State", arm.getLiftState());
             telemetry.addData("Drone Launch State", endgame.getLauncherState());
-            telemetry.addData("Bumper", armSubsystem.rightBumperDown());
+            telemetry.addData("Drive Multiplier", arm.getPowerMultiplier());
             telemetry.update();
         }
     }

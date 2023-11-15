@@ -73,6 +73,9 @@ public class RedSideDrive extends LinearOpMode {
                     }
                     break;
             }
+            leftXInput *= arm.getPowerMultiplier();
+            leftYInput *= arm.getPowerMultiplier();
+            rightXInput*= arm.getPowerMultiplier();
 
             // Take gamepad input and pass it into the mecanum drive function
             drive.setDrivePowers(new PoseVelocity2d
@@ -98,6 +101,7 @@ public class RedSideDrive extends LinearOpMode {
             telemetry.addData("Turn State", turnState.name());
             telemetry.addData("Lift State", arm.getLiftState());
             telemetry.addData("Drone Launch State", endgame.getLauncherState());
+            telemetry.addData("Drive Multiplier", arm.getPowerMultiplier());
             telemetry.update();
         }
     }

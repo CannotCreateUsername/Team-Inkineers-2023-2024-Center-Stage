@@ -65,7 +65,7 @@ public class RedSideAutoBackdrop extends LinearOpMode {
             public void onOpened() {
                 // Usually this is where you'll want to start streaming from the camera (see section 4)
                 // If resolution does not match, it will crash
-                camera1.startStreaming(640, 480, OpenCvCameraRotation.UPRIGHT);
+                camera1.startStreaming(640, 480, OpenCvCameraRotation.UPSIDE_DOWN);
             }
 
             @Override
