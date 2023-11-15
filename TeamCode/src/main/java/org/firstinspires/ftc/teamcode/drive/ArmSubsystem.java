@@ -85,6 +85,7 @@ public class ArmSubsystem {
 
     public void runArm(GamepadEx gamepad1) {
         int SLIDE_LIMIT = 1800;
+        double MIN_MULTIPLIER = 0.2;
         switch (slideState) {
             case REST:
                 liftMultiplier = 1;
@@ -110,7 +111,7 @@ public class ArmSubsystem {
                 }
                 break;
             case RUNNING:
-                liftMultiplier = 1 - ((float) SLIDE_LIMIT/slides.getCurrentPosition()) + 0.2;
+                liftMultiplier = ((float) SLIDE_LIMIT/slides.getCurrentPosition())/10 + MIN_MULTIPLIER; // 0.2 is the minimum multiplier
                 if (gamepad1.isDown(GamepadKeys.Button.RIGHT_BUMPER) && slides.getCurrentPosition() < SLIDE_LIMIT) {
                     if (reversed) {
                         runToPosition(slides.getCurrentPosition()-100);
@@ -126,7 +127,7 @@ public class ArmSubsystem {
                 }
                 break;
             case PAUSED:
-                liftMultiplier = 1 - ((float) SLIDE_LIMIT/slides.getCurrentPosition()) + 0.2;
+                liftMultiplier = ((float) SLIDE_LIMIT/slides.getCurrentPosition())/10 + MIN_MULTIPLIER;
                 if (gamepad1.isDown(GamepadKeys.Button.RIGHT_BUMPER)) {
                     slideState = SlideState.RUNNING;
                 } else if (gamepad1.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER)) {
