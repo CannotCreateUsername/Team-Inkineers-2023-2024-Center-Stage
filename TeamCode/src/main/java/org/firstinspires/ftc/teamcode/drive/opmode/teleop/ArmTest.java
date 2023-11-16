@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.drive.opmode.teleop;
 
+import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -23,7 +24,9 @@ public class ArmTest extends LinearOpMode {
         waitForStart();
         while (opModeIsActive()) {
             if (gamepad1.a) {
-                Actions.runBlocking(armSubsystem.dropYellowPixel());
+                Actions.runBlocking(new SequentialAction(
+                        armSubsystem.dropYellowPixel()
+                ));
             }
 
             armSubsystem.runArm(gamepadEx1);
@@ -39,6 +42,7 @@ public class ArmTest extends LinearOpMode {
             telemetry.addData("Intake State", intakeSubsystem.getIntakeState());
             telemetry.addData("Reversed?", armSubsystem.isReversed());
             telemetry.addData("Drone Launch State", endgameSubsystems.getLauncherState());
+            telemetry.addData("Right Bumper Down?", armSubsystem.rightBumperDown());
             telemetry.update();
         }
     }

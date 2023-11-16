@@ -97,7 +97,7 @@ public class RedSideDrive extends LinearOpMode {
 
 
             // Telemetry
-            telemetry.addData("Intake State", intake.getIntakeState());
+            telemetry.addData("Slides Reversed", arm.isReversed());
             telemetry.addData("Turn State", turnState.name());
             telemetry.addData("Lift State", arm.getLiftState());
             telemetry.addData("Drone Launch State", endgame.getLauncherState());

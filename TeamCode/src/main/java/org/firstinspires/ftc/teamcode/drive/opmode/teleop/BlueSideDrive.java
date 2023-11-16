@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.drive.opmode.teleop;
 
+import com.acmerobotics.roadrunner.Actions;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.acmerobotics.roadrunner.Vector2d;
@@ -97,7 +98,7 @@ public class BlueSideDrive extends LinearOpMode {
 
 
             // Telemetry
-            telemetry.addData("Intake State", intake.getIntakeState());
+            telemetry.addData("Slides Reversed", arm.isReversed());
             telemetry.addData("Turn State", turnState.name());
             telemetry.addData("Lift State", arm.getLiftState());
             telemetry.addData("Drone Launch State", endgame.getLauncherState());

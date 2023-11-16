@@ -1,7 +1,13 @@
 package org.firstinspires.ftc.teamcode.drive;
 
 
+
+import androidx.annotation.NonNull;
+
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
+import com.acmerobotics.roadrunner.SequentialAction;
+import com.acmerobotics.roadrunner.SleepAction;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.arcrobotics.ftclib.gamepad.TriggerReader;
@@ -43,6 +49,7 @@ public class ArmSubsystem {
     private boolean reversed = false;
 
     ElapsedTime timer;
+    ElapsedTime dropTimer;
 
     TriggerReader rtReader;
     TriggerReader ltReader;
@@ -66,6 +73,7 @@ public class ArmSubsystem {
         outtakeState = OuttakeState.IDLE;
 
         timer = new ElapsedTime();
+        dropTimer = new ElapsedTime();
     }
 
     public double powerPID(double power) {
@@ -85,7 +93,7 @@ public class ArmSubsystem {
 
     public void runArm(GamepadEx gamepad1) {
         int SLIDE_LIMIT = 1800;
-        double MIN_MULTIPLIER = 0.2;
+        double MIN_MULTIPLIER = 0.3;
         switch (slideState) {
             case REST:
                 liftMultiplier = 1;
@@ -197,14 +205,77 @@ public class ArmSubsystem {
 
     // Autonomous Functions
 
-    public Action dropYellowPixel() {
-        ElapsedTime dropTimer = new ElapsedTime();
-        return telemetryPacket -> {
-            dropTimer.reset();
-            runToPosition(200);
-            virtualBar.setPosition(DROP);
-            outtake.setPower(-1);
-            return dropTimer.seconds() < 2;
+    public Action spinOuttake(double power) {
+        return new Action() {
+            boolean set = false;
+            @Override
+            public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+                if (!set) {
+                    dropTimer.reset();
+                    set = true;
+                }
+                if (dropTimer.seconds() < 1.9) {
+                    outtake.setPower(power);
+                } else {
+                    outtake.setPower(0);
+                }
+                return dropTimer.seconds() < 2;
+            }
         };
+    }
+
+    public Action readySlides() {
+        return telemetryPacket -> {
+            runToPosition(200, 0.2);
+            return !(slides.getCurrentPosition() >= 200);
+        };
+    }
+
+    public Action resetSlides() {
+        return telemetryPacket -> {
+            runToPosition(50);
+            return !(slides.getCurrentPosition() <= 50);
+        };
+    }
+
+    public Action ready4bar() {
+        return new Action() {
+            boolean set = false;
+            @Override
+            public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+                if (!set) {
+                    dropTimer.reset();
+                    set = true;
+                }
+                virtualBar.setPosition(DROP);
+                return dropTimer.seconds() < 2;
+            }
+        };
+    }
+
+    public Action reset4Bar() {
+        return new Action() {
+            boolean set = false;
+            @Override
+            public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+                if (!set) {
+                    dropTimer.reset();
+                    set = true;
+                }
+                virtualBar.setPosition(LOAD);
+                return dropTimer.seconds() < 2;
+            }
+        };
+    }
+
+    public Action dropYellowPixel() {
+        return new SequentialAction(
+                readySlides(),
+                ready4bar(),
+                new SleepAction(1),
+                spinOuttake(1),
+                reset4Bar(),
+                resetSlides()
+        );
     }
 }
