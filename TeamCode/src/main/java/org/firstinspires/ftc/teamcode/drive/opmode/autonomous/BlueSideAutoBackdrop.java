@@ -35,8 +35,8 @@ public class BlueSideAutoBackdrop extends LinearOpMode {
         // Run to the left spike location
         Action runToLeftProp = drive.actionBuilder(drive.pose)
                 .strafeToConstantHeading(new Vector2d(28, 0))
-                .strafeToConstantHeading(new Vector2d(28, -18))
-                .strafeToConstantHeading(new Vector2d(22, -18))
+                .strafeToConstantHeading(new Vector2d(28, -11))
+                .strafeToConstantHeading(new Vector2d(22, -11))
                 .strafeToConstantHeading(new Vector2d(24, -40))
                 .build();
         // Run to the center spike location
@@ -48,21 +48,21 @@ public class BlueSideAutoBackdrop extends LinearOpMode {
         // Run to the right spike location
         Action runToRightProp = drive.actionBuilder(drive.pose)
                 .strafeToConstantHeading(new Vector2d(28, 0))
-                .strafeToConstantHeading(new Vector2d(28, 18))
-                .strafeToConstantHeading(new Vector2d(22, 18))
+                .strafeToConstantHeading(new Vector2d(28, 11))
+                .strafeToConstantHeading(new Vector2d(22, 11))
                 .strafeToConstantHeading(new Vector2d(24, -40))
                 .build();
 
         // Backdrop drive code
         Action runToBackdropCenter = drive.actionBuilder(drive.pose)
-                .turn(Math.toRadians(100))
+                .turn(Math.toRadians(90))
                 .build();
         Action runToBackdropLeft = drive.actionBuilder(drive.pose)
-                .turn(Math.toRadians(100))
+                .turn(Math.toRadians(90))
                 .strafeToConstantHeading(new Vector2d(0, -10))
                 .build();
         Action runToBackdropRight = drive.actionBuilder(drive.pose)
-                .turn(Math.toRadians(100))
+                .turn(Math.toRadians(90))
                 .strafeToConstantHeading(new Vector2d(0, 10))
                 .build();
 
@@ -108,6 +108,7 @@ public class BlueSideAutoBackdrop extends LinearOpMode {
         timer1.reset();
         if (isStopRequested()) return;
 
+        camera1.stopStreaming();
         switch (octopusPipeline.getLocation()) {
             case NONE:
             case MIDDLE:
