@@ -15,7 +15,7 @@ import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
-@Autonomous(name = "Blue Alliance Substation Auto", group = "Backdrop Side")
+@Autonomous(name = "Blue Alliance Substation Auto", group = "Substation Side")
 public class BlueSideAutoSubstation extends LinearOpMode {
 
     OpenCvCamera camera1;
@@ -30,24 +30,23 @@ public class BlueSideAutoSubstation extends LinearOpMode {
 
         // Run to the left spike location
         Action runToLeftProp = drive.actionBuilder(drive.pose)
-                .strafeToConstantHeading(new Vector2d(24, 0))
-                .strafeToConstantHeading(new Vector2d(24, -16))
-                .strafeToConstantHeading(new Vector2d(16, -16))
+                .strafeToConstantHeading(new Vector2d(28, 0))
+                .strafeToConstantHeading(new Vector2d(28, -12))
+                .strafeToConstantHeading(new Vector2d(24, -12))
+                .turn(Math.toRadians(90))
                 .build();
         // Run to the center spike location
         Action runToCenterProp = drive.actionBuilder(drive.pose)
-                .strafeToConstantHeading(new Vector2d(32, 0))
+                .strafeToConstantHeading(new Vector2d(31, 0))
                 .strafeToConstantHeading(new Vector2d(24, 0))
+                .turn(Math.toRadians(90))
                 .build();
         // Run to the right spike location
         Action runToRightProp = drive.actionBuilder(drive.pose)
-                .strafeToConstantHeading(new Vector2d(24, 0))
-                .strafeToConstantHeading(new Vector2d(24, 16))
-                .strafeToConstantHeading(new Vector2d(16, 16))
-                .build();
-        // Park in backstage
-        Action park = drive.actionBuilder(startPose)
-                .strafeToConstantHeading(new Vector2d(16, -32))
+                .strafeToConstantHeading(new Vector2d(28, 0))
+                .strafeToConstantHeading(new Vector2d(28, 12))
+                .strafeToConstantHeading(new Vector2d(24, 12))
+                .turn(Math.toRadians(90))
                 .build();
 
         // Live preview thing
@@ -100,7 +99,5 @@ public class BlueSideAutoSubstation extends LinearOpMode {
                 Actions.runBlocking(runToRightProp);
                 break;
         }
-
-        Actions.runBlocking(park);
     }
 }

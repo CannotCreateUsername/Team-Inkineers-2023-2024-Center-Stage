@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.drive.opmode.autonomous;
 
 import com.acmerobotics.roadrunner.Action;
-import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
@@ -12,13 +11,12 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.cv.RedOctopusPipeline;
-import org.firstinspires.ftc.teamcode.drive.ArmSubsystem;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
-@Autonomous(name = "Red Alliance Backdrop Auto", group = "Backdrop Side")
-public class RedSideAutoBackdrop extends LinearOpMode {
+@Autonomous(name = "Red Alliance Substation Auto", group = "Substation Side")
+public class RedSideAutoSubstation extends LinearOpMode {
 
     OpenCvCamera camera1;
 
@@ -29,42 +27,26 @@ public class RedSideAutoBackdrop extends LinearOpMode {
         // Initialize the drive
         Pose2d startPose = new Pose2d(0, 0, Math.toRadians(0));
         MecanumDrive drive = new MecanumDrive(hardwareMap, startPose);
-        ArmSubsystem arm = new ArmSubsystem(hardwareMap);
 
         // Run to the left spike location
         Action runToLeftProp = drive.actionBuilder(drive.pose)
                 .strafeToConstantHeading(new Vector2d(28, 0))
                 .strafeToConstantHeading(new Vector2d(28, -12))
                 .strafeToConstantHeading(new Vector2d(24, -12))
-                .strafeToConstantHeading(new Vector2d(30, 24))
+                .turn(Math.toRadians(-90))
                 .build();
         // Run to the center spike location
         Action runToCenterProp = drive.actionBuilder(drive.pose)
                 .strafeToConstantHeading(new Vector2d(31, 0))
                 .strafeToConstantHeading(new Vector2d(24, 0))
-                .strafeToConstantHeading(new Vector2d(30, 24))
+                .turn(Math.toRadians(-90))
                 .build();
         // Run to the right spike location
         Action runToRightProp = drive.actionBuilder(drive.pose)
                 .strafeToConstantHeading(new Vector2d(28, 0))
                 .strafeToConstantHeading(new Vector2d(28, 12))
                 .strafeToConstantHeading(new Vector2d(24, 12))
-                .strafeToConstantHeading(new Vector2d(30, 24))
-                .build();
-
-        // Backdrop drive code
-        Action runToBackdrop = drive.actionBuilder(drive.pose)
                 .turn(Math.toRadians(-90))
-                .build();
-        Action runToBackdropLeft = drive.actionBuilder(drive.pose)
-                .strafeToConstantHeading(new Vector2d(0, -8))
-                .build();
-        Action runToBackdropRight = drive.actionBuilder(drive.pose)
-                .strafeToConstantHeading(new Vector2d(0, 8))
-                .build();
-
-        Action park = drive.actionBuilder(new Pose2d(new Vector2d(0, 0), Math.toRadians(0)))
-                .strafeToConstantHeading(new Vector2d(0, 20))
                 .build();
 
         // Live preview thing
@@ -101,10 +83,10 @@ public class RedSideAutoBackdrop extends LinearOpMode {
         }
 
         waitForStart();
+
         timer1.reset();
         if (isStopRequested()) return;
 
-        camera1.stopStreaming();
         switch (octopusPipeline.getLocation()) {
             case NONE:
             case MIDDLE:
@@ -117,30 +99,5 @@ public class RedSideAutoBackdrop extends LinearOpMode {
                 Actions.runBlocking(runToRightProp);
                 break;
         }
-
-        Actions.runBlocking(runToBackdrop);
-
-        switch (octopusPipeline.getLocation()) {
-            case NONE:
-            case MIDDLE:
-                Actions.runBlocking(new ParallelAction(
-                        arm.dropYellowPixel()
-                ));
-                break;
-            case LEFT:
-                Actions.runBlocking(new ParallelAction(
-                        arm.dropYellowPixel(),
-                        runToBackdropLeft
-                ));
-                break;
-            case RIGHT:
-                Actions.runBlocking(new ParallelAction(
-                        arm.dropYellowPixel(),
-                        runToBackdropRight
-                ));
-                break;
-        }
-
-        Actions.runBlocking(park);
     }
 }
