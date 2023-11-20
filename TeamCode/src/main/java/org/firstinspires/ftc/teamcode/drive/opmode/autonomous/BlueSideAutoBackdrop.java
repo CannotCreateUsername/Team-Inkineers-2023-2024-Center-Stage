@@ -36,25 +36,25 @@ public class BlueSideAutoBackdrop extends LinearOpMode {
                 .strafeToConstantHeading(new Vector2d(28, 0))
                 .strafeToConstantHeading(new Vector2d(28, -12))
                 .strafeToConstantHeading(new Vector2d(24, -12))
-                .strafeToConstantHeading(new Vector2d(30, -24))
+                .strafeToConstantHeading(new Vector2d(30, -27))
                 .build();
         // Run to the center spike location
         Action runToCenterProp = drive.actionBuilder(drive.pose)
                 .strafeToConstantHeading(new Vector2d(31, 0))
                 .strafeToConstantHeading(new Vector2d(24, 0))
-                .strafeToConstantHeading(new Vector2d(30, -24))
+                .strafeToConstantHeading(new Vector2d(30, -27))
                 .build();
         // Run to the right spike location
         Action runToRightProp = drive.actionBuilder(drive.pose)
                 .strafeToConstantHeading(new Vector2d(28, 0))
                 .strafeToConstantHeading(new Vector2d(28, 12))
                 .strafeToConstantHeading(new Vector2d(24, 12))
-                .strafeToConstantHeading(new Vector2d(30, -24))
+                .strafeToConstantHeading(new Vector2d(30, -27))
                 .build();
 
         // Backdrop drive code
         Action runToBackdrop = drive.actionBuilder(drive.pose)
-                .turn(Math.toRadians(-90))
+                .turn(Math.toRadians(90))
                 .build();
         Action runToBackdropLeft = drive.actionBuilder(drive.pose)
                 .strafeToConstantHeading(new Vector2d(0, -8))
@@ -63,8 +63,8 @@ public class BlueSideAutoBackdrop extends LinearOpMode {
                 .strafeToConstantHeading(new Vector2d(0, 8))
                 .build();
 
-        Action park = drive.actionBuilder(new Pose2d(new Vector2d(0, 0), Math.toRadians(0)))
-                .strafeToConstantHeading(new Vector2d(0, 20))
+        Action park = drive.actionBuilder(new Pose2d(new Vector2d(0, 0), Math.toRadians(90)))
+                .strafeToConstantHeading(new Vector2d(-20, -10))
                 .build();
 
         // Live preview thing
@@ -129,14 +129,14 @@ public class BlueSideAutoBackdrop extends LinearOpMode {
                 break;
             case LEFT:
                 Actions.runBlocking(new ParallelAction(
-                        arm.dropYellowPixel(),
-                        runToBackdropLeft
+                        arm.dropYellowPixel()
+//                        runToBackdropLeft
                 ));
                 break;
             case RIGHT:
                 Actions.runBlocking(new ParallelAction(
-                        arm.dropYellowPixel(),
-                        runToBackdropRight
+                        arm.dropYellowPixel()
+//                        runToBackdropRight
                 ));
                 break;
         }
