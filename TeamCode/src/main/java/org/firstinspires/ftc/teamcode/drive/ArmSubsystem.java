@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
+import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.SleepAction;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
@@ -23,7 +24,8 @@ public class ArmSubsystem {
         READY,
         RUNNING,
         PAUSED,
-        REST
+        REST,
+        HANG
     }
     public enum OuttakeState {
         OUT,
@@ -47,6 +49,7 @@ public class ArmSubsystem {
 
     private double currentTarget;
     private boolean reversed = false;
+    private boolean dropped = false;
 
     ElapsedTime timer;
     ElapsedTime dropTimer;
@@ -91,7 +94,7 @@ public class ArmSubsystem {
 
     boolean a;
 
-    public void runArm(GamepadEx gamepad1) {
+    public void runArm(GamepadEx gamepad1, GamepadEx gamepad2) {
         int SLIDE_LIMIT = 1800;
         double MIN_MULTIPLIER = 0.3;
         switch (slideState) {
@@ -100,6 +103,8 @@ public class ArmSubsystem {
                 if (gamepad1.wasJustReleased(GamepadKeys.Button.RIGHT_BUMPER)) {
                     slideState = SlideState.READY;
                     timer.reset();
+                } else if (gamepad2.wasJustReleased(GamepadKeys.Button.A)) {
+                    slideState = SlideState.HANG;
                 }
                 if (timer.seconds() > 1.5) {
                     runToPosition(50);
@@ -108,7 +113,7 @@ public class ArmSubsystem {
             case READY:
                 liftMultiplier = 1;
                 runToPosition(200, 0.2);
-                if (gamepad1.wasJustPressed(GamepadKeys.Button.RIGHT_BUMPER)) {
+                if (gamepad1.wasJustPressed(GamepadKeys.Button.RIGHT_BUMPER) && timer.seconds() > 0.5) {
                     slideState = SlideState.RUNNING;
                 } else if (gamepad1.wasJustReleased(GamepadKeys.Button.LEFT_BUMPER)) {
                     virtualBar.setPosition(LOAD);
@@ -120,7 +125,7 @@ public class ArmSubsystem {
                 break;
             case RUNNING:
                 liftMultiplier = ((float) SLIDE_LIMIT/slides.getCurrentPosition())/10 + MIN_MULTIPLIER; // 0.2 is the minimum multiplier
-                if (gamepad1.isDown(GamepadKeys.Button.RIGHT_BUMPER) && slides.getCurrentPosition() < SLIDE_LIMIT) {
+                if ((gamepad1.isDown(GamepadKeys.Button.RIGHT_BUMPER) || gamepad2.isDown(GamepadKeys.Button.RIGHT_BUMPER)) && slides.getCurrentPosition() < SLIDE_LIMIT) {
                     if (reversed) {
                         runToPosition(slides.getCurrentPosition()-100);
                     } else {
@@ -144,11 +149,21 @@ public class ArmSubsystem {
                     timer.reset();
                 }
                 break;
+            case HANG:
+                liftMultiplier = 0.8;
+                if (gamepad2.wasJustReleased(GamepadKeys.Button.A)) {
+                    slideState = SlideState.REST;
+                } else if (gamepad2.isDown(GamepadKeys.Button.RIGHT_BUMPER)) {
+                    reversed = true;
+                    slideState = SlideState.RUNNING;
+                }
+                runToPosition(1000, 0.2);
+                break;
         }
-        if (gamepad1.wasJustPressed(GamepadKeys.Button.X)) {
+        if (gamepad1.wasJustPressed(GamepadKeys.Button.X) || gamepad2.wasJustPressed(GamepadKeys.Button.X)) {
             reversed = !reversed;
         }
-        a = gamepad1.isDown(GamepadKeys.Button.RIGHT_BUMPER);
+        a = gamepad2.isDown(GamepadKeys.Button.RIGHT_BUMPER);
     }
 
     // Decrease driving speed for more control when the slides are lifted
@@ -218,6 +233,7 @@ public class ArmSubsystem {
                     outtake.setPower(power);
                 } else {
                     outtake.setPower(0);
+                    dropped = true;
                 }
                 return dropTimer.seconds() < 2;
             }
@@ -227,7 +243,7 @@ public class ArmSubsystem {
     public Action readySlides() {
         return telemetryPacket -> {
             runToPosition(200, 0.2);
-            return !(slides.getCurrentPosition() >= 200);
+            return !dropped;
         };
     }
 
@@ -270,10 +286,13 @@ public class ArmSubsystem {
 
     public Action dropYellowPixel() {
         return new SequentialAction(
-                readySlides(),
-                ready4bar(),
-                new SleepAction(1),
-                spinOuttake(1),
+                new ParallelAction(
+                        readySlides(),
+                        ready4bar(),
+                        new SequentialAction(
+                                new SleepAction(3),
+                                spinOuttake(1))
+                ),
                 reset4Bar(),
                 resetSlides()
         );

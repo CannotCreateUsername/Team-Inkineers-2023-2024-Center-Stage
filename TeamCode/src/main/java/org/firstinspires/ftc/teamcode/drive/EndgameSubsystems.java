@@ -26,7 +26,6 @@ public class EndgameSubsystems {
         } else if (gamepad.wasJustPressed(GamepadKeys.Button.DPAD_DOWN)) {
             droneLauncher.setPosition(TAKEOFF);
         }
-        gamepad.readButtons();
     }
 
     public String getLauncherState() {

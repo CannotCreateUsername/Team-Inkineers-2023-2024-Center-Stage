@@ -8,6 +8,7 @@ import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.drive.ArmSubsystem;
@@ -32,7 +33,7 @@ public class BlueSideDrive extends LinearOpMode {
         turnState = TurnState.ROTATED;
 
         GamepadEx gamepadEx1 = new GamepadEx(gamepad1);
-//        GamepadEx gamepadEx2 = new GamepadEx(gamepad2);
+        GamepadEx gamepadEx2 = new GamepadEx(gamepad2);
 
         // Initialize the drive code
         MecanumDrive drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, Math.toRadians(0)));
@@ -89,13 +90,15 @@ public class BlueSideDrive extends LinearOpMode {
 
             // Run Robot Subsystems
             // Arm control loop
-            arm.runArm(gamepadEx1);
+            arm.runArm(gamepadEx1, gamepadEx2);
             arm.runOuttake(gamepadEx1);
             // Intake control loop
             intake.runIntake(gamepadEx1);
             // Endgame control loop
-            endgame.run(gamepadEx1);
+            endgame.run(gamepadEx2);
 
+            gamepadEx1.readButtons();
+            gamepadEx2.readButtons();
 
             // Telemetry
             telemetry.addData("Slides Reversed", arm.isReversed());
