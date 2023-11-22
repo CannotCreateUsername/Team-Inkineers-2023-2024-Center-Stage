@@ -32,39 +32,34 @@ public class RedSideAutoBackdrop extends LinearOpMode {
         ArmSubsystem arm = new ArmSubsystem(hardwareMap);
 
         // Run to the left spike location
-        Action runToLeftProp = drive.actionBuilder(drive.pose)
+        Action runToLeftProp = drive.actionBuilder(startPose)
                 .strafeToConstantHeading(new Vector2d(28, 0))
                 .strafeToConstantHeading(new Vector2d(28, -12))
                 .strafeToConstantHeading(new Vector2d(24, -12))
-                .strafeToConstantHeading(new Vector2d(30, 27))
+                .strafeToConstantHeading(new Vector2d(24, 30))
+                .turn(Math.toRadians(-90))
                 .build();
         // Run to the center spike location
-        Action runToCenterProp = drive.actionBuilder(drive.pose)
+        Action runToCenterProp = drive.actionBuilder(startPose)
                 .strafeToConstantHeading(new Vector2d(31, 0))
                 .strafeToConstantHeading(new Vector2d(24, 0))
-                .strafeToConstantHeading(new Vector2d(30, 27))
+                .strafeToConstantHeading(new Vector2d(24, 30))
+                .turn(Math.toRadians(-90))
                 .build();
         // Run to the right spike location
-        Action runToRightProp = drive.actionBuilder(drive.pose)
+        Action runToRightProp = drive.actionBuilder(startPose)
                 .strafeToConstantHeading(new Vector2d(28, 0))
                 .strafeToConstantHeading(new Vector2d(28, 12))
                 .strafeToConstantHeading(new Vector2d(24, 12))
-                .strafeToConstantHeading(new Vector2d(30, 27))
-                .build();
-
-        // Backdrop drive code
-        Action runToBackdrop = drive.actionBuilder(drive.pose)
+                .strafeToConstantHeading(new Vector2d(24, 30))
                 .turn(Math.toRadians(-90))
                 .build();
-        Action runToBackdropLeft = drive.actionBuilder(drive.pose)
-                .strafeToConstantHeading(new Vector2d(0, -8))
-                .build();
-        Action runToBackdropRight = drive.actionBuilder(drive.pose)
-                .strafeToConstantHeading(new Vector2d(0, 8))
-                .build();
 
-        Action park = drive.actionBuilder(new Pose2d(new Vector2d(0, 0), Math.toRadians(-90)))
-                .strafeToConstantHeading(new Vector2d(-20, 10))
+        Action runToBackdropLeft = drive.actionBuilder(new Pose2d(new Vector2d(24, 30), Math.toRadians(-90)))
+                .strafeToConstantHeading(new Vector2d(18, 30))
+                .build();
+        Action runToBackdropRight = drive.actionBuilder(new Pose2d(new Vector2d(24, 30), Math.toRadians(-90)))
+                .strafeToConstantHeading(new Vector2d(30, 30))
                 .build();
 
         // Live preview thing
@@ -118,28 +113,25 @@ public class RedSideAutoBackdrop extends LinearOpMode {
                 break;
         }
 
-        Actions.runBlocking(runToBackdrop);
-
         switch (octopusPipeline.getLocation()) {
             case NONE:
             case MIDDLE:
-                Actions.runBlocking(new ParallelAction(
-                        arm.dropYellowPixel()
-                ));
                 break;
             case LEFT:
                 Actions.runBlocking(new ParallelAction(
-                        arm.dropYellowPixel()
-//                        runToBackdropLeft
+                        runToBackdropLeft
                 ));
                 break;
             case RIGHT:
                 Actions.runBlocking(new ParallelAction(
-                        arm.dropYellowPixel()
-//                        runToBackdropRight
+                        runToBackdropRight
                 ));
                 break;
         }
+
+        Action park = drive.actionBuilder(drive.pose)
+                .strafeToConstantHeading(new Vector2d(24, 30))
+                .build();
 
         Actions.runBlocking(park);
     }

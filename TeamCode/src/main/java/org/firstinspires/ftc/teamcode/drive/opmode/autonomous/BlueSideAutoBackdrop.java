@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.drive.opmode.autonomous;
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -21,6 +22,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 public class BlueSideAutoBackdrop extends LinearOpMode {
 
     OpenCvCamera camera1;
+    MecanumDrive drive;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -28,43 +30,38 @@ public class BlueSideAutoBackdrop extends LinearOpMode {
 
         // Initialize the drive
         Pose2d startPose = new Pose2d(0, 0, Math.toRadians(0));
-        MecanumDrive drive = new MecanumDrive(hardwareMap, startPose);
+        drive = new MecanumDrive(hardwareMap, startPose);
         ArmSubsystem arm = new ArmSubsystem(hardwareMap);
 
         // Run to the left spike location
-        Action runToLeftProp = drive.actionBuilder(drive.pose)
+        Action runToLeftProp = drive.actionBuilder(startPose)
                 .strafeToConstantHeading(new Vector2d(28, 0))
                 .strafeToConstantHeading(new Vector2d(28, -12))
                 .strafeToConstantHeading(new Vector2d(24, -12))
-                .strafeToConstantHeading(new Vector2d(30, -27))
+                .strafeToConstantHeading(new Vector2d(24, -30))
+                .turn(Math.toRadians(90))
                 .build();
         // Run to the center spike location
-        Action runToCenterProp = drive.actionBuilder(drive.pose)
-                .strafeToConstantHeading(new Vector2d(31, 0))
+        Action runToCenterProp = drive.actionBuilder(startPose)
+                .strafeToConstantHeading(new Vector2d(32, 0))
                 .strafeToConstantHeading(new Vector2d(24, 0))
-                .strafeToConstantHeading(new Vector2d(30, -27))
+                .strafeToConstantHeading(new Vector2d(24, -30))
+                .turn(Math.toRadians(90))
                 .build();
         // Run to the right spike location
-        Action runToRightProp = drive.actionBuilder(drive.pose)
+        Action runToRightProp = drive.actionBuilder(startPose)
                 .strafeToConstantHeading(new Vector2d(28, 0))
                 .strafeToConstantHeading(new Vector2d(28, 12))
                 .strafeToConstantHeading(new Vector2d(24, 12))
-                .strafeToConstantHeading(new Vector2d(30, -27))
-                .build();
-
-        // Backdrop drive code
-        Action runToBackdrop = drive.actionBuilder(drive.pose)
+                .strafeToConstantHeading(new Vector2d(24, -30))
                 .turn(Math.toRadians(90))
                 .build();
-        Action runToBackdropLeft = drive.actionBuilder(drive.pose)
-                .strafeToConstantHeading(new Vector2d(0, -8))
-                .build();
-        Action runToBackdropRight = drive.actionBuilder(drive.pose)
-                .strafeToConstantHeading(new Vector2d(0, 8))
-                .build();
 
-        Action park = drive.actionBuilder(new Pose2d(new Vector2d(0, 0), Math.toRadians(90)))
-                .strafeToConstantHeading(new Vector2d(-20, -10))
+        Action runToBackdropLeft = drive.actionBuilder(new Pose2d(new Vector2d(24, -30), Math.toRadians(90)))
+                .strafeToConstantHeading(new Vector2d(30, -30))
+                .build();
+        Action runToBackdropRight = drive.actionBuilder(new Pose2d(new Vector2d(24, -30), Math.toRadians(90)))
+                .strafeToConstantHeading(new Vector2d(18, -30))
                 .build();
 
         // Live preview thing
@@ -108,39 +105,42 @@ public class BlueSideAutoBackdrop extends LinearOpMode {
         switch (octopusPipeline.getLocation()) {
             case NONE:
             case MIDDLE:
-                Actions.runBlocking(runToCenterProp);
+                Actions.runBlocking(new ParallelAction(
+                        runToCenterProp
+                ));
                 break;
             case LEFT:
-                Actions.runBlocking(runToLeftProp);
+                Actions.runBlocking(new ParallelAction(
+                        runToLeftProp
+                ));
                 break;
             case RIGHT:
-                Actions.runBlocking(runToRightProp);
+                Actions.runBlocking(new ParallelAction(
+                        runToRightProp
+                ));
                 break;
         }
-
-        Actions.runBlocking(runToBackdrop);
 
         switch (octopusPipeline.getLocation()) {
             case NONE:
             case MIDDLE:
-                Actions.runBlocking(new ParallelAction(
-                        arm.dropYellowPixel()
-                ));
                 break;
             case LEFT:
-                Actions.runBlocking(new ParallelAction(
-                        arm.dropYellowPixel()
-//                        runToBackdropLeft
+                Actions.runBlocking(new SequentialAction(
+                        runToBackdropLeft
                 ));
                 break;
             case RIGHT:
-                Actions.runBlocking(new ParallelAction(
-                        arm.dropYellowPixel()
-//                        runToBackdropRight
+                Actions.runBlocking(new SequentialAction(
+                        runToBackdropRight
                 ));
                 break;
         }
+        Action park = drive.actionBuilder(drive.pose)
+                .strafeToConstantHeading(new Vector2d(24, -30))
+                .build();
 
         Actions.runBlocking(park);
     }
+
 }
