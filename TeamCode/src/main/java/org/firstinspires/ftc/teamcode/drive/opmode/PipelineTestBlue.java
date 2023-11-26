@@ -9,7 +9,7 @@ import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
-@TeleOp(name = "Pipeline Test Blue")
+@TeleOp(name = "Pipeline Test Blue", group = "CV")
 public class PipelineTestBlue extends LinearOpMode {
 
     OpenCvCamera camera1;

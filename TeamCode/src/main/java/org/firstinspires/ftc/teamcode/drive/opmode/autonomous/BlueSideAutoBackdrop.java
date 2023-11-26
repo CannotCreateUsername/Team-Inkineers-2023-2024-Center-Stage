@@ -22,7 +22,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 public class BlueSideAutoBackdrop extends LinearOpMode {
 
     OpenCvCamera camera1;
-    MecanumDrive drive;
+    BlueOctopusPipeline octopusPipeline;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -30,7 +30,7 @@ public class BlueSideAutoBackdrop extends LinearOpMode {
 
         // Initialize the drive
         Pose2d startPose = new Pose2d(0, 0, Math.toRadians(0));
-        drive = new MecanumDrive(hardwareMap, startPose);
+        MecanumDrive drive = new MecanumDrive(hardwareMap, startPose);
         ArmSubsystem arm = new ArmSubsystem(hardwareMap);
 
         // Run to the left spike location
@@ -64,32 +64,7 @@ public class BlueSideAutoBackdrop extends LinearOpMode {
                 .strafeToConstantHeading(new Vector2d(18, -30))
                 .build();
 
-        // Live preview thing
-        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        // Grab the webcam from the config files
-        WebcamName webcam1 = hardwareMap.get(WebcamName.class, "Webcam 1");
-        // Create an OpenCV camera using webcam1
-        camera1 = OpenCvCameraFactory.getInstance().createWebcam(webcam1, cameraMonitorViewId);
-
-        // Attach the pipeline
-        BlueOctopusPipeline octopusPipeline = new BlueOctopusPipeline();
-        camera1.setPipeline(octopusPipeline);
-
-        camera1.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
-            @Override
-            public void onOpened() {
-                // Usually this is where you'll want to start streaming from the camera (see section 4)
-                // If resolution does not match, it will crash
-                camera1.startStreaming(640, 480, OpenCvCameraRotation.UPSIDE_DOWN);
-            }
-
-            @Override
-            public void onError(int errorCode) {
-                // This will be called should the camera not open
-                telemetry.addData("fail", "bad");
-                telemetry.update();
-            }
-        });
+        initCV();
 
         // Display Telemetry
         while (!isStopRequested() && !opModeIsActive()) {
@@ -143,4 +118,32 @@ public class BlueSideAutoBackdrop extends LinearOpMode {
         Actions.runBlocking(park);
     }
 
+    public void initCV() {
+        // Live preview thing
+        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        // Grab the webcam from the config files
+        WebcamName webcam1 = hardwareMap.get(WebcamName.class, "Webcam 1");
+        // Create an OpenCV camera using webcam1
+        camera1 = OpenCvCameraFactory.getInstance().createWebcam(webcam1, cameraMonitorViewId);
+
+        // Attach the pipeline
+        octopusPipeline = new BlueOctopusPipeline();
+        camera1.setPipeline(octopusPipeline);
+
+        camera1.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
+            @Override
+            public void onOpened() {
+                // Usually this is where you'll want to start streaming from the camera (see section 4)
+                // If resolution does not match, it will crash
+                camera1.startStreaming(640, 480, OpenCvCameraRotation.UPSIDE_DOWN);
+            }
+
+            @Override
+            public void onError(int errorCode) {
+                // This will be called should the camera not open
+                telemetry.addData("fail", "bad");
+                telemetry.update();
+            }
+        });
+    }
 }
