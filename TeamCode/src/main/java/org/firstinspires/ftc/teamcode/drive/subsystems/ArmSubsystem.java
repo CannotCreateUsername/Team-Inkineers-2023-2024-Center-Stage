@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.drive;
+package org.firstinspires.ftc.teamcode.drive.subsystems;
 
 
 
@@ -112,7 +112,7 @@ public class ArmSubsystem {
                 break;
             case READY:
                 liftMultiplier = 1;
-                runToPosition(200, 0.2);
+                runToPosition(300, 0.2);
                 if (gamepad1.wasJustPressed(GamepadKeys.Button.RIGHT_BUMPER) && timer.seconds() > 0.5) {
                     slideState = SlideState.RUNNING;
                 } else if (gamepad1.wasJustReleased(GamepadKeys.Button.LEFT_BUMPER)) {

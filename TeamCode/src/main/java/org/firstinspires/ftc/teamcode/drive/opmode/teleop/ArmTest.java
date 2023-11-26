@@ -7,9 +7,9 @@ import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.drive.ArmSubsystem;
-import org.firstinspires.ftc.teamcode.drive.EndgameSubsystems;
-import org.firstinspires.ftc.teamcode.drive.IntakeSubsystem;
+import org.firstinspires.ftc.teamcode.drive.subsystems.ArmSubsystem;
+import org.firstinspires.ftc.teamcode.drive.subsystems.EndgameSubsystems;
+import org.firstinspires.ftc.teamcode.drive.subsystems.IntakeSubsystem;
 
 @TeleOp(name = "Arm Testing", group = "Linear opmode")
 public class ArmTest extends LinearOpMode {

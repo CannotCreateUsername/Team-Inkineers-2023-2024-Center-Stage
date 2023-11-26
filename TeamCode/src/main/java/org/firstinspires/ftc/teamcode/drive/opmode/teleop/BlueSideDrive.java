@@ -9,10 +9,10 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.MecanumDrive;
-import org.firstinspires.ftc.teamcode.drive.ArmSubsystem;
-import org.firstinspires.ftc.teamcode.drive.EndgameSubsystems;
+import org.firstinspires.ftc.teamcode.drive.subsystems.ArmSubsystem;
+import org.firstinspires.ftc.teamcode.drive.subsystems.EndgameSubsystems;
 import org.firstinspires.ftc.teamcode.drive.GamepadHelper;
-import org.firstinspires.ftc.teamcode.drive.IntakeSubsystem;
+import org.firstinspires.ftc.teamcode.drive.subsystems.IntakeSubsystem;
 
 @TeleOp(name = "Blue Drive", group = "Linear Opmode")
 public class BlueSideDrive extends LinearOpMode {
