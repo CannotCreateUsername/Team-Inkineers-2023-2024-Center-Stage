@@ -57,7 +57,7 @@ public class AprilTagMediator {
         visionPortal.stopStreaming();
     }
 
-    public class TurnAlign implements Action {
+    public class LeftTurnAlign implements Action {
         private boolean initialized = false;
         private boolean finished = false;
 
@@ -74,15 +74,8 @@ public class AprilTagMediator {
             }
 
             for (AprilTagDetection detection : currentDetections) {
-                double turnDirection = detection.ftcPose.yaw > 0 ? -1:1;
+                if ((detection.id == 1 || detection.id == 4) && timer.seconds() < 3) {
 
-                if (timer.seconds() < 2) {
-                    drive.setDrivePowers(
-                            new PoseVelocity2d(
-                                    new Vector2d(0, 0),
-                                    0
-                            )
-                    );
                 }
             }
 
