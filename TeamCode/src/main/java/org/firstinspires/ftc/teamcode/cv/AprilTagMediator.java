@@ -2,27 +2,93 @@ package org.firstinspires.ftc.teamcode.cv;
 
 import android.util.Size;
 
-import com.qualcomm.robotcore.hardware.HardwareMap;
+import androidx.annotation.NonNull;
 
-import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+import com.acmerobotics.roadrunner.Action;
+import com.acmerobotics.roadrunner.PoseVelocity2d;
+import com.acmerobotics.roadrunner.Vector2d;
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
+import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.IMU;
+import com.qualcomm.robotcore.util.ElapsedTime;
+
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.vision.VisionPortal;
+import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagGameDatabase;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
+import java.util.List;
+import java.util.Objects;
+
+import static org.firstinspires.ftc.teamcode.drive.constants.PIDConstants.ImuKp;
+import static org.firstinspires.ftc.teamcode.drive.constants.PIDConstants.ImuKd;
+
 public class AprilTagMediator {
 
-    public AprilTagMediator(HardwareMap hardwareMap) {
+    private double YAW_ERROR_THRESHOLD = 0.5;
+
+
+    MecanumDrive drive;
+    private VisionPortal visionPortal;
+    private AprilTagProcessor aprilTag;
+    private final IMU imu;
+
+    public AprilTagMediator(HardwareMap hardwareMap, MecanumDrive mecanumDrive) {
+        drive = mecanumDrive;
+        imu = hardwareMap.get(IMU.class, "IMU");
+
+        IMU.Parameters myIMUparameters;
+
+        myIMUparameters = new IMU.Parameters(
+                new RevHubOrientationOnRobot(
+                        RevHubOrientationOnRobot.LogoFacingDirection.LEFT,
+                        RevHubOrientationOnRobot.UsbFacingDirection.UP
+                )
+        );
+
+        imu.initialize(myIMUparameters);
+
         initAprilTag(hardwareMap);
+        visionPortal.stopStreaming();
     }
 
-    private static final boolean USE_WEBCAM = true;  // true for webcam, false for phone camera
+    public class TurnAlign implements Action {
+        private boolean initialized = false;
+        private boolean finished = false;
 
-    private AprilTagProcessor aprilTag;
+        List<AprilTagDetection> currentDetections = aprilTag.getDetections();
+        ElapsedTime timer = new ElapsedTime();
 
-    private VisionPortal visionPortal;
+        @Override
+        public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+            if (!initialized) {
+                visionPortal.resumeStreaming();
+                imu.resetYaw();
+                timer.reset();
+                initialized = true;
+            }
+
+            for (AprilTagDetection detection : currentDetections) {
+                double turnDirection = detection.ftcPose.yaw > 0 ? -1:1;
+
+                if (timer.seconds() < 2) {
+                    drive.setDrivePowers(
+                            new PoseVelocity2d(
+                                    new Vector2d(0, 0),
+                                    0
+                            )
+                    );
+                }
+            }
+
+            return !finished;
+        }
+    }
 
     /**
      * Initialize the AprilTag processor.
@@ -30,6 +96,10 @@ public class AprilTagMediator {
     private void initAprilTag(HardwareMap hardwareMap) {
 
         // Create the AprilTag processor.
+        // == CAMERA CALIBRATION ==
+        // If you do not manually specify calibration parameters, the SDK will attempt
+        // to load a predefined calibration for your camera.
+        // ... these parameters are fx, fy, cx, cy.
         aprilTag = new AprilTagProcessor.Builder()
                 .setDrawAxes(true)
                 .setDrawCubeProjection(false)
@@ -64,7 +134,7 @@ public class AprilTagMediator {
         // Choose whether or not LiveView stops if no processors are enabled.
         // If set "true", monitor shows solid orange screen if no processors enabled.
         // If set "false", monitor shows camera view without annotations.
-        builder.setAutoStopLiveView(true);
+        // builder.setAutoStopLiveView(true);
 
         // Set and enable the processor.
         builder.addProcessor(aprilTag);
