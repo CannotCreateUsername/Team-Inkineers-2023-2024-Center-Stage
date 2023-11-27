@@ -79,7 +79,7 @@ public class AprilTagMediator {
                 }
             }
 
-            return !finished;
+            return timer.seconds() < 3;
         }
     }
 
