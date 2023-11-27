@@ -23,15 +23,11 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagGameDatabase;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 import java.util.List;
-import java.util.Objects;
 
-import static org.firstinspires.ftc.teamcode.drive.constants.PIDConstants.ImuKp;
-import static org.firstinspires.ftc.teamcode.drive.constants.PIDConstants.ImuKd;
+import static org.firstinspires.ftc.teamcode.drive.constants.PIDConstants.IMUKp;
+import static org.firstinspires.ftc.teamcode.drive.constants.PIDConstants.IMUKd;
 
 public class AprilTagMediator {
-
-    private double YAW_ERROR_THRESHOLD = 0.5;
-
 
     MecanumDrive drive;
     private VisionPortal visionPortal;
@@ -58,8 +54,9 @@ public class AprilTagMediator {
     }
 
     public class LeftTurnAlign implements Action {
+        /** @noinspection FieldCanBeLocal*/
+        private final double YAW_ERROR_THRESHOLD = 0.5;
         private boolean initialized = false;
-        private boolean finished = false;
 
         List<AprilTagDetection> currentDetections = aprilTag.getDetections();
         ElapsedTime timer = new ElapsedTime();
@@ -75,12 +72,30 @@ public class AprilTagMediator {
 
             for (AprilTagDetection detection : currentDetections) {
                 if ((detection.id == 1 || detection.id == 4) && timer.seconds() < 3) {
-
+                    double error = (imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES)) - detection.ftcPose.yaw;
+                    if (Math.abs(error) > YAW_ERROR_THRESHOLD) {
+                        turnPID(error);
+                    }
+                }
+                if (timer.seconds() > 3) {
+                    break;
                 }
             }
 
             return timer.seconds() < 3;
         }
+    }
+
+    private void turnPID(double error) {
+        double turnDirection = error > 0 ? -1:1;
+        double turnPower = (error * IMUKp) + IMUKd;
+
+        drive.setDrivePowers(
+                new PoseVelocity2d(
+                        new Vector2d(0, 0),
+                        turnPower * turnDirection
+                )
+        );
     }
 
     /**
