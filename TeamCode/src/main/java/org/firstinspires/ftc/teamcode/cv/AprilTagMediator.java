@@ -30,13 +30,13 @@ import static org.firstinspires.ftc.teamcode.drive.constants.PIDConstants.IMUKd;
 public class AprilTagMediator {
 
     MecanumDrive drive;
-    private VisionPortal visionPortal;
+    public VisionPortal visionPortal;
     private AprilTagProcessor aprilTag;
-    private final IMU imu;
+    private IMU imu;
 
-    public AprilTagMediator(HardwareMap hardwareMap, MecanumDrive mecanumDrive) {
+    public void init(HardwareMap hardwareMap, MecanumDrive mecanumDrive) {
         drive = mecanumDrive;
-        imu = hardwareMap.get(IMU.class, "IMU");
+        imu = hardwareMap.get(IMU.class, "imu");
 
         IMU.Parameters myIMUparameters;
 
@@ -50,7 +50,6 @@ public class AprilTagMediator {
         imu.initialize(myIMUparameters);
 
         initAprilTag(hardwareMap);
-        visionPortal.stopStreaming();
     }
 
     public class LeftTurnAlign implements Action {

@@ -1,8 +1,8 @@
 package org.firstinspires.ftc.teamcode.drive.opmode.autonomous;
 
 import com.acmerobotics.roadrunner.Action;
-import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -76,34 +76,30 @@ public class RedSideAutoBackdrop extends LinearOpMode {
         if (isStopRequested()) return;
 
         camera1.stopStreaming();
+        camera1.stopStreaming();
         switch (octopusPipeline.getLocation()) {
             case NONE:
             case MIDDLE:
-                Actions.runBlocking(runToCenterProp);
+                Actions.runBlocking(new SequentialAction(
+                        runToCenterProp
+                ));
                 break;
             case LEFT:
-                Actions.runBlocking(runToLeftProp);
-                break;
-            case RIGHT:
-                Actions.runBlocking(runToRightProp);
-                break;
-        }
-
-        switch (octopusPipeline.getLocation()) {
-            case NONE:
-            case MIDDLE:
-                break;
-            case LEFT:
-                Actions.runBlocking(new ParallelAction(
+                Actions.runBlocking(new SequentialAction(
+                        runToLeftProp,
                         runToBackdropLeft
+
                 ));
                 break;
             case RIGHT:
-                Actions.runBlocking(new ParallelAction(
+                Actions.runBlocking(new SequentialAction(
+                        runToRightProp,
                         runToBackdropRight
                 ));
                 break;
         }
+
+        Actions.runBlocking(arm.dropYellowPixel());
 
         Action park = drive.actionBuilder(drive.pose)
                 .strafeToConstantHeading(new Vector2d(24, 30))
