@@ -101,6 +101,7 @@ public class AprilTagMediator {
      * Initialize the AprilTag processor.
      */
     private void initAprilTag(HardwareMap hardwareMap) {
+        RedOctopusPipeline octopusPipeline = new RedOctopusPipeline();
 
         // Create the AprilTag processor.
         // == CAMERA CALIBRATION ==
@@ -145,6 +146,7 @@ public class AprilTagMediator {
 
         // Set and enable the processor.
         builder.addProcessor(aprilTag);
+        builder.addProcessor(octopusPipeline);
 
         // Build the Vision Portal, using the above settings.
         visionPortal = builder.build();

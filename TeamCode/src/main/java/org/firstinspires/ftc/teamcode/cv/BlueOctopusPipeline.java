@@ -1,14 +1,18 @@
 package org.firstinspires.ftc.teamcode.cv;
 
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+
+import org.firstinspires.ftc.robotcore.internal.camera.calibration.CameraCalibration;
+import org.firstinspires.ftc.vision.VisionProcessor;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
-import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
-import org.openftc.easyopencv.OpenCvPipeline;
 
-public class BlueOctopusPipeline extends OpenCvPipeline {
+public class BlueOctopusPipeline implements VisionProcessor {
 
     // Camera resolution (check camera)
     public static final int WIDTH = 640;
@@ -35,9 +39,22 @@ public class BlueOctopusPipeline extends OpenCvPipeline {
     int rightRegionStart = (2 * WIDTH) / 3;
     int rightRegionEnd = WIDTH;
 
-    @Override
-    public Mat processFrame(Mat input) {
+    // We create a HSV range for blue to detect the team prop
+    // NOTE: In OpenCV's implementation,
+    // Hue values are half the real value
+    Scalar lowHSV = new Scalar(105, 255*.75, 255*.3); // lower bound HSV for blue
+    Scalar highHSV = new Scalar(130, 255, 255); // higher bound HSV for blue
 
+    // Paint for image preview
+    Paint paint = new Paint();
+
+    @Override
+    public void init(int width, int height, CameraCalibration calibration) {
+        paint.setColor(Color.BLUE);
+    }
+
+    @Override
+    public Object processFrame(Mat input, long captureTimeNanos) {
         Mat hsv = new Mat();
         Imgproc.cvtColor(input, hsv, Imgproc.COLOR_RGB2HSV);
 
@@ -47,12 +64,6 @@ public class BlueOctopusPipeline extends OpenCvPipeline {
             return input;
         }
 
-        // We create a HSV range for blue to detect the team prop
-        // NOTE: In OpenCV's implementation,
-        // Hue values are half the real value
-        Scalar lowHSV = new Scalar(105, 255*.75, 255*.3); // lower bound HSV for blue
-        Scalar highHSV = new Scalar(130, 255, 255); // higher bound HSV for blue
-
         Mat blueMask = new Mat();
         Core.inRange(hsv, lowHSV, highHSV, blueMask);
 
@@ -61,25 +72,28 @@ public class BlueOctopusPipeline extends OpenCvPipeline {
         centerSum = Core.sumElems(blueMask.submat(new Rect(centerRegionStart, 0, centerRegionEnd - centerRegionStart, HEIGHT))).val[0];
         rightSum = Core.sumElems(blueMask.submat(new Rect(rightRegionStart, 0, rightRegionEnd - rightRegionStart, HEIGHT))).val[0];
 
-        // Detect if a red object is in one of the three regions
-        if (leftSum > 0 && leftSum > centerSum && leftSum > rightSum) {
-            Imgproc.rectangle(input, new Point(leftRegionStart, 0), new Point(leftRegionEnd, HEIGHT), new Scalar(0, 255, 255), 2);
-            location = SpikeLocation.LEFT;
-        } else if (centerSum > 0 && centerSum > leftSum && centerSum > rightSum) {
-            Imgproc.rectangle(input, new Point(centerRegionStart, 0), new Point(centerRegionEnd, HEIGHT), new Scalar(0, 255, 255), 2);
-            location = SpikeLocation.MIDDLE;
-        } else if (rightSum > 0 && rightSum > leftSum && rightSum > centerSum) {
-            Imgproc.rectangle(input, new Point(rightRegionStart, 0), new Point(rightRegionEnd, HEIGHT), new Scalar(0, 255, 255), 2);
-            location = SpikeLocation.RIGHT;
-        } else {
-            location = SpikeLocation.NONE;
-        }
-
         // Release mats to conserve memory
         hsv.release();
         blueMask.release();
 
         return input;
+    }
+
+    @Override
+    public void onDrawFrame(Canvas canvas, int onscreenWidth, int onscreenHeight, float scaleBmpPxToCanvasPx, float scaleCanvasDensity, Object userContext) {
+        // Detect if a red object is in one of the three regions
+        if (leftSum > 0 && leftSum > centerSum && leftSum > rightSum) {
+            canvas.drawRect(leftRegionStart, 0, leftRegionEnd, HEIGHT, paint);
+            location = SpikeLocation.LEFT;
+        } else if (centerSum > 0 && centerSum > leftSum && centerSum > rightSum) {
+            canvas.drawRect(centerRegionStart, 0, centerRegionEnd, HEIGHT, paint);
+            location =SpikeLocation.MIDDLE;
+        } else if (rightSum > 0 && rightSum > leftSum && rightSum > centerSum) {
+            canvas.drawRect(rightRegionStart, 0, rightRegionEnd, HEIGHT, paint);
+            location = SpikeLocation.RIGHT;
+        } else {
+            location = SpikeLocation.NONE;
+        }
     }
 
     public SpikeLocation getLocation() { return this.location; }
