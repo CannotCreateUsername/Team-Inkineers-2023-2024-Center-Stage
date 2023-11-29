@@ -2,30 +2,41 @@ package org.firstinspires.ftc.teamcode.drive.opmode.teleop;
 
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.Vector2d;
+import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.MecanumDrive;
-import org.firstinspires.ftc.teamcode.cv.AprilTagMediator;
+import org.firstinspires.ftc.teamcode.cv.ComputerVisionMediator;
+import org.firstinspires.ftc.teamcode.cv.RedOctopusPipeline;
 
 @TeleOp(name = "Dual CV Testing", group = "CV")
 public class DualCVTester extends LinearOpMode {
 
     MecanumDrive drive;
-    AprilTagMediator aprilTagMediator = new AprilTagMediator();
+    ComputerVisionMediator computerVisionMediator = new ComputerVisionMediator();
 
     @Override
     public void runOpMode() throws InterruptedException {
         drive = new MecanumDrive(hardwareMap, new Pose2d(new Vector2d(0, 0), Math.toRadians(0)));
-        aprilTagMediator.init(hardwareMap, drive);
-
+        computerVisionMediator.init(hardwareMap, drive, new RedOctopusPipeline());
 
         ElapsedTime cringeTimer = new ElapsedTime();
+
+        while (!opModeIsActive() && !isStopRequested()) {
+            computerVisionMediator.telemetryAprilTag(this);
+            telemetry.update();
+        }
 
         waitForStart();
         cringeTimer.reset();
         while (opModeIsActive()) {
+
+            if (gamepad1.a) {
+                Actions.runBlocking(computerVisionMediator.leftTurnAlign());
+            }
+
             telemetry.addLine("Never gonna");
 
             if (cringeTimer.seconds() > 1) {

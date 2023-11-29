@@ -9,19 +9,15 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
+import org.firstinspires.ftc.teamcode.cv.ComputerVisionMediator;
 import org.firstinspires.ftc.teamcode.cv.RedOctopusPipeline;
 import org.firstinspires.ftc.teamcode.drive.subsystems.ArmSubsystem;
-import org.openftc.easyopencv.OpenCvCamera;
-import org.openftc.easyopencv.OpenCvCameraFactory;
-import org.openftc.easyopencv.OpenCvCameraRotation;
 
 @Autonomous(name = "Red Alliance Backdrop Auto", group = "Backdrop Side")
 public class RedSideAutoBackdrop extends LinearOpMode {
 
-    OpenCvCamera camera1;
-    RedOctopusPipeline octopusPipeline;
+    RedOctopusPipeline octopusPipeline = new RedOctopusPipeline();
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -31,6 +27,7 @@ public class RedSideAutoBackdrop extends LinearOpMode {
         Pose2d startPose = new Pose2d(0, 0, Math.toRadians(0));
         MecanumDrive drive = new MecanumDrive(hardwareMap, startPose);
         ArmSubsystem arm = new ArmSubsystem(hardwareMap);
+        ComputerVisionMediator CVMediator = new ComputerVisionMediator();
 
         // Run to the left spike location
         Action runToLeftProp = drive.actionBuilder(startPose)
@@ -63,7 +60,8 @@ public class RedSideAutoBackdrop extends LinearOpMode {
                 .strafeToConstantHeading(new Vector2d(30, 30))
                 .build();
 
-        initCV();
+        // Initialize all computer vision stuff
+        CVMediator.init(hardwareMap, drive, octopusPipeline);
 
         // Display Telemetry
         while (!isStopRequested() && !opModeIsActive()) {
@@ -75,8 +73,10 @@ public class RedSideAutoBackdrop extends LinearOpMode {
         timer1.reset();
         if (isStopRequested()) return;
 
-        camera1.stopStreaming();
-        camera1.stopStreaming();
+        // Stop the pipeline since we no longer need to detect the prop
+        CVMediator.visionPortal.setProcessorEnabled(octopusPipeline, false);
+
+
         switch (octopusPipeline.getLocation()) {
             case NONE:
             case MIDDLE:
@@ -87,14 +87,14 @@ public class RedSideAutoBackdrop extends LinearOpMode {
             case LEFT:
                 Actions.runBlocking(new SequentialAction(
                         runToLeftProp,
-                        runToBackdropLeft
+                        runToBackdropRight
 
                 ));
                 break;
             case RIGHT:
                 Actions.runBlocking(new SequentialAction(
                         runToRightProp,
-                        runToBackdropRight
+                        runToBackdropLeft
                 ));
                 break;
         }
@@ -106,34 +106,5 @@ public class RedSideAutoBackdrop extends LinearOpMode {
                 .build();
 
         Actions.runBlocking(park);
-    }
-
-    public void initCV() {
-        // Live preview thing
-        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        // Grab the webcam from the config files
-        WebcamName webcam1 = hardwareMap.get(WebcamName.class, "Webcam 1");
-        // Create an OpenCV camera using webcam1
-        camera1 = OpenCvCameraFactory.getInstance().createWebcam(webcam1, cameraMonitorViewId);
-
-        // Attach the pipeline
-        octopusPipeline = new RedOctopusPipeline();
-        camera1.setPipeline(octopusPipeline);
-
-        camera1.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
-            @Override
-            public void onOpened() {
-                // Usually this is where you'll want to start streaming from the camera (see section 4)
-                // If resolution does not match, it will crash
-                camera1.startStreaming(640, 480, OpenCvCameraRotation.UPSIDE_DOWN);
-            }
-
-            @Override
-            public void onError(int errorCode) {
-                // This will be called should the camera not open
-                telemetry.addData("fail", "bad");
-                telemetry.update();
-            }
-        });
     }
 }
