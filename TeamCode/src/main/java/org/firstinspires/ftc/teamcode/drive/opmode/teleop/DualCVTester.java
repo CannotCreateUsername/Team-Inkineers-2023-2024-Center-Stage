@@ -34,7 +34,7 @@ public class DualCVTester extends LinearOpMode {
         while (opModeIsActive()) {
 
             if (gamepad1.a) {
-                Actions.runBlocking(computerVisionMediator.leftTurnAlign());
+                Actions.runBlocking(computerVisionMediator.turnAlign());
             }
 
             telemetry.addLine("Never gonna");

@@ -82,10 +82,11 @@ public class ComputerVisionMediator {
         visionPortal = builder.build();
     }
 
-    public class LeftTurnAlign implements Action {
+    public class TurnAlign implements Action {
         /** @noinspection FieldCanBeLocal*/
-        private final double YAW_ERROR_THRESHOLD = 0.5;
+        private final double YAW_ERROR_THRESHOLD = 1;
         private boolean initialized = false;
+        private double error;
 
         List<AprilTagDetection> currentDetections = aprilTag.getDetections();
         ElapsedTime timer = new ElapsedTime();
@@ -100,24 +101,40 @@ public class ComputerVisionMediator {
             }
 
             for (AprilTagDetection detection : currentDetections) {
-                if ((detection.id == 1 || detection.id == 4) && timer.seconds() < 3) {
-                    double error = (imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES)) - detection.ftcPose.yaw;
+                if ((detection.id == 1 || detection.id == 4) && error > 1) {
+                    error = (imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES)) - detection.ftcPose.yaw;
+                    if (Math.abs(error) > YAW_ERROR_THRESHOLD) {
+                        turnPID(error);
+                    }
+                } else if ((detection.id == 2 || detection.id == 5) && error > 1) {
+                    error = (imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES)) - detection.ftcPose.yaw;
+                    if (Math.abs(error) > YAW_ERROR_THRESHOLD) {
+                        turnPID(error);
+                    }
+                } else if ((detection.id == 3 || detection.id == 6) && error > 1) {
+                    error = (imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES)) - detection.ftcPose.yaw;
                     if (Math.abs(error) > YAW_ERROR_THRESHOLD) {
                         turnPID(error);
                     }
                 }
-                if (timer.seconds() > 3) {
-                    break;
-                }
             }
 
-            return timer.seconds() < 3;
+            return timer.seconds() < 2;
         }
     }
 
-    public Action leftTurnAlign() {
-        return new LeftTurnAlign();
+    public class DriveAlign implements Action {
+
+        @Override
+        public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+            return false;
+        }
     }
+
+    public Action turnAlign() {
+        return new TurnAlign();
+    }
+    public Action driveAlign() { return new DriveAlign(); }
 
     private void turnPID(double error) {
         double turnDirection = error > 0 ? -1:1;
@@ -129,6 +146,10 @@ public class ComputerVisionMediator {
                         turnPower * turnDirection
                 )
         );
+    }
+
+    private void DrivePID(double error) {
+
     }
 
     /**

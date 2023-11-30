@@ -84,16 +84,15 @@ public class BlueSideAutoBackdrop extends LinearOpMode {
                 break;
             case LEFT:
                 Actions.runBlocking(new SequentialAction(
-                        runToRightProp,
-                        runToBackdropRight
-
+                        runToLeftProp,
+                        runToBackdropLeft,
+                        CVMediator.turnAlign()
                 ));
                 break;
             case RIGHT:
                 Actions.runBlocking(new SequentialAction(
-                        runToLeftProp,
-                        runToBackdropLeft,
-                        CVMediator.leftTurnAlign()
+                        runToRightProp,
+                        runToBackdropRight
                 ));
                 break;
         }
