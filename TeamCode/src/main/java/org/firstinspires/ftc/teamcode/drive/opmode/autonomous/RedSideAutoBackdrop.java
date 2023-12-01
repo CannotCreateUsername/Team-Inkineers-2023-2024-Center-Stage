@@ -34,34 +34,36 @@ public class RedSideAutoBackdrop extends LinearOpMode {
                 .strafeToConstantHeading(new Vector2d(28, 0))
                 .strafeToConstantHeading(new Vector2d(28, -12))
                 .strafeToConstantHeading(new Vector2d(24, -12))
-                .strafeToConstantHeading(new Vector2d(24, 30))
-                .turn(Math.toRadians(-90))
+                .strafeToConstantHeading(new Vector2d(24, 34))
                 .build();
         // Run to the center spike location
         Action runToCenterProp = drive.actionBuilder(startPose)
                 .strafeToConstantHeading(new Vector2d(31, 0))
                 .strafeToConstantHeading(new Vector2d(24, 0))
-                .strafeToConstantHeading(new Vector2d(24, 30))
-                .turn(Math.toRadians(-90))
+                .strafeToConstantHeading(new Vector2d(24, 34))
                 .build();
         // Run to the right spike location
         Action runToRightProp = drive.actionBuilder(startPose)
                 .strafeToConstantHeading(new Vector2d(28, 0))
                 .strafeToConstantHeading(new Vector2d(28, 12))
                 .strafeToConstantHeading(new Vector2d(24, 12))
-                .strafeToConstantHeading(new Vector2d(24, 30))
-                .turn(Math.toRadians(-90))
+                .strafeToConstantHeading(new Vector2d(24, 34))
                 .build();
 
-        Action runToBackdropLeft = drive.actionBuilder(new Pose2d(new Vector2d(24, 30), Math.toRadians(-90)))
-                .strafeToConstantHeading(new Vector2d(18, 30))
+        Action runToBackdropLeft = drive.actionBuilder(new Pose2d(new Vector2d(24, 34), Math.toRadians(-90)))
+                .strafeToConstantHeading(new Vector2d(18, 34))
                 .build();
-        Action runToBackdropRight = drive.actionBuilder(new Pose2d(new Vector2d(24, 30), Math.toRadians(-90)))
-                .strafeToConstantHeading(new Vector2d(30, 30))
+        Action runToBackdropRight = drive.actionBuilder(new Pose2d(new Vector2d(24, 34), Math.toRadians(-90)))
+                .strafeToConstantHeading(new Vector2d(34, 34))
+                .build();
+
+        // Park in backstage
+        Action park = drive.actionBuilder(new Pose2d(new Vector2d(0, 0), Math.toRadians(-90)))
+                .strafeToConstantHeading(new Vector2d(-24, -12))
                 .build();
 
         // Initialize all computer vision stuff
-        CVMediator.init(hardwareMap, drive, octopusPipeline);
+        CVMediator.init(hardwareMap, drive, octopusPipeline, false, this);
 
         // Display Telemetry
         while (!isStopRequested() && !opModeIsActive()) {
@@ -80,30 +82,22 @@ public class RedSideAutoBackdrop extends LinearOpMode {
         switch (octopusPipeline.getLocation()) {
             case NONE:
             case MIDDLE:
-                Actions.runBlocking(new SequentialAction(
-                        runToCenterProp
-                ));
+                Actions.runBlocking(runToCenterProp);
+                CVMediator.turnPID(-90);
                 break;
             case LEFT:
-                Actions.runBlocking(new SequentialAction(
-                        runToLeftProp,
-                        runToBackdropRight
-
-                ));
+                Actions.runBlocking(runToLeftProp);
+                CVMediator.turnPID(-90);
+                Actions.runBlocking(runToBackdropLeft);
                 break;
             case RIGHT:
-                Actions.runBlocking(new SequentialAction(
-                        runToRightProp,
-                        runToBackdropLeft
-                ));
+                Actions.runBlocking(runToRightProp);
+                CVMediator.turnPID(-90);
+                Actions.runBlocking(runToBackdropRight);
                 break;
         }
 
         Actions.runBlocking(arm.dropYellowPixel());
-
-        Action park = drive.actionBuilder(drive.pose)
-                .strafeToConstantHeading(new Vector2d(24, 30))
-                .build();
 
         Actions.runBlocking(park);
     }

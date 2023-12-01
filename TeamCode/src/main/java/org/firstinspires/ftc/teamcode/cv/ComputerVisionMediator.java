@@ -33,7 +33,10 @@ import static org.firstinspires.ftc.teamcode.drive.constants.PIDConstants.IMUKd;
 import static org.firstinspires.ftc.teamcode.drive.constants.PIDConstants.LKd;
 import static org.firstinspires.ftc.teamcode.drive.constants.PIDConstants.LKp;
 
+import javax.annotation.Nullable;
+
 public class ComputerVisionMediator {
+    private final double YAW_ERROR_THRESH = 0.2;
 
     MecanumDrive drive;
 
@@ -43,8 +46,11 @@ public class ComputerVisionMediator {
     private AprilTagProcessor aprilTag;
     private IMU imu;
 
+    private LinearOpMode opMode;
+
     // Initialization for red
-    public void init(HardwareMap hardwareMap, MecanumDrive mecanumDrive, RedOctopusPipeline octopusPipeline) {
+    public void init(HardwareMap hardwareMap, @Nullable MecanumDrive mecanumDrive, RedOctopusPipeline octopusPipeline, boolean useAprilTag, LinearOpMode linearOpMode) {
+        opMode = linearOpMode;
         drive = mecanumDrive;
         imu = hardwareMap.get(IMU.class, "imu");
 
@@ -60,13 +66,16 @@ public class ComputerVisionMediator {
         imu.initialize(myIMUparameters);
 
         initCV(hardwareMap, octopusPipeline);
-        initAprilTagCV();
+        if (useAprilTag) {
+            initAprilTagCV();
+        }
 
         visionPortal = builder.build();
     }
 
     // Initialization for blue
-    public void init(HardwareMap hardwareMap, MecanumDrive mecanumDrive, BlueOctopusPipeline octopusPipeline) {
+    public void init(HardwareMap hardwareMap, @Nullable MecanumDrive mecanumDrive, BlueOctopusPipeline octopusPipeline, boolean useAprilTag, LinearOpMode linearOpMode) {
+        opMode = linearOpMode;
         drive = mecanumDrive;
         imu = hardwareMap.get(IMU.class, "imu");
 
@@ -82,7 +91,9 @@ public class ComputerVisionMediator {
         imu.initialize(myIMUparameters);
 
         initCV(hardwareMap, octopusPipeline);
-        initAprilTagCV();
+        if (useAprilTag) {
+            initAprilTagCV();
+        }
 
         visionPortal = builder.build();
     }
@@ -90,7 +101,6 @@ public class ComputerVisionMediator {
     // Align heading with april tag
     public class TurnAlign implements Action {
         /** @noinspection FieldCanBeLocal*/
-        private final double YAW_ERROR_THRESH = 1;
         private boolean initialized = false;
 
         List<AprilTagDetection> currentDetections = aprilTag.getDetections();
@@ -109,115 +119,89 @@ public class ComputerVisionMediator {
                 double hError = detection.ftcPose.yaw;
                 if ((detection.id == 1 || detection.id == 4) && Math.abs(hError) > YAW_ERROR_THRESH) {
                     turnPID(hError);
-                } else if ((detection.id == 2 || detection.id == 5) && Math.abs(hError) > YAW_ERROR_THRESH) {
-                    turnPID(hError);
-                } else if ((detection.id == 3 || detection.id == 6) && Math.abs(hError) > YAW_ERROR_THRESH) {
-                    turnPID(hError);
                 }
             }
 
+            if (timer.seconds() > 1.9) {
+                drive.setDrivePowers(new PoseVelocity2d(new Vector2d(0, 0), 0));
+            }
             return timer.seconds() < 2;
         }
     }
 
-    // Align distance with april tag
-    public class DriveAlign implements Action {
-        /** @noinspection FieldCanBeLocal*/
-        private final double DISTANCE_ERROR_THRESH = 3;
-        private boolean initialized = false;
-
-        List<AprilTagDetection> currentDetections = aprilTag.getDetections();
+    public void turnPID(double degrees) {
         ElapsedTime timer = new ElapsedTime();
+        double power;
+        double error = 1;
 
-        @Override
-        public boolean run(@NonNull TelemetryPacket telemetryPacket) {
-            if (!initialized) {
-                drive.pose = new Pose2d(new Vector2d(0, 0), Math.toRadians(90));
-                timer.reset();
-                initialized = true;
-            }
+        // the turn direction should always be consistent with the input parameter.
+        double turnDirection = degrees > 0 ? -1:1;
+        imu.resetYaw();
+        timer.reset();
+        while (Math.abs(error) > YAW_ERROR_THRESH && timer.seconds() < 2 && opMode.opModeIsActive()) {
+            // calculate the error , regardless of the target or current turn angle
+            error = Math.abs(imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES)) - Math.abs(degrees);
+            power = (error * IMUKp) + IMUKd;
 
-            for (AprilTagDetection detection : currentDetections) {
-                double xError = detection.ftcPose.x;
-                if ((detection.id == 1 || detection.id == 4) && Math.abs(xError) > DISTANCE_ERROR_THRESH) {
-                    distancePID(xError);
-                } else if ((detection.id == 2 || detection.id == 5) && Math.abs(xError) > DISTANCE_ERROR_THRESH) {
-                    distancePID(xError);
-                } else if ((detection.id == 3 || detection.id == 6) && Math.abs(xError) > DISTANCE_ERROR_THRESH) {
-                    distancePID(xError);
-                }
-            }
-            return timer.seconds() < 2;
+            // note: power positive means turn right,
+            drive.setDrivePowers(
+                    new PoseVelocity2d(
+                            new Vector2d(0, 0),
+                            power * turnDirection
+                    )
+            );
         }
-    }
-
-    // Align laterally with april tag
-    public class LateralAlign implements Action {
-        /** @noinspection FieldCanBeLocal*/
-        private final double LATERAL_ERROR_THRESH = 1;
-        private boolean initialized = false;
-
-        List<AprilTagDetection> currentDetections = aprilTag.getDetections();
-        ElapsedTime timer = new ElapsedTime();
-
-        @Override
-        public boolean run(@NonNull TelemetryPacket telemetryPacket) {
-            if (!initialized) {
-                drive.pose = new Pose2d(new Vector2d(0, 0), Math.toRadians(90));
-                timer.reset();
-                initialized = true;
-            }
-
-            for (AprilTagDetection detection : currentDetections) {
-                double yError = detection.ftcPose.y;
-                if ((detection.id == 1 || detection.id == 4) && Math.abs(yError) > LATERAL_ERROR_THRESH) {
-                    lateralPID(yError);
-                } else if ((detection.id == 2 || detection.id == 5) && Math.abs(yError) > LATERAL_ERROR_THRESH) {
-                    lateralPID(yError);
-                } else if ((detection.id == 3 || detection.id == 6) && Math.abs(yError) > LATERAL_ERROR_THRESH) {
-                    lateralPID(yError);
-                }
-            }
-            return timer.seconds() < 2;
-        }
-    }
-
-    private void turnPID(double error) {
-        double turnDirection = error > 0 ? -1:1;
-        double turnPower = (error * IMUKp) + IMUKd;
-
         drive.setDrivePowers(
                 new PoseVelocity2d(
                         new Vector2d(0, 0),
-                        turnPower * turnDirection
-                )
-        );
-    }
-    private void distancePID(double error) {
-        double drivePower = (error * DKp) + DKd;
-
-        drive.setDrivePowers(
-                new PoseVelocity2d(
-                        new Vector2d(drivePower, 0),
                         0
                 )
         );
     }
-    private void lateralPID(double error) {
-        double drivePower = (error * LKp) + LKd;
 
-        drive.setDrivePowers(
-                new PoseVelocity2d(
-                        new Vector2d(0, drivePower),
-                        0
-                )
-        );
+//    public Action turnPID(double degrees) {
+//        return new Action() {
+//            private final ElapsedTime timer = new ElapsedTime();
+//            private double error = 1;
+//
+//            private boolean initialized = false;
+//            // the turn direction should always be consistent with the input parameter.
+//            final double turnDirection = degrees > 0 ? -1:1;
+//
+//            @Override
+//            public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+//                if (!initialized) {
+//                    imu.resetYaw();
+//                    timer.reset();
+//                    initialized = true;
+//                }
+//
+//                if (Math.abs(error) > YAW_ERROR_THRESH && timer.seconds() < 2 && opMode.opModeIsActive()) {
+//                    // calculate the error , regardless of the target or current turn angle
+//                    error = Math.abs(imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES)) - Math.abs(degrees);
+//                    double power = (error * IMUKp) + IMUKd;
+//
+//                    // note: power positive means turn right,
+//                    drive.setDrivePowers(
+//                            new PoseVelocity2d(
+//                                    new Vector2d(0, 0),
+//                                    power * turnDirection
+//                            )
+//                    );
+//                }
+//                return Math.abs(error) <= YAW_ERROR_THRESH;
+//            }
+//        };
+//    }
+
+    public double getYawAngle() {
+        return imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
     }
 
     // VERY COOL ACTIONS
     public Action turnAlign() { return new TurnAlign(); }
-    public Action distanceAlign() { return new DriveAlign(); }
-    public Action lateralAlign() { return new LateralAlign(); }
+//    public Action distanceAlign() { return new DriveAlign(); }
+//    public Action lateralAlign() { return new LateralAlign(); }
 
     /**
      * Add telemetry about AprilTag detections.
@@ -248,7 +232,7 @@ public class ComputerVisionMediator {
     }   // end method telemetryAprilTag()
 
 
-    public void initCV(HardwareMap hardwareMap, BlueOctopusPipeline octopusPipeline) {
+    private void initCV(HardwareMap hardwareMap, BlueOctopusPipeline octopusPipeline) {
         // Create the vision portal by using a builder.
         builder = new VisionPortal.Builder();
 
@@ -275,7 +259,7 @@ public class ComputerVisionMediator {
         // visionPortal.setProcessorEnabled(aprilTag, true);
     }
 
-    public void initCV(HardwareMap hardwareMap, RedOctopusPipeline octopusPipeline) {
+    private void initCV(HardwareMap hardwareMap, RedOctopusPipeline octopusPipeline) {
         // Create the vision portal by using a builder.
         builder = new VisionPortal.Builder();
 

@@ -13,7 +13,7 @@ public class PipelineTestRed extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         RedOctopusPipeline octopusPipeline = new RedOctopusPipeline();
         ComputerVisionMediator CVMediator = new ComputerVisionMediator();
-        CVMediator.initCV(hardwareMap, octopusPipeline);
+        CVMediator.init(hardwareMap, null, octopusPipeline, false, this);
 
         waitForStart();
         while (opModeIsActive()) {
