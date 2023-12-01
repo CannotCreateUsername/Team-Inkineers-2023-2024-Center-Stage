@@ -242,7 +242,7 @@ public class ArmSubsystem {
 
     public Action readySlides() {
         return telemetryPacket -> {
-            runToPosition(200, 0.2);
+            runToPosition(150, 0.2);
             return !dropped;
         };
     }

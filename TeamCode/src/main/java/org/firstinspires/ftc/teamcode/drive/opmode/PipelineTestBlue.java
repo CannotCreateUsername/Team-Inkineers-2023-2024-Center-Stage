@@ -1,11 +1,13 @@
 package org.firstinspires.ftc.teamcode.drive.opmode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.cv.BlueOctopusPipeline;
 import org.firstinspires.ftc.teamcode.cv.ComputerVisionMediator;
 
+@Disabled
 @TeleOp(name = "Pipeline Test Blue", group = "CV")
 public class PipelineTestBlue extends LinearOpMode {
 
