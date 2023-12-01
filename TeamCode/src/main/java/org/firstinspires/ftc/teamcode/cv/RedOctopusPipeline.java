@@ -44,8 +44,8 @@ public class RedOctopusPipeline implements VisionProcessor {
     // We create a HSV range for blue to detect the team prop
     // NOTE: In OpenCV's implementation,
     // Hue values are half the real value
-    Scalar lowHSV = new Scalar(0, 10, 100); // lower bound HSV for red
-    Scalar highHSV = new Scalar(20, 255, 255); // higher bound HSV for red
+    Scalar lowHSV = new Scalar(105, 255*.75, 255*.3); // lower bound HSV for red from BGR
+    Scalar highHSV = new Scalar(130, 255, 255); // higher bound HSV for red from BGR
 
     // Paint for image preview
     Paint paint = new Paint();
@@ -59,7 +59,7 @@ public class RedOctopusPipeline implements VisionProcessor {
     public Object processFrame(Mat input, long captureTimeNanos) {
 
         Mat hsv = new Mat();
-        Imgproc.cvtColor(input, hsv, Imgproc.COLOR_RGB2HSV);
+        Imgproc.cvtColor(input, hsv, Imgproc.COLOR_BGR2HSV);
 
         // if something is wrong, we assume there's no team prop
         if (hsv.empty()) {
@@ -69,9 +69,6 @@ public class RedOctopusPipeline implements VisionProcessor {
 
         Mat redMask = new Mat();
         Core.inRange(hsv, lowHSV, highHSV, redMask);
-
-        // Filter out background noise using Gaussian blur
-        Imgproc.GaussianBlur(redMask, redMask, new Size(9, 9), 2, 2);
 
         // Calculate the sum of non-zero elements in each region
         leftSum = Core.sumElems(redMask.submat(new Rect(leftRegionStart, 0, leftRegionEnd - leftRegionStart, HEIGHT))).val[0];

@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.cv.ComputerVisionMediator;
 import org.firstinspires.ftc.teamcode.cv.RedOctopusPipeline;
 
-@Disabled
+//@Disabled
 @TeleOp(name = "Pipeline Test Red", group = "CV")
 public class PipelineTestRed extends LinearOpMode {
 
