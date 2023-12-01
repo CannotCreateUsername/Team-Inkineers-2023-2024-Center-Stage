@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.drive.opmode.teleop;
 
+import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
@@ -35,6 +36,16 @@ public class DualCVTester extends LinearOpMode {
 
             if (gamepad1.a) {
                 Actions.runBlocking(computerVisionMediator.turnAlign());
+            } else if (gamepad1.b) {
+                Actions.runBlocking(computerVisionMediator.distanceAlign());
+            } else if (gamepad1.x) {
+                Actions.runBlocking(computerVisionMediator.lateralAlign());
+            } else if (gamepad1.y) {
+                Actions.runBlocking(new ParallelAction(
+                        computerVisionMediator.turnAlign(),
+                        computerVisionMediator.distanceAlign(),
+                        computerVisionMediator.lateralAlign()
+                ));
             }
 
             telemetry.addLine("Never gonna");

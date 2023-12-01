@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
+import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
@@ -25,8 +26,12 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 import java.util.List;
 
+import static org.firstinspires.ftc.teamcode.drive.constants.PIDConstants.DKd;
+import static org.firstinspires.ftc.teamcode.drive.constants.PIDConstants.DKp;
 import static org.firstinspires.ftc.teamcode.drive.constants.PIDConstants.IMUKp;
 import static org.firstinspires.ftc.teamcode.drive.constants.PIDConstants.IMUKd;
+import static org.firstinspires.ftc.teamcode.drive.constants.PIDConstants.LKd;
+import static org.firstinspires.ftc.teamcode.drive.constants.PIDConstants.LKp;
 
 public class ComputerVisionMediator {
 
@@ -82,11 +87,11 @@ public class ComputerVisionMediator {
         visionPortal = builder.build();
     }
 
+    // Align heading with april tag
     public class TurnAlign implements Action {
         /** @noinspection FieldCanBeLocal*/
-        private final double YAW_ERROR_THRESHOLD = 1;
+        private final double YAW_ERROR_THRESH = 1;
         private boolean initialized = false;
-        private double error;
 
         List<AprilTagDetection> currentDetections = aprilTag.getDetections();
         ElapsedTime timer = new ElapsedTime();
@@ -101,21 +106,13 @@ public class ComputerVisionMediator {
             }
 
             for (AprilTagDetection detection : currentDetections) {
-                if ((detection.id == 1 || detection.id == 4) && error > 1) {
-                    error = (imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES)) - detection.ftcPose.yaw;
-                    if (Math.abs(error) > YAW_ERROR_THRESHOLD) {
-                        turnPID(error);
-                    }
-                } else if ((detection.id == 2 || detection.id == 5) && error > 1) {
-                    error = (imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES)) - detection.ftcPose.yaw;
-                    if (Math.abs(error) > YAW_ERROR_THRESHOLD) {
-                        turnPID(error);
-                    }
-                } else if ((detection.id == 3 || detection.id == 6) && error > 1) {
-                    error = (imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES)) - detection.ftcPose.yaw;
-                    if (Math.abs(error) > YAW_ERROR_THRESHOLD) {
-                        turnPID(error);
-                    }
+                double hError = detection.ftcPose.yaw;
+                if ((detection.id == 1 || detection.id == 4) && Math.abs(hError) > YAW_ERROR_THRESH) {
+                    turnPID(hError);
+                } else if ((detection.id == 2 || detection.id == 5) && Math.abs(hError) > YAW_ERROR_THRESH) {
+                    turnPID(hError);
+                } else if ((detection.id == 3 || detection.id == 6) && Math.abs(hError) > YAW_ERROR_THRESH) {
+                    turnPID(hError);
                 }
             }
 
@@ -123,18 +120,67 @@ public class ComputerVisionMediator {
         }
     }
 
+    // Align distance with april tag
     public class DriveAlign implements Action {
+        /** @noinspection FieldCanBeLocal*/
+        private final double DISTANCE_ERROR_THRESH = 3;
+        private boolean initialized = false;
+
+        List<AprilTagDetection> currentDetections = aprilTag.getDetections();
+        ElapsedTime timer = new ElapsedTime();
 
         @Override
         public boolean run(@NonNull TelemetryPacket telemetryPacket) {
-            return false;
+            if (!initialized) {
+                drive.pose = new Pose2d(new Vector2d(0, 0), Math.toRadians(90));
+                timer.reset();
+                initialized = true;
+            }
+
+            for (AprilTagDetection detection : currentDetections) {
+                double xError = detection.ftcPose.x;
+                if ((detection.id == 1 || detection.id == 4) && Math.abs(xError) > DISTANCE_ERROR_THRESH) {
+                    distancePID(xError);
+                } else if ((detection.id == 2 || detection.id == 5) && Math.abs(xError) > DISTANCE_ERROR_THRESH) {
+                    distancePID(xError);
+                } else if ((detection.id == 3 || detection.id == 6) && Math.abs(xError) > DISTANCE_ERROR_THRESH) {
+                    distancePID(xError);
+                }
+            }
+            return timer.seconds() < 2;
         }
     }
 
-    public Action turnAlign() {
-        return new TurnAlign();
+    // Align laterally with april tag
+    public class LateralAlign implements Action {
+        /** @noinspection FieldCanBeLocal*/
+        private final double LATERAL_ERROR_THRESH = 1;
+        private boolean initialized = false;
+
+        List<AprilTagDetection> currentDetections = aprilTag.getDetections();
+        ElapsedTime timer = new ElapsedTime();
+
+        @Override
+        public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+            if (!initialized) {
+                drive.pose = new Pose2d(new Vector2d(0, 0), Math.toRadians(90));
+                timer.reset();
+                initialized = true;
+            }
+
+            for (AprilTagDetection detection : currentDetections) {
+                double yError = detection.ftcPose.y;
+                if ((detection.id == 1 || detection.id == 4) && Math.abs(yError) > LATERAL_ERROR_THRESH) {
+                    lateralPID(yError);
+                } else if ((detection.id == 2 || detection.id == 5) && Math.abs(yError) > LATERAL_ERROR_THRESH) {
+                    lateralPID(yError);
+                } else if ((detection.id == 3 || detection.id == 6) && Math.abs(yError) > LATERAL_ERROR_THRESH) {
+                    lateralPID(yError);
+                }
+            }
+            return timer.seconds() < 2;
+        }
     }
-    public Action driveAlign() { return new DriveAlign(); }
 
     private void turnPID(double error) {
         double turnDirection = error > 0 ? -1:1;
@@ -147,10 +193,31 @@ public class ComputerVisionMediator {
                 )
         );
     }
+    private void distancePID(double error) {
+        double drivePower = (error * DKp) + DKd;
 
-    private void DrivePID(double error) {
-
+        drive.setDrivePowers(
+                new PoseVelocity2d(
+                        new Vector2d(drivePower, 0),
+                        0
+                )
+        );
     }
+    private void lateralPID(double error) {
+        double drivePower = (error * LKp) + LKd;
+
+        drive.setDrivePowers(
+                new PoseVelocity2d(
+                        new Vector2d(0, drivePower),
+                        0
+                )
+        );
+    }
+
+    // VERY COOL ACTIONS
+    public Action turnAlign() { return new TurnAlign(); }
+    public Action distanceAlign() { return new DriveAlign(); }
+    public Action lateralAlign() { return new LateralAlign(); }
 
     /**
      * Add telemetry about AprilTag detections.

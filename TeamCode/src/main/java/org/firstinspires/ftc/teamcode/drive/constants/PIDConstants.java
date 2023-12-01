@@ -4,6 +4,15 @@ import com.acmerobotics.dashboard.config.Config;
 
 @Config
 public class PIDConstants {
+    // IMU yaw constants for turning
     public static double IMUKp = 0.02;
     public static double IMUKd = 0.09;
+
+    // Straight constants for forward/backwards
+    public static double DKp = 0.02;
+    public static double DKd = 0.02;
+
+    // Lateral constants for strafing
+    public static double LKp = 0.02;
+    public static double LKd = 0.02;
 }
