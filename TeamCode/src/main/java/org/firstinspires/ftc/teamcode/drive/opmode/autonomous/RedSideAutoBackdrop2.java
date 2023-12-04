@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.drive.opmode.autonomous;
 
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.Pose2d;
-import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -14,8 +13,8 @@ import org.firstinspires.ftc.teamcode.cv.ComputerVisionMediator;
 import org.firstinspires.ftc.teamcode.cv.RedOctopusPipeline;
 import org.firstinspires.ftc.teamcode.drive.subsystems.ArmSubsystem;
 
-@Autonomous(name = "Red Alliance Backdrop Auto", group = "Backdrop Side")
-public class RedSideAutoBackdrop extends LinearOpMode {
+@Autonomous(name = "Red Alliance Backdrop Auto 2", group = "Backdrop Side")
+public class RedSideAutoBackdrop2 extends LinearOpMode {
 
     RedOctopusPipeline octopusPipeline = new RedOctopusPipeline();
 
@@ -58,11 +57,11 @@ public class RedSideAutoBackdrop extends LinearOpMode {
                 .build();
 
         // Park in backstage
-        Action rightPark = drive.actionBuilder(new Pose2d(new Vector2d(24, 36), Math.toRadians(-90)))
-                .strafeToConstantHeading(new Vector2d(-4, 38))
+        Action leftPark = drive.actionBuilder(new Pose2d(new Vector2d(24, 36), Math.toRadians(-90)))
+                .strafeToConstantHeading(new Vector2d(48, 38))
                 .build();
         Action middlePark = drive.actionBuilder(new Pose2d(new Vector2d(24, 36), Math.toRadians(-90)))
-                .strafeToConstantHeading(new Vector2d(4, 40))
+                .strafeToConstantHeading(new Vector2d(44, 40))
                 .build();
 
         // Initialize all computer vision stuff
@@ -95,14 +94,14 @@ public class RedSideAutoBackdrop extends LinearOpMode {
                 CVMediator.turnPID(-90);
                 Actions.runBlocking(runToBackdropLeft);
                 Actions.runBlocking(arm.dropYellowPixel());
-                Actions.runBlocking(middlePark);
+                Actions.runBlocking(leftPark);
                 break;
             case RIGHT:
                 Actions.runBlocking(runToRightProp);
                 CVMediator.turnPID(-90);
                 Actions.runBlocking(runToBackdropRight);
                 Actions.runBlocking(arm.dropYellowPixel());
-                Actions.runBlocking(rightPark);
+                Actions.runBlocking(middlePark);
                 break;
         }
     }

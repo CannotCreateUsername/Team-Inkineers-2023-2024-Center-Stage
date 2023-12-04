@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.drive.opmode.autonomous;
 
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.Pose2d;
-import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -10,14 +9,14 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.MecanumDrive;
+import org.firstinspires.ftc.teamcode.cv.BlueOctopusPipeline;
 import org.firstinspires.ftc.teamcode.cv.ComputerVisionMediator;
-import org.firstinspires.ftc.teamcode.cv.RedOctopusPipeline;
 import org.firstinspires.ftc.teamcode.drive.subsystems.ArmSubsystem;
 
-@Autonomous(name = "Red Alliance Backdrop Auto", group = "Backdrop Side")
-public class RedSideAutoBackdrop extends LinearOpMode {
+@Autonomous(name = "Blue Alliance Backdrop Auto 2", group = "Backdrop Side")
+public class BlueSideAutoBackdrop2 extends LinearOpMode {
 
-    RedOctopusPipeline octopusPipeline = new RedOctopusPipeline();
+    BlueOctopusPipeline octopusPipeline = new BlueOctopusPipeline();
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -32,40 +31,39 @@ public class RedSideAutoBackdrop extends LinearOpMode {
         // Run to the left spike location
         Action runToLeftProp = drive.actionBuilder(startPose)
                 .strafeToConstantHeading(new Vector2d(28, 0))
-                .strafeToConstantHeading(new Vector2d(28, -11))
-                .strafeToConstantHeading(new Vector2d(24, -11))
-                .strafeToConstantHeading(new Vector2d(24, 34))
+                .strafeToConstantHeading(new Vector2d(28, -12))
+                .strafeToConstantHeading(new Vector2d(24, -12))
+                .strafeToConstantHeading(new Vector2d(24, -34))
                 .build();
         // Run to the center spike location
         Action runToCenterProp = drive.actionBuilder(startPose)
-                .strafeToConstantHeading(new Vector2d(31, 0))
+                .strafeToConstantHeading(new Vector2d(32, 0))
                 .strafeToConstantHeading(new Vector2d(24, 0))
-                .strafeToConstantHeading(new Vector2d(26, 36))
+                .strafeToConstantHeading(new Vector2d(24, -36))
                 .build();
         // Run to the right spike location
         Action runToRightProp = drive.actionBuilder(startPose)
                 .strafeToConstantHeading(new Vector2d(28, 0))
                 .strafeToConstantHeading(new Vector2d(28, 12))
                 .strafeToConstantHeading(new Vector2d(24, 12))
-                .strafeToConstantHeading(new Vector2d(24, 34))
+                .strafeToConstantHeading(new Vector2d(24, -34))
                 .build();
 
-        Action runToBackdropLeft = drive.actionBuilder(new Pose2d(new Vector2d(24, 34), Math.toRadians(-90)))
-                .strafeToConstantHeading(new Vector2d(16, 36))
+        Action runToBackdropLeft = drive.actionBuilder(new Pose2d(new Vector2d(24, -34), Math.toRadians(90)))
+                .strafeToConstantHeading(new Vector2d(30, -32))
                 .build();
-        Action runToBackdropRight = drive.actionBuilder(new Pose2d(new Vector2d(24, 34), Math.toRadians(-90)))
-                .strafeToConstantHeading(new Vector2d(29, 32))
+        Action runToBackdropRight = drive.actionBuilder(new Pose2d(new Vector2d(24, -34), Math.toRadians(90)))
+                .strafeToConstantHeading(new Vector2d(16, -37))
                 .build();
 
         // Park in backstage
-        Action rightPark = drive.actionBuilder(new Pose2d(new Vector2d(24, 36), Math.toRadians(-90)))
-                .strafeToConstantHeading(new Vector2d(-4, 38))
+        Action rightPark = drive.actionBuilder(new Pose2d(new Vector2d(24, -36), Math.toRadians(90)))
+                .strafeToConstantHeading(new Vector2d(48, -38))
                 .build();
-        Action middlePark = drive.actionBuilder(new Pose2d(new Vector2d(24, 36), Math.toRadians(-90)))
-                .strafeToConstantHeading(new Vector2d(4, 40))
+        Action middlePark = drive.actionBuilder(new Pose2d(new Vector2d(24, -36), Math.toRadians(90)))
+                .strafeToConstantHeading(new Vector2d(44, -40))
                 .build();
 
-        // Initialize all computer vision stuff
         CVMediator.init(hardwareMap, drive, octopusPipeline, false, this);
 
         // Display Telemetry
@@ -81,25 +79,24 @@ public class RedSideAutoBackdrop extends LinearOpMode {
         // Stop the pipeline since we no longer need to detect the prop
         CVMediator.visionPortal.setProcessorEnabled(octopusPipeline, false);
 
-
         switch (octopusPipeline.getLocation()) {
             case NONE:
             case MIDDLE:
                 Actions.runBlocking(runToCenterProp);
-                CVMediator.turnPID(-90);
+                CVMediator.turnPID(90);
                 Actions.runBlocking(arm.dropYellowPixel());
                 Actions.runBlocking(middlePark);
                 break;
             case LEFT:
                 Actions.runBlocking(runToLeftProp);
-                CVMediator.turnPID(-90);
+                CVMediator.turnPID(90);
                 Actions.runBlocking(runToBackdropLeft);
                 Actions.runBlocking(arm.dropYellowPixel());
                 Actions.runBlocking(middlePark);
                 break;
             case RIGHT:
                 Actions.runBlocking(runToRightProp);
-                CVMediator.turnPID(-90);
+                CVMediator.turnPID(90);
                 Actions.runBlocking(runToBackdropRight);
                 Actions.runBlocking(arm.dropYellowPixel());
                 Actions.runBlocking(rightPark);

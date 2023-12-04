@@ -112,14 +112,14 @@ public class ArmSubsystem {
                 break;
             case READY:
                 liftMultiplier = 1;
-                runToPosition(300, 0.2);
+                runToPosition(350, 0.2);
                 if (gamepad1.wasJustPressed(GamepadKeys.Button.RIGHT_BUMPER) && timer.seconds() > 0.5) {
                     slideState = SlideState.RUNNING;
                 } else if (gamepad1.wasJustReleased(GamepadKeys.Button.LEFT_BUMPER)) {
                     virtualBar.setPosition(LOAD);
                     slideState = SlideState.REST;
                     timer.reset();
-                } else if (timer.seconds() > 0.5) {
+                } else if (timer.seconds() > 1) {
                     virtualBar.setPosition(DROP);
                 }
                 break;
