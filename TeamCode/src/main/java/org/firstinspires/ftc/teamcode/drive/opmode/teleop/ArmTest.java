@@ -36,6 +36,9 @@ public class ArmTest extends LinearOpMode {
             intakeSubsystem.runIntake(gamepadEx1);
             endgameSubsystems.run(gamepadEx1);
 
+            gamepadEx1.readButtons();
+            gamepadEx2.readButtons();
+
             telemetry.addData("Slide State", armSubsystem.getLiftState());
             telemetry.addData("Slide Position", armSubsystem.getSlidePosition());
             telemetry.addData("V4B Position", armSubsystem.getV4bPosition());
