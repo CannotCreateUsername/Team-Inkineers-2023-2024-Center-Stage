@@ -56,8 +56,6 @@ public class ArmSubsystem {
     TriggerReader rtReader;
     TriggerReader ltReader;
 
-    boolean moved = false;
-
     public ArmSubsystem(HardwareMap hardwareMap) {
         // Map actuator variables to actual hardware
         slides = hardwareMap.get(DcMotor.class, "slides");
@@ -106,21 +104,14 @@ public class ArmSubsystem {
                 } else if (gamepad2.wasJustReleased(GamepadKeys.Button.A)) {
                     slideState = SlideState.HANG;
                 }
-                if (moved) {
-                    // Move back after the virtual four bar has been reset
-                    runToPosition(50);
-                }
-                if (timer.seconds() > 2 && !(slides.getCurrentPosition() <= 55)) {
+                runToPosition(5);
+                if (timer.seconds() > 2 && !(slides.getCurrentPosition() <= 6)) {
                     // Account for slippage and prevent motor stalling
                     slides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                 }
                 break;
             case RUNNING:
                 liftMultiplier = ((float) SLIDE_LIMIT/slides.getCurrentPosition())/10 + MIN_MULTIPLIER; // 0.2 is the minimum multiplier
-                if (!moved) {
-                    // Only move after a button is pressed (so no penalty before buzzer)
-                    moved = true;
-                }
                 if ((gamepad1.isDown(GamepadKeys.Button.RIGHT_BUMPER) || gamepad2.isDown(GamepadKeys.Button.RIGHT_BUMPER)) && slides.getCurrentPosition() < SLIDE_LIMIT) {
                     if (reversed) {
                         runToPosition(slides.getCurrentPosition()-100);
