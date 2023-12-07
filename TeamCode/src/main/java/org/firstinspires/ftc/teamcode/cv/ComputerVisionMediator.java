@@ -25,17 +25,16 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 import java.util.List;
 
-import static org.firstinspires.ftc.teamcode.drive.constants.PIDConstants.DKd;
-import static org.firstinspires.ftc.teamcode.drive.constants.PIDConstants.DKp;
 import static org.firstinspires.ftc.teamcode.drive.constants.PIDConstants.IMUKp;
 import static org.firstinspires.ftc.teamcode.drive.constants.PIDConstants.IMUKd;
-import static org.firstinspires.ftc.teamcode.drive.constants.PIDConstants.LKd;
-import static org.firstinspires.ftc.teamcode.drive.constants.PIDConstants.LKp;
+import static org.firstinspires.ftc.teamcode.drive.constants.PIDConstants.XKd;
+import static org.firstinspires.ftc.teamcode.drive.constants.PIDConstants.XKp;
+import static org.firstinspires.ftc.teamcode.drive.constants.PIDConstants.YKd;
+import static org.firstinspires.ftc.teamcode.drive.constants.PIDConstants.YKp;
 
 import javax.annotation.Nullable;
 
 public class ComputerVisionMediator {
-    private final double YAW_ERROR_THRESH = 0.2;
 
     MecanumDrive drive;
 
@@ -116,7 +115,7 @@ public class ComputerVisionMediator {
 
             for (AprilTagDetection detection : currentDetections) {
                 double hError = detection.ftcPose.yaw;
-                if ((detection.id == 1 || detection.id == 4) && Math.abs(hError) > YAW_ERROR_THRESH) {
+                if (detection.id == 1 || detection.id == 4) {
                     turnPID(hError);
                 }
             }
@@ -125,6 +124,63 @@ public class ComputerVisionMediator {
                 drive.setDrivePowers(new PoseVelocity2d(new Vector2d(0, 0), 0));
             }
             return timer.seconds() < 2;
+        }
+    }
+
+    public class DistanceAlign implements Action {
+        private boolean initialized = false;
+
+        List<AprilTagDetection> currentDetections = aprilTag.getDetections();
+        private boolean finished = false;
+
+        @Override
+        public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+            if (!initialized) {
+                visionPortal.setProcessorEnabled(aprilTag, true);
+                initialized = true;
+            }
+
+            for (AprilTagDetection detection : currentDetections) {
+                if (detection.id == 8 || detection.id == 9) {
+                    distancePID(detection.ftcPose.x, detection.ftcPose.y);
+                }
+            }
+
+            return finished;
+        }
+
+        private void distancePID(double x, double y) {
+            ElapsedTime timer = new ElapsedTime();
+            double xPower;
+            double yPower;
+            double xError = 5;
+            double yError = 5;
+
+            timer.reset();
+            double x_ERROR_THRESH = 2;
+            double y_ERROR_THRESH = 1;
+            while (Math.abs(xError) > x_ERROR_THRESH && Math.abs(yError) > y_ERROR_THRESH && timer.seconds() < 2 && opMode.opModeIsActive()) {
+                // calculate the error, regardless of the target or current turn angle
+                xError = Math.abs(x);
+                yError = Math.abs(y);
+                xPower = (xError * XKp) + XKd;
+                yPower = (yError * YKp) + YKd;
+
+                // note: power positive means turn right,
+                drive.setDrivePowers(
+                        new PoseVelocity2d(
+                                new Vector2d(xPower, yPower),
+                                0
+                        )
+                );
+            }
+            drive.setDrivePowers(
+                    new PoseVelocity2d(
+                            new Vector2d(0, 0),
+                            0
+                    )
+            );
+            finished = true;
         }
     }
 
@@ -137,6 +193,7 @@ public class ComputerVisionMediator {
         double turnDirection = degrees > 0 ? -1:1;
         imu.resetYaw();
         timer.reset();
+        double YAW_ERROR_THRESH = 0.2;
         while (Math.abs(error) > YAW_ERROR_THRESH && timer.seconds() < 2 && opMode.opModeIsActive()) {
             // calculate the error , regardless of the target or current turn angle
             error = Math.abs(imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES)) - Math.abs(degrees);
@@ -158,49 +215,13 @@ public class ComputerVisionMediator {
         );
     }
 
-//    public Action turnPID(double degrees) {
-//        return new Action() {
-//            private final ElapsedTime timer = new ElapsedTime();
-//            private double error = 1;
-//
-//            private boolean initialized = false;
-//            // the turn direction should always be consistent with the input parameter.
-//            final double turnDirection = degrees > 0 ? -1:1;
-//
-//            @Override
-//            public boolean run(@NonNull TelemetryPacket telemetryPacket) {
-//                if (!initialized) {
-//                    imu.resetYaw();
-//                    timer.reset();
-//                    initialized = true;
-//                }
-//
-//                if (Math.abs(error) > YAW_ERROR_THRESH && timer.seconds() < 2 && opMode.opModeIsActive()) {
-//                    // calculate the error , regardless of the target or current turn angle
-//                    error = Math.abs(imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES)) - Math.abs(degrees);
-//                    double power = (error * IMUKp) + IMUKd;
-//
-//                    // note: power positive means turn right,
-//                    drive.setDrivePowers(
-//                            new PoseVelocity2d(
-//                                    new Vector2d(0, 0),
-//                                    power * turnDirection
-//                            )
-//                    );
-//                }
-//                return Math.abs(error) <= YAW_ERROR_THRESH;
-//            }
-//        };
-//    }
-
     public double getYawAngle() {
         return imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
     }
 
     // VERY COOL ACTIONS
     public Action turnAlign() { return new TurnAlign(); }
-//    public Action distanceAlign() { return new DriveAlign(); }
-//    public Action lateralAlign() { return new LateralAlign(); }
+    public Action distanceAlign() { return new DistanceAlign(); }
 
     /**
      * Add telemetry about AprilTag detections.

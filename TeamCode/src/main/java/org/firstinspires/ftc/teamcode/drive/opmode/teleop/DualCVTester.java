@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.drive.opmode.teleop;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.acmerobotics.roadrunner.Vector2d;
+import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -37,6 +38,8 @@ public class DualCVTester extends LinearOpMode {
 
             if (gamepad1.a) {
                 computerVisionMediator.turnPID(90);
+            } else if (gamepad1.b) {
+                Actions.runBlocking(computerVisionMediator.distanceAlign());
             }
 
             // Take gamepad input and pass it into the mecanum drive function

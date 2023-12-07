@@ -9,10 +9,10 @@ public class PIDConstants {
     public static double IMUKd = 0.09;
 
     // Straight constants for forward/backwards
-    public static double DKp = 0.05;
-    public static double DKd = 0.02;
+    public static double XKp = 0.05;
+    public static double XKd = 0.02;
 
     // Lateral constants for strafing
-    public static double LKp = 0.05;
-    public static double LKd = 0.02;
+    public static double YKp = 0.05;
+    public static double YKd = 0.02;
 }
