@@ -17,6 +17,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 public class ArmSubsystem {
@@ -37,6 +38,8 @@ public class ArmSubsystem {
     private final DcMotor slides;
     private final Servo virtualBar;
     private final CRServo outtake;
+
+    private final VoltageSensor voltSensor;
 
     public final int DROP = -1;
     public final int LOAD = 1;
@@ -61,6 +64,7 @@ public class ArmSubsystem {
         slides = hardwareMap.get(DcMotor.class, "slides");
         virtualBar = hardwareMap.get(Servo.class, "bar");
         outtake = hardwareMap.get(CRServo.class, "outtake");
+        voltSensor = hardwareMap.voltageSensor.get("slides");
 
         // Motor behavior setup
         slides.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -218,6 +222,7 @@ public class ArmSubsystem {
     public double getArmTimer() { return timer.seconds(); }
     public String getOuttakeState() { return outtakeState.name(); }
     public boolean isReversed() { return reversed; }
+    public double getSlideVoltage() {return voltSensor.getVoltage(); }
 
     // Autonomous Functions
 
