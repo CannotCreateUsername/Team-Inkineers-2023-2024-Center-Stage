@@ -36,6 +36,7 @@ public class ArmSubsystem {
     private final static double Kp = .05;
 
     private final DcMotor slides;
+    private final DcMotor slides2;
     private final Servo virtualBar;
     private final CRServo outtake;
 
@@ -62,6 +63,7 @@ public class ArmSubsystem {
     public ArmSubsystem(HardwareMap hardwareMap) {
         // Map actuator variables to actual hardware
         slides = hardwareMap.get(DcMotor.class, "slides");
+        slides2 = hardwareMap.get(DcMotor.class, "slides2");
         virtualBar = hardwareMap.get(Servo.class, "bar");
         outtake = hardwareMap.get(CRServo.class, "outtake");
         voltSensor = hardwareMap.voltageSensor.get("slides");
@@ -207,6 +209,7 @@ public class ArmSubsystem {
         slides.setTargetPosition(position);
         slides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         slides.setPower(powerPID(power));
+        slides2.setPower(slides.getPower());
     }
 
     // Run to position at default power
@@ -255,8 +258,8 @@ public class ArmSubsystem {
 
     public Action resetSlides() {
         return telemetryPacket -> {
-            runToPosition(50);
-            return !(slides.getCurrentPosition() <= 50);
+            runToPosition(5);
+            return !(slides.getCurrentPosition() <= 5);
         };
     }
 

@@ -133,10 +133,17 @@ public class ComputerVisionMediator {
         List<AprilTagDetection> currentDetections = aprilTag.getDetections();
         private boolean finished = false;
 
+        ElapsedTime timer = new ElapsedTime();
+        double xPower;
+        double yPower;
+        double xError = 5;
+        double yError = 5;
+
         @Override
         public boolean run(@NonNull TelemetryPacket telemetryPacket) {
             if (!initialized) {
                 visionPortal.setProcessorEnabled(aprilTag, true);
+                timer.reset();
                 initialized = true;
             }
 
@@ -150,16 +157,9 @@ public class ComputerVisionMediator {
         }
 
         private void distancePID(double x, double y) {
-            ElapsedTime timer = new ElapsedTime();
-            double xPower;
-            double yPower;
-            double xError = 5;
-            double yError = 5;
-
-            timer.reset();
             double x_ERROR_THRESH = 2;
             double y_ERROR_THRESH = 1;
-            while (Math.abs(xError) > x_ERROR_THRESH && Math.abs(yError) > y_ERROR_THRESH && timer.seconds() < 2 && opMode.opModeIsActive()) {
+            if (Math.abs(xError) > x_ERROR_THRESH && Math.abs(yError) > y_ERROR_THRESH && timer.seconds() < 2 && opMode.opModeIsActive()) {
                 // calculate the error, regardless of the target or current turn angle
                 xError = Math.abs(x);
                 yError = Math.abs(y);
@@ -173,14 +173,16 @@ public class ComputerVisionMediator {
                                 0
                         )
                 );
+            } else if (timer.seconds() > 2) {
+                drive.setDrivePowers(
+                        new PoseVelocity2d(
+                                new Vector2d(0, 0),
+                                0
+                        )
+                );
+                finished = true;
             }
-            drive.setDrivePowers(
-                    new PoseVelocity2d(
-                            new Vector2d(0, 0),
-                            0
-                    )
-            );
-            finished = true;
+
         }
     }
 

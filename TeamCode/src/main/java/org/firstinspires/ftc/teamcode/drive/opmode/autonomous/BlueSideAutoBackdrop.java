@@ -34,7 +34,7 @@ public class BlueSideAutoBackdrop extends LinearOpMode {
                 .strafeToConstantHeading(new Vector2d(28, 0))
                 .strafeToConstantHeading(new Vector2d(28, -12))
                 .strafeToConstantHeading(new Vector2d(24, -12))
-                .strafeToConstantHeading(new Vector2d(24, -34))
+                .strafeToConstantHeading(new Vector2d(16, -34))
                 .build();
         // Run to the center spike location
         Action runToCenterProp = drive.actionBuilder(startPose)
@@ -47,15 +47,15 @@ public class BlueSideAutoBackdrop extends LinearOpMode {
                 .strafeToConstantHeading(new Vector2d(28, 0))
                 .strafeToConstantHeading(new Vector2d(28, 12))
                 .strafeToConstantHeading(new Vector2d(24, 12))
-                .strafeToConstantHeading(new Vector2d(24, -34))
+                .strafeToConstantHeading(new Vector2d(30, -34))
                 .build();
 
-        Action runToBackdropLeft = drive.actionBuilder(new Pose2d(new Vector2d(24, -34), Math.toRadians(90)))
-                .strafeToConstantHeading(new Vector2d(30, -32))
-                .build();
-        Action runToBackdropRight = drive.actionBuilder(new Pose2d(new Vector2d(24, -34), Math.toRadians(90)))
-                .strafeToConstantHeading(new Vector2d(16, -37))
-                .build();
+//        Action runToBackdropLeft = drive.actionBuilder(new Pose2d(new Vector2d(24, -34), Math.toRadians(90)))
+//                .strafeToConstantHeading(new Vector2d(30, -32))
+//                .build();
+//        Action runToBackdropRight = drive.actionBuilder(new Pose2d(new Vector2d(24, -34), Math.toRadians(90)))
+//                .strafeToConstantHeading(new Vector2d(16, -37))
+//                .build();
 
         // Park in backstage
         Action leftPark = drive.actionBuilder(new Pose2d(new Vector2d(24, -36), Math.toRadians(90)))
@@ -91,14 +91,12 @@ public class BlueSideAutoBackdrop extends LinearOpMode {
             case LEFT:
                 Actions.runBlocking(runToLeftProp);
                 CVMediator.turnPID(90);
-                Actions.runBlocking(runToBackdropLeft);
                 Actions.runBlocking(arm.dropYellowPixel());
                 Actions.runBlocking(leftPark);
                 break;
             case RIGHT:
                 Actions.runBlocking(runToRightProp);
                 CVMediator.turnPID(90);
-                Actions.runBlocking(runToBackdropRight);
                 Actions.runBlocking(arm.dropYellowPixel());
                 Actions.runBlocking(middlePark);
                 break;
