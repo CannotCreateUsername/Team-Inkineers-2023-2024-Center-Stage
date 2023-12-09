@@ -48,7 +48,9 @@ public class ArmTest extends LinearOpMode {
             telemetry.addData("Reversed?", armSubsystem.isReversed());
             telemetry.addData("Drone Launch State", endgameSubsystems.getLauncherState());
             telemetry.addData("Right Bumper Down?", armSubsystem.rightBumperDown());
-            telemetry.addData("Slide Volts", armSubsystem.getSlideVoltage());
+//            telemetry.addData("Slide Volts", armSubsystem.getSlideVoltage());
+            telemetry.addData("FIRST Slide motor power", armSubsystem.getSlide1Power());
+            telemetry.addData("SECOND Slide motor power", armSubsystem.getSlide2Power());
             telemetry.update();
         }
     }

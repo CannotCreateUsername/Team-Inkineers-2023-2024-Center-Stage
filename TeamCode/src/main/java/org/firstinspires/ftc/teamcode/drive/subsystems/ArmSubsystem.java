@@ -17,7 +17,6 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 public class ArmSubsystem {
@@ -40,8 +39,6 @@ public class ArmSubsystem {
     private final Servo virtualBar;
     private final CRServo outtake;
 
-    private final VoltageSensor voltSensor;
-
     public final int DROP = -1;
     public final int LOAD = 1;
 
@@ -53,6 +50,7 @@ public class ArmSubsystem {
     private double currentTarget;
     private boolean reversed = false;
     private boolean dropped = false;
+    private boolean drop = false;
 
     ElapsedTime timer;
     ElapsedTime dropTimer;
@@ -66,13 +64,17 @@ public class ArmSubsystem {
         slides2 = hardwareMap.get(DcMotor.class, "slides2");
         virtualBar = hardwareMap.get(Servo.class, "bar");
         outtake = hardwareMap.get(CRServo.class, "outtake");
-        voltSensor = hardwareMap.voltageSensor.get("slides");
 
         // Motor behavior setup
         slides.setDirection(DcMotorSimple.Direction.REVERSE);
         slides.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         slides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         slides.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        slides2.setDirection(DcMotorSimple.Direction.REVERSE);
+        slides2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        slides2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        slides2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         virtualBar.setPosition(LOAD);
 
@@ -114,6 +116,7 @@ public class ArmSubsystem {
                 if (timer.seconds() > 2 && !(slides.getCurrentPosition() <= 6)) {
                     // Account for slippage and prevent motor stalling
                     slides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                    slides2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                 }
                 break;
             case RUNNING:
@@ -133,10 +136,12 @@ public class ArmSubsystem {
                 }
 
                 // Code to run the virtual four bar
-                if (gamepad1.wasJustPressed(GamepadKeys.Button.A)) {
+                if (gamepad1.wasJustPressed(GamepadKeys.Button.A) && !drop) {
                     virtualBar.setPosition(DROP);
-                } else if (gamepad1.wasJustPressed(GamepadKeys.Button.B)) {
+                    drop = true;
+                } else if (gamepad1.wasJustPressed(GamepadKeys.Button.A) && drop) {
                     virtualBar.setPosition(LOAD);
+                    drop = false;
                 }
                 break;
             case PAUSED:
@@ -150,10 +155,12 @@ public class ArmSubsystem {
                 }
 
                 // Code to run the virtual four bar
-                if (gamepad1.wasJustPressed(GamepadKeys.Button.A)) {
+                if (gamepad1.wasJustPressed(GamepadKeys.Button.A) && !drop) {
                     virtualBar.setPosition(DROP);
-                } else if (gamepad1.wasJustPressed(GamepadKeys.Button.B)) {
+                    drop = true;
+                } else if (gamepad1.wasJustPressed(GamepadKeys.Button.A) && drop) {
                     virtualBar.setPosition(LOAD);
+                    drop = false;
                 }
                 break;
             case HANG:
@@ -209,7 +216,10 @@ public class ArmSubsystem {
         slides.setTargetPosition(position);
         slides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         slides.setPower(powerPID(power));
-        slides2.setPower(slides.getPower());
+
+        slides2.setTargetPosition(position);
+        slides2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        slides2.setPower(powerPID(power));
     }
 
     // Run to position at default power
@@ -225,7 +235,8 @@ public class ArmSubsystem {
     public double getArmTimer() { return timer.seconds(); }
     public String getOuttakeState() { return outtakeState.name(); }
     public boolean isReversed() { return reversed; }
-    public double getSlideVoltage() {return voltSensor.getVoltage(); }
+    public double getSlide1Power() { return slides.getPower(); }
+    public double getSlide2Power() { return slides2.getPower(); }
 
     // Autonomous Functions
 
