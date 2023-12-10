@@ -34,7 +34,7 @@ public class ArmTest extends LinearOpMode {
             armSubsystem.runArm(gamepadEx1, gamepadEx2);
             armSubsystem.runOuttake(gamepadEx1);
             intakeSubsystem.runIntake(gamepadEx1);
-            endgameSubsystems.run(gamepadEx1);
+            endgameSubsystems.run(gamepadEx2);
 
             gamepadEx1.readButtons();
             gamepadEx2.readButtons();
@@ -48,7 +48,6 @@ public class ArmTest extends LinearOpMode {
             telemetry.addData("Reversed?", armSubsystem.isReversed());
             telemetry.addData("Drone Launch State", endgameSubsystems.getLauncherState());
             telemetry.addData("Right Bumper Down?", armSubsystem.rightBumperDown());
-//            telemetry.addData("Slide Volts", armSubsystem.getSlideVoltage());
             telemetry.addData("FIRST Slide motor power", armSubsystem.getSlide1Power());
             telemetry.addData("SECOND Slide motor power", armSubsystem.getSlide2Power());
             telemetry.update();

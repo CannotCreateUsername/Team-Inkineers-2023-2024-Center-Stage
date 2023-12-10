@@ -13,7 +13,7 @@ public class GamepadHelper {
     /** @noinspection FieldCanBeLocal*/
     private final double  maxMultiplier = 1.00; // Runs at 100% at full ramp
     /** @noinspection FieldCanBeLocal*/
-    private final double incrementMultiplier = 0.2;
+    private final double incrementMultiplier = 0.3;
     private double gameStickMultiplier;
     /** @noinspection FieldCanBeLocal*/
     private final double timeIncrementInMs = 200;

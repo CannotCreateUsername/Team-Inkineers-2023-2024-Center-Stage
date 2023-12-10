@@ -23,8 +23,7 @@ public class ArmSubsystem {
     public enum SlideState {
         RUNNING,
         PAUSED,
-        REST,
-        HANG
+        REST
     }
     public enum OuttakeState {
         OUT,
@@ -109,8 +108,6 @@ public class ArmSubsystem {
                 liftMultiplier = 1;
                 if (gamepad1.wasJustPressed(GamepadKeys.Button.RIGHT_BUMPER)) {
                     slideState = SlideState.RUNNING;
-                } else if (gamepad2.wasJustReleased(GamepadKeys.Button.A)) {
-                    slideState = SlideState.HANG;
                 }
                 runToPosition(5);
                 if (timer.seconds() > 2 && !(slides.getCurrentPosition() <= 6)) {
@@ -121,7 +118,7 @@ public class ArmSubsystem {
                 break;
             case RUNNING:
                 liftMultiplier = ((float) SLIDE_LIMIT/slides.getCurrentPosition())/10 + MIN_MULTIPLIER; // 0.2 is the minimum multiplier
-                if ((gamepad1.isDown(GamepadKeys.Button.RIGHT_BUMPER) || gamepad2.isDown(GamepadKeys.Button.RIGHT_BUMPER)) && slides.getCurrentPosition() < SLIDE_LIMIT) {
+                if ((gamepad1.isDown(GamepadKeys.Button.RIGHT_BUMPER)) && slides.getCurrentPosition() < SLIDE_LIMIT) {
                     if (reversed) {
                         runToPosition(slides.getCurrentPosition()-100);
                     } else {
@@ -163,18 +160,9 @@ public class ArmSubsystem {
                     drop = false;
                 }
                 break;
-            case HANG:
-                liftMultiplier = 0.8;
-                if (gamepad2.wasJustReleased(GamepadKeys.Button.A)) {
-                    slideState = SlideState.REST;
-                } else if (gamepad2.isDown(GamepadKeys.Button.RIGHT_BUMPER)) {
-                    reversed = true;
-                    slideState = SlideState.RUNNING;
-                }
-                runToPosition(1000, 0.2);
-                break;
         }
-        if (gamepad1.wasJustPressed(GamepadKeys.Button.X) || gamepad2.wasJustPressed(GamepadKeys.Button.X)) {
+
+        if (gamepad1.wasJustPressed(GamepadKeys.Button.X)) {
             reversed = !reversed;
         }
         a = gamepad2.isDown(GamepadKeys.Button.RIGHT_BUMPER);
@@ -224,7 +212,7 @@ public class ArmSubsystem {
 
     // Run to position at default power
     public void runToPosition(int position) {
-        runToPosition(position, 0.4);
+        runToPosition(position, 0.6);
     }
 
     // Telemetry
