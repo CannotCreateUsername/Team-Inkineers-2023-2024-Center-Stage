@@ -47,7 +47,6 @@ public class ArmSubsystem {
     OuttakeState outtakeState;
 
     private double currentTarget;
-    private boolean reversed = false;
     private boolean dropped = false;
     private boolean drop = false;
 
@@ -109,7 +108,9 @@ public class ArmSubsystem {
                 if (gamepad1.wasJustPressed(GamepadKeys.Button.RIGHT_BUMPER)) {
                     slideState = SlideState.RUNNING;
                 }
-                runToPosition(5);
+                if (timer.seconds() > 1.5) {
+                    runToPosition(5);
+                }
                 if (timer.seconds() > 2 && !(slides.getCurrentPosition() <= 6)) {
                     // Account for slippage and prevent motor stalling
                     slides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -118,18 +119,19 @@ public class ArmSubsystem {
                 break;
             case RUNNING:
                 liftMultiplier = ((float) SLIDE_LIMIT/slides.getCurrentPosition())/10 + MIN_MULTIPLIER; // 0.2 is the minimum multiplier
-                if ((gamepad1.isDown(GamepadKeys.Button.RIGHT_BUMPER)) && slides.getCurrentPosition() < SLIDE_LIMIT) {
-                    if (reversed) {
+                if (slides.getCurrentPosition() < SLIDE_LIMIT) {
+                    if (gamepad1.isDown(GamepadKeys.Button.LEFT_BUMPER) && slides.getCurrentPosition() > 100) {
                         runToPosition(slides.getCurrentPosition()-100);
-                    } else {
+                    } else if (gamepad1.isDown(GamepadKeys.Button.RIGHT_BUMPER)) {
                         runToPosition(slides.getCurrentPosition()+100);
                     }
-                } else if (gamepad1.wasJustReleased(GamepadKeys.Button.RIGHT_BUMPER)) {
-                    slideState = SlideState.PAUSED;
-                } else if (gamepad1.wasJustReleased(GamepadKeys.Button.LEFT_BUMPER)) {
+                }
+                if (gamepad1.wasJustReleased(GamepadKeys.Button.X)) {
                     virtualBar.setPosition(LOAD);
                     slideState = SlideState.REST;
                     timer.reset();
+                } else if (gamepad1.wasJustReleased(GamepadKeys.Button.RIGHT_BUMPER)) {
+                    slideState = SlideState.PAUSED;
                 }
 
                 // Code to run the virtual four bar
@@ -145,7 +147,7 @@ public class ArmSubsystem {
                 liftMultiplier = ((float) SLIDE_LIMIT/slides.getCurrentPosition())/10 + MIN_MULTIPLIER;
                 if (gamepad1.isDown(GamepadKeys.Button.RIGHT_BUMPER)) {
                     slideState = SlideState.RUNNING;
-                } else if (gamepad1.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER)) {
+                } else if (gamepad1.wasJustPressed(GamepadKeys.Button.X)) {
                     virtualBar.setPosition(LOAD);
                     slideState = SlideState.REST;
                     timer.reset();
@@ -162,9 +164,6 @@ public class ArmSubsystem {
                 break;
         }
 
-        if (gamepad1.wasJustPressed(GamepadKeys.Button.X)) {
-            reversed = !reversed;
-        }
         a = gamepad2.isDown(GamepadKeys.Button.RIGHT_BUMPER);
     }
 
@@ -222,7 +221,6 @@ public class ArmSubsystem {
     public double getV4bPosition() { return virtualBar.getPosition(); }
     public double getArmTimer() { return timer.seconds(); }
     public String getOuttakeState() { return outtakeState.name(); }
-    public boolean isReversed() { return reversed; }
     public double getSlide1Power() { return slides.getPower(); }
     public double getSlide2Power() { return slides2.getPower(); }
 

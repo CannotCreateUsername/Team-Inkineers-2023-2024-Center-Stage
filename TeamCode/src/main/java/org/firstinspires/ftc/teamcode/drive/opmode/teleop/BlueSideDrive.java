@@ -99,7 +99,6 @@ public class BlueSideDrive extends LinearOpMode {
             gamepadEx2.readButtons();
 
             // Telemetry
-            telemetry.addData("Slides Reversed", arm.isReversed());
             telemetry.addData("Turn State", turnState.name());
             telemetry.addData("Lift State", arm.getLiftState());
             telemetry.addData("Drone Launch State", endgame.getLauncherState());
