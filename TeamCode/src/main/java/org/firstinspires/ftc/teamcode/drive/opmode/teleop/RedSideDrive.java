@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.MecanumDrive;
+import org.firstinspires.ftc.teamcode.drive.DriveFunctions;
 import org.firstinspires.ftc.teamcode.drive.subsystems.ArmSubsystem;
 import org.firstinspires.ftc.teamcode.drive.subsystems.EndgameSubsystems;
 import org.firstinspires.ftc.teamcode.drive.GamepadHelper;
@@ -35,6 +36,7 @@ public class RedSideDrive extends LinearOpMode {
 
         // Initialize the drive code
         MecanumDrive drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, Math.toRadians(0)));
+        DriveFunctions functions = new DriveFunctions(hardwareMap, drive, this);
 
         // Initialize intake code
         IntakeSubsystem intake = new IntakeSubsystem(hardwareMap);
@@ -61,6 +63,7 @@ public class RedSideDrive extends LinearOpMode {
                     leftYInput = -leftStickX.getRampingValue(gamepad1.left_stick_x);
                     rightXInput = rightStickX.getRampingValue(gamepad1.right_stick_x);
                     if (gamepadEx1.wasJustReleased(GamepadKeys.Button.Y)) {
+                        functions.turnPID(90);
                         turnState = TurnState.STRAIGHT;
                     }
                     break;
@@ -69,6 +72,7 @@ public class RedSideDrive extends LinearOpMode {
                     leftYInput = leftStickY.getRampingValue(gamepad1.left_stick_y);
                     rightXInput = rightStickX.getRampingValue(gamepad1.right_stick_x);
                     if (gamepadEx1.wasJustReleased(GamepadKeys.Button.Y)) {
+                        functions.turnPID(-90);
                         turnState = TurnState.ROTATED;
                     }
                     break;

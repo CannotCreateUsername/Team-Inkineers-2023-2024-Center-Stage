@@ -1,7 +1,9 @@
 package org.firstinspires.ftc.teamcode.drive.opmode.autonomous;
 
 import com.acmerobotics.roadrunner.Action;
+import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -33,35 +35,39 @@ public class BlueSideAutoBackdrop extends LinearOpMode {
                 .strafeToConstantHeading(new Vector2d(28, 0))
                 .strafeToConstantHeading(new Vector2d(28, -12))
                 .strafeToConstantHeading(new Vector2d(24, -12))
-                .strafeToConstantHeading(new Vector2d(16, -34))
+                .strafeToConstantHeading(new Vector2d(16.5, -34))
                 .build();
         // Run to the center spike location
         Action runToCenterProp = drive.actionBuilder(startPose)
                 .strafeToConstantHeading(new Vector2d(32, 0))
                 .strafeToConstantHeading(new Vector2d(24, 0))
-                .strafeToConstantHeading(new Vector2d(24, -36))
+                .strafeToConstantHeading(new Vector2d(26, -31))
                 .build();
         // Run to the right spike location
         Action runToRightProp = drive.actionBuilder(startPose)
                 .strafeToConstantHeading(new Vector2d(28, 0))
                 .strafeToConstantHeading(new Vector2d(28, 12))
                 .strafeToConstantHeading(new Vector2d(24, 12))
-                .strafeToConstantHeading(new Vector2d(30, -34))
+                .strafeToConstantHeading(new Vector2d(31, -30))
                 .build();
 
 //        Action runToBackdropLeft = drive.actionBuilder(new Pose2d(new Vector2d(24, -34), Math.toRadians(90)))
 //                .strafeToConstantHeading(new Vector2d(30, -32))
 //                .build();
-//        Action runToBackdropRight = drive.actionBuilder(new Pose2d(new Vector2d(24, -34), Math.toRadians(90)))
+//        Action runToBackdropRight = drive\.actionBuilder(new Pose2d(new Vector2d(24, -34), Math.toRadians(90)))
 //                .strafeToConstantHeading(new Vector2d(16, -37))
 //                .build();
 
-        // Park in backstage
-        Action leftPark = drive.actionBuilder(new Pose2d(new Vector2d(24, -36), Math.toRadians(90)))
-                .strafeToConstantHeading(new Vector2d(-4, -38))
+        Action scoot = drive.actionBuilder(new Pose2d(new Vector2d(24, -34), Math.toRadians(90)))
+                .strafeToConstantHeading(new Vector2d(24, -28))
                 .build();
-        Action middlePark = drive.actionBuilder(new Pose2d(new Vector2d(24, -36), Math.toRadians(90)))
-                .strafeToConstantHeading(new Vector2d(4, -40))
+
+        // Park in backstage
+        Action leftPark = drive.actionBuilder(new Pose2d(new Vector2d(24, -30), Math.toRadians(90)))
+                .strafeToConstantHeading(new Vector2d(-4, -34))
+                .build();
+        Action middlePark = drive.actionBuilder(new Pose2d(new Vector2d(24, -30), Math.toRadians(90)))
+                .strafeToConstantHeading(new Vector2d(4, -36))
                 .build();
 
         CVMediator.init(hardwareMap, drive, octopusPipeline, false, this);
@@ -84,20 +90,35 @@ public class BlueSideAutoBackdrop extends LinearOpMode {
             case MIDDLE:
                 Actions.runBlocking(runToCenterProp);
                 CVMediator.turnPID(90);
-                Actions.runBlocking(arm.dropYellowPixel());
-                Actions.runBlocking(middlePark);
+                Actions.runBlocking(new SequentialAction(
+                        new ParallelAction(
+                                scoot,
+                                arm.dropYellowPixel()
+                        ),
+                        middlePark
+                ));
                 break;
             case LEFT:
                 Actions.runBlocking(runToLeftProp);
                 CVMediator.turnPID(90);
-                Actions.runBlocking(arm.dropYellowPixel());
-                Actions.runBlocking(leftPark);
+                Actions.runBlocking(new SequentialAction(
+                        new ParallelAction(
+                                scoot,
+                                arm.dropYellowPixel()
+                        ),
+                        leftPark
+                ));
                 break;
             case RIGHT:
                 Actions.runBlocking(runToRightProp);
                 CVMediator.turnPID(90);
-                Actions.runBlocking(arm.dropYellowPixel());
-                Actions.runBlocking(middlePark);
+                Actions.runBlocking(new SequentialAction(
+                        new ParallelAction(
+                                scoot,
+                                arm.dropYellowPixel()
+                        ),
+                        middlePark
+                ));
                 break;
         }
     }

@@ -130,7 +130,7 @@ public class ComputerVisionMediator {
     public class DistanceAlign implements Action {
         private boolean initialized = false;
 
-        List<AprilTagDetection> currentDetections = aprilTag.getDetections();
+        List<AprilTagDetection> currentDetections;
         private boolean finished = false;
 
         ElapsedTime timer = new ElapsedTime();
@@ -139,6 +139,9 @@ public class ComputerVisionMediator {
         double xError = 5;
         double yError = 5;
 
+        double x_ERROR_THRESH = 0.5;
+        double y_ERROR_THRESH = 5;
+
         @Override
         public boolean run(@NonNull TelemetryPacket telemetryPacket) {
             if (!initialized) {
@@ -146,43 +149,37 @@ public class ComputerVisionMediator {
                 timer.reset();
                 initialized = true;
             }
+            currentDetections = aprilTag.getDetections();
 
             for (AprilTagDetection detection : currentDetections) {
-                if (detection.id == 8 || detection.id == 9) {
-                    distancePID(detection.ftcPose.x, detection.ftcPose.y);
+                if (detection.id == 3 || detection.id == 6) {
+                    while ((Math.abs(xError) > x_ERROR_THRESH || Math.abs(yError) > y_ERROR_THRESH && timer.seconds() < 2) && opMode.opModeIsActive()) {
+                        // calculate the error, regardless of the target
+                        currentDetections = aprilTag.getDetections();
+                        xError = detection.ftcPose.x;
+                        yError = detection.ftcPose.y;
+                        xPower = (xError * XKp) + XKd;
+                        yPower = (yError * YKp) + YKd;
+
+                        // note: power positive means turn right,
+                        drive.setDrivePowers(
+                                new PoseVelocity2d(
+                                        new Vector2d(yPower, xPower),
+                                        0
+                                )
+                        );
+                    }
+                    drive.setDrivePowers(
+                            new PoseVelocity2d(
+                                    new Vector2d(0, 0),
+                                    0
+                            )
+                    );
+                    finished = true;
                 }
             }
 
             return finished;
-        }
-
-        private void distancePID(double x, double y) {
-            double x_ERROR_THRESH = 2;
-            double y_ERROR_THRESH = 1;
-            if (Math.abs(xError) > x_ERROR_THRESH && Math.abs(yError) > y_ERROR_THRESH && timer.seconds() < 2 && opMode.opModeIsActive()) {
-                // calculate the error, regardless of the target or current turn angle
-                xError = Math.abs(x);
-                yError = Math.abs(y);
-                xPower = (xError * XKp) + XKd;
-                yPower = (yError * YKp) + YKd;
-
-                // note: power positive means turn right,
-                drive.setDrivePowers(
-                        new PoseVelocity2d(
-                                new Vector2d(xPower, yPower),
-                                0
-                        )
-                );
-            } else if (timer.seconds() > 2) {
-                drive.setDrivePowers(
-                        new PoseVelocity2d(
-                                new Vector2d(0, 0),
-                                0
-                        )
-                );
-                finished = true;
-            }
-
         }
     }
 
@@ -195,8 +192,8 @@ public class ComputerVisionMediator {
         double turnDirection = degrees > 0 ? -1:1;
         imu.resetYaw();
         timer.reset();
-        double YAW_ERROR_THRESH = 0.2;
-        while (Math.abs(error) > YAW_ERROR_THRESH && timer.seconds() < 2 && opMode.opModeIsActive()) {
+        double YAW_ERROR_THRESH = 0.1;
+        while (Math.abs(error) > YAW_ERROR_THRESH && timer.seconds() < 3 && opMode.opModeIsActive()) {
             // calculate the error , regardless of the target or current turn angle
             error = Math.abs(imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES)) - Math.abs(degrees);
             power = (error * IMUKp) + IMUKd;

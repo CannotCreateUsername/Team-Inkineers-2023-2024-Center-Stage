@@ -239,16 +239,15 @@ public class ArmSubsystem {
                     outtake.setPower(power);
                 } else {
                     outtake.setPower(0);
-                    dropped = true;
                 }
-                return dropTimer.seconds() < 2;
+                return dropTimer.seconds() < 3;
             }
         };
     }
 
     public Action readySlides() {
         return telemetryPacket -> {
-            runToPosition(150, 0.2);
+            runToPosition(100, 0.4);
             return !dropped;
         };
     }
@@ -285,21 +284,28 @@ public class ArmSubsystem {
                     set = true;
                 }
                 virtualBar.setPosition(LOAD);
+                if (dropTimer.seconds() > 1.9) {
+                    dropped = true;
+                }
                 return dropTimer.seconds() < 2;
             }
         };
     }
 
     public Action dropYellowPixel() {
-        return new SequentialAction(
+        return new SequentialAction (
                 new ParallelAction(
                         readySlides(),
-                        ready4bar(),
                         new SequentialAction(
-                                new SleepAction(3),
-                                spinOuttake(1))
+                                ready4bar(),
+                                new SleepAction(0.5),
+                                spinOuttake(0.5),
+                                new ParallelAction(
+                                        readySlides(),
+                                        reset4Bar()
+                                )
+                        )
                 ),
-                reset4Bar(),
                 resetSlides()
         );
     }
