@@ -111,7 +111,7 @@ public class ArmSubsystem {
                 if (timer.seconds() > 1.5) {
                     runToPosition(5);
                 }
-                if (timer.seconds() > 2 && !(slides.getCurrentPosition() <= 6)) {
+                if (timer.seconds() > 3.5 && !(slides.getCurrentPosition() <= 10)) {
                     // Account for slippage and prevent motor stalling
                     slides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                     slides2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -123,7 +123,7 @@ public class ArmSubsystem {
                     if (gamepad1.isDown(GamepadKeys.Button.LEFT_BUMPER) && slides.getCurrentPosition() > 100) {
                         runToPosition(slides.getCurrentPosition()-100);
                     } else if (gamepad1.isDown(GamepadKeys.Button.RIGHT_BUMPER)) {
-                        runToPosition(slides.getCurrentPosition()+100);
+                        runToPosition(slides.getCurrentPosition()+100, 0.8);
                     }
                 }
                 if (gamepad1.wasJustReleased(GamepadKeys.Button.X)) {
@@ -145,9 +145,14 @@ public class ArmSubsystem {
                 break;
             case PAUSED:
                 liftMultiplier = ((float) SLIDE_LIMIT/slides.getCurrentPosition())/10 + MIN_MULTIPLIER;
-                if (gamepad1.isDown(GamepadKeys.Button.RIGHT_BUMPER)) {
-                    slideState = SlideState.RUNNING;
-                } else if (gamepad1.wasJustPressed(GamepadKeys.Button.X)) {
+                if (slides.getCurrentPosition() < SLIDE_LIMIT) {
+                    if (gamepad1.isDown(GamepadKeys.Button.LEFT_BUMPER) && slides.getCurrentPosition() > 100) {
+                        runToPosition(slides.getCurrentPosition()-100);
+                    } else if (gamepad1.isDown(GamepadKeys.Button.RIGHT_BUMPER)) {
+                        runToPosition(slides.getCurrentPosition()+100, 0.8);
+                    }
+                }
+                if (gamepad1.wasJustPressed(GamepadKeys.Button.X)) {
                     virtualBar.setPosition(LOAD);
                     slideState = SlideState.REST;
                     timer.reset();

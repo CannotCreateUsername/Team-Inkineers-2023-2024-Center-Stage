@@ -51,13 +51,6 @@ public class BlueSideAutoBackdrop extends LinearOpMode {
                 .strafeToConstantHeading(new Vector2d(31, -30))
                 .build();
 
-//        Action runToBackdropLeft = drive.actionBuilder(new Pose2d(new Vector2d(24, -34), Math.toRadians(90)))
-//                .strafeToConstantHeading(new Vector2d(30, -32))
-//                .build();
-//        Action runToBackdropRight = drive\.actionBuilder(new Pose2d(new Vector2d(24, -34), Math.toRadians(90)))
-//                .strafeToConstantHeading(new Vector2d(16, -37))
-//                .build();
-
         Action scoot = drive.actionBuilder(new Pose2d(new Vector2d(24, -34), Math.toRadians(90)))
                 .strafeToConstantHeading(new Vector2d(24, -28))
                 .build();
