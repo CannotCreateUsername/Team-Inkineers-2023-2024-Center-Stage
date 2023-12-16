@@ -35,20 +35,20 @@ public class RedSideAutoBackdrop extends LinearOpMode {
                 .strafeToConstantHeading(new Vector2d(28, 0))
                 .strafeToConstantHeading(new Vector2d(28, -11))
                 .strafeToConstantHeading(new Vector2d(24, -11))
-                .strafeToConstantHeading(new Vector2d(31, 30))
+                .strafeToConstantHeading(new Vector2d(31, 31))
                 .build();
         // Run to the center spike location
         Action runToCenterProp = drive.actionBuilder(startPose)
                 .strafeToConstantHeading(new Vector2d(31, 0))
                 .strafeToConstantHeading(new Vector2d(24, 0))
-                .strafeToConstantHeading(new Vector2d(26, 31))
+                .strafeToConstantHeading(new Vector2d(26, 32))
                 .build();
         // Run to the right spike location
         Action runToRightProp = drive.actionBuilder(startPose)
                 .strafeToConstantHeading(new Vector2d(28, 0))
                 .strafeToConstantHeading(new Vector2d(28, 12))
                 .strafeToConstantHeading(new Vector2d(24, 12))
-                .strafeToConstantHeading(new Vector2d(18, 33.5))
+                .strafeToConstantHeading(new Vector2d(18, 34))
                 .build();
 
         Action scoot = drive.actionBuilder(new Pose2d(new Vector2d(24, 34), Math.toRadians(-90)))
@@ -56,7 +56,7 @@ public class RedSideAutoBackdrop extends LinearOpMode {
                 .build();
 
         // Park in backstage
-        Action rightPark = drive.actionBuilder(new Pose2d(new Vector2d(24, 30), Math.toRadians(-90)))
+        Action rightPark = drive.actionBuilder(new Pose2d(new Vector2d(24, 34), Math.toRadians(-90)))
                 .strafeToConstantHeading(new Vector2d(-8, 34))
                 .build();
         Action middlePark = drive.actionBuilder(new Pose2d(new Vector2d(24, 30), Math.toRadians(-90)))

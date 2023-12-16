@@ -15,6 +15,7 @@ import com.arcrobotics.ftclib.gamepad.TriggerReader;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -97,9 +98,9 @@ public class ArmSubsystem {
         }
     }
 
-    boolean a;
+//    boolean a;
 
-    public void runArm(GamepadEx gamepad1, GamepadEx gamepad2) {
+    public void runArm(GamepadEx gamepad1, Gamepad gamepad) {
         int SLIDE_LIMIT = 1800;
         double MIN_MULTIPLIER = 0.3;
         switch (slideState) {
@@ -168,8 +169,6 @@ public class ArmSubsystem {
                 }
                 break;
         }
-
-        a = gamepad2.isDown(GamepadKeys.Button.RIGHT_BUMPER);
     }
 
     // Decrease driving speed for more control when the slides are lifted
@@ -182,7 +181,7 @@ public class ArmSubsystem {
             case IDLE:
                 if (rtReader.isDown()) {
                     outtakeState = OuttakeState.IN;
-                    outtake.setPower(-1);
+                    outtake.setPower(-0.5);
                 } else if (ltReader.isDown() && !rtReader.isDown()) {
                     outtakeState = OuttakeState.OUT;
                 }
@@ -194,7 +193,7 @@ public class ArmSubsystem {
                 }
                 break;
             case OUT:
-                outtake.setPower(1);
+                outtake.setPower(0.5);
                 if (!ltReader.isDown()) {
                     outtakeState = OuttakeState.IDLE;
                     outtake.setPower(0);
@@ -220,7 +219,7 @@ public class ArmSubsystem {
     }
 
     // Telemetry
-    public boolean rightBumperDown() { return a; }
+//    public boolean rightBumperDown() { return a; }
     public String getLiftState() { return slideState.name(); }
     public int getSlidePosition() { return slides.getCurrentPosition(); }
     public double getV4bPosition() { return virtualBar.getPosition(); }
@@ -231,7 +230,7 @@ public class ArmSubsystem {
 
     // Autonomous Functions
 
-    public Action spinOuttake(double power) {
+    public Action spinOuttake(double power, double time) {
         return new Action() {
             boolean set = false;
             @Override
@@ -240,12 +239,12 @@ public class ArmSubsystem {
                     dropTimer.reset();
                     set = true;
                 }
-                if (dropTimer.seconds() < 1.9) {
+                if (dropTimer.seconds() < time-0.1) {
                     outtake.setPower(power);
                 } else {
                     outtake.setPower(0);
                 }
-                return dropTimer.seconds() < 3;
+                return dropTimer.seconds() < time;
             }
         };
     }
@@ -304,7 +303,7 @@ public class ArmSubsystem {
                         new SequentialAction(
                                 ready4bar(),
                                 new SleepAction(0.5),
-                                spinOuttake(0.5),
+                                spinOuttake(0.5, 3),
                                 new ParallelAction(
                                         readySlides(),
                                         reset4Bar()

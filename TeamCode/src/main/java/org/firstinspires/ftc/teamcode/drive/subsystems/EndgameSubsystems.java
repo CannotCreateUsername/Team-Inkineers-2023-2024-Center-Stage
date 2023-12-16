@@ -19,10 +19,10 @@ public class EndgameSubsystems {
         droneLauncher.setPosition(TAKEOFF);
     }
 
-    public void run(GamepadEx gamepad) {
-        if (gamepad.wasJustReleased(GamepadKeys.Button.DPAD_UP)) {
+    public void run(GamepadEx gamepad1, GamepadEx gamepad2) {
+        if (gamepad1.wasJustReleased(GamepadKeys.Button.DPAD_UP) || gamepad2.wasJustReleased(GamepadKeys.Button.DPAD_UP)) {
             droneLauncher.setPosition(LAUNCHED);
-        } else if (gamepad.wasJustPressed(GamepadKeys.Button.DPAD_DOWN)) {
+        } else if (gamepad1.wasJustPressed(GamepadKeys.Button.DPAD_DOWN) || gamepad2.wasJustPressed(GamepadKeys.Button.DPAD_DOWN)) {
             droneLauncher.setPosition(TAKEOFF);
         }
     }
