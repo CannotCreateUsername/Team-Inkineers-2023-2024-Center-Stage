@@ -11,6 +11,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.cv.ComputerVisionMediator;
 import org.firstinspires.ftc.teamcode.cv.RedOctopusPipeline;
+import org.firstinspires.ftc.teamcode.drive.subsystems.ArmSubsystem;
+import org.firstinspires.ftc.teamcode.drive.subsystems.IntakeSubsystem;
 
 @Autonomous(name = "Red Alliance Substation Auto", group = "Substation Side")
 public class RedSideAutoSubstation extends LinearOpMode {
@@ -24,8 +26,13 @@ public class RedSideAutoSubstation extends LinearOpMode {
         // Initialize the drive
         Pose2d startPose = new Pose2d(0, 0, Math.toRadians(0));
         MecanumDrive drive = new MecanumDrive(hardwareMap, startPose);
+        IntakeSubsystem intake = new IntakeSubsystem(hardwareMap);
+        ArmSubsystem arm = new ArmSubsystem(hardwareMap);
         ComputerVisionMediator CVMediator = new ComputerVisionMediator();
 
+        // Initialize some functions
+        AutoFunctions functions = new AutoFunctions();
+        functions.init(intake, arm, drive, false);
 
         // Run to the left spike location
         Action runToLeftProp = drive.actionBuilder(drive.pose)
@@ -65,16 +72,17 @@ public class RedSideAutoSubstation extends LinearOpMode {
             case NONE:
             case MIDDLE:
                 Actions.runBlocking(runToCenterProp);
-                CVMediator.turnPID(90);
+                CVMediator.turnPID(-90);
                 break;
             case LEFT:
                 Actions.runBlocking(runToLeftProp);
-                CVMediator.turnPID(90);
+                CVMediator.turnPID(-90);
                 break;
             case RIGHT:
                 Actions.runBlocking(runToRightProp);
-                CVMediator.turnPID(90);
+                CVMediator.turnPID(-90);
                 break;
         }
+        functions.intakePixel(drive.pose);
     }
 }

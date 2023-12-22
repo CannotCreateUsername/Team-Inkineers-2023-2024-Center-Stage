@@ -230,7 +230,7 @@ public class ArmSubsystem {
 
     // Autonomous Functions
 
-    public Action spinOuttake(double power, double time) {
+    public Action spinOuttake(double power, double duration) {
         return new Action() {
             boolean set = false;
             @Override
@@ -239,12 +239,12 @@ public class ArmSubsystem {
                     dropTimer.reset();
                     set = true;
                 }
-                if (dropTimer.seconds() < time-0.1) {
+                if (dropTimer.seconds() < duration-0.1) {
                     outtake.setPower(power);
                 } else {
                     outtake.setPower(0);
                 }
-                return dropTimer.seconds() < time;
+                return dropTimer.seconds() < duration;
             }
         };
     }

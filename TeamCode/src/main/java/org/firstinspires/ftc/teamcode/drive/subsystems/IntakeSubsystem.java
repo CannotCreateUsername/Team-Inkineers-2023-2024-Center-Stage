@@ -2,12 +2,15 @@ package org.firstinspires.ftc.teamcode.drive.subsystems;
 
 import androidx.annotation.NonNull;
 
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+import com.acmerobotics.roadrunner.Action;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.arcrobotics.ftclib.gamepad.TriggerReader;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 public class IntakeSubsystem {
     public enum IntakeState {
@@ -22,6 +25,8 @@ public class IntakeSubsystem {
 
     TriggerReader rtReader;
     TriggerReader ltReader;
+
+    ElapsedTime intakeTimer;
 
     public IntakeSubsystem(@NonNull HardwareMap hardwareMap) {
         intake = hardwareMap.get(DcMotor.class, "intake");
@@ -62,4 +67,22 @@ public class IntakeSubsystem {
     public String getIntakeState() { return intakeState.name(); }
 
     // Autonomous Functions
+    public Action spinIntake(double power, double duration) {
+        return new Action() {
+            boolean set = false;
+            @Override
+            public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+                if (!set) {
+                    intakeTimer.reset();
+                    set = true;
+                }
+                if (intakeTimer.seconds() < duration-0.1) {
+                    intake.setPower(power);
+                } else {
+                    intake.setPower(0);
+                }
+                return intakeTimer.seconds() < duration;
+            }
+        };
+    }
 }
