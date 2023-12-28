@@ -11,6 +11,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.drive.DriveFunctions;
 import org.firstinspires.ftc.teamcode.drive.subsystems.ArmSubsystem;
+import org.firstinspires.ftc.teamcode.drive.subsystems.ArmSubsystem2;
 import org.firstinspires.ftc.teamcode.drive.subsystems.EndgameSubsystems;
 import org.firstinspires.ftc.teamcode.drive.GamepadHelper;
 import org.firstinspires.ftc.teamcode.drive.subsystems.IntakeSubsystem;
@@ -42,7 +43,7 @@ public class BlueSideDrive extends LinearOpMode {
         IntakeSubsystem intake = new IntakeSubsystem(hardwareMap);
 
         // Initialize arm code
-        ArmSubsystem arm = new ArmSubsystem(hardwareMap);
+        ArmSubsystem2 arm = new ArmSubsystem2(hardwareMap);
 
         //Initialize drone launcher and hanging code
         EndgameSubsystems endgame = new EndgameSubsystems(hardwareMap);
@@ -92,7 +93,7 @@ public class BlueSideDrive extends LinearOpMode {
 
             // Run Robot Subsystems
             // Arm control loop
-            arm.runArm(gamepadEx1, gamepad1);
+            arm.runArm(gamepadEx1, gamepadEx2);
             arm.runOuttake(gamepadEx1);
             // Intake control loop
             intake.runIntake(gamepadEx1);

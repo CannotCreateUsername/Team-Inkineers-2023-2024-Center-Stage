@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.drive.subsystems.ArmSubsystem;
+import org.firstinspires.ftc.teamcode.drive.subsystems.ArmSubsystem2;
 import org.firstinspires.ftc.teamcode.drive.subsystems.EndgameSubsystems;
 import org.firstinspires.ftc.teamcode.drive.subsystems.IntakeSubsystem;
 
@@ -19,7 +20,7 @@ public class ArmTest extends LinearOpMode {
         GamepadEx gamepadEx1 = new GamepadEx(gamepad1);
         GamepadEx gamepadEx2 = new GamepadEx(gamepad2);
 
-        ArmSubsystem armSubsystem = new ArmSubsystem(hardwareMap);
+        ArmSubsystem2 armSubsystem = new ArmSubsystem2(hardwareMap);
         IntakeSubsystem intakeSubsystem = new IntakeSubsystem(hardwareMap);
         EndgameSubsystems endgameSubsystems = new EndgameSubsystems(hardwareMap);
 
@@ -31,7 +32,7 @@ public class ArmTest extends LinearOpMode {
                 ));
             }
 
-            armSubsystem.runArm(gamepadEx1, gamepad1);
+            armSubsystem.runArm(gamepadEx1, gamepadEx2);
             armSubsystem.runOuttake(gamepadEx1);
             intakeSubsystem.runIntake(gamepadEx1);
             endgameSubsystems.run(gamepadEx1, gamepadEx2);

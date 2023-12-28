@@ -92,7 +92,7 @@ public class RedSideDrive extends LinearOpMode {
 
             // Run Robot Subsystems
             // Arm control loop
-            arm.runArm(gamepadEx1, gamepad1);
+            arm.runArm(gamepadEx1, gamepadEx2);
             arm.runOuttake(gamepadEx1);
             // Intake control loop
             intake.runIntake(gamepadEx1);

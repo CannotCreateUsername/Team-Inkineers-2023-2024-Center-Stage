@@ -19,7 +19,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-public class ArmSubsystem {
+public class ArmSubsystem2 {
     public enum SlideState {
         RUNNING,
         PAUSED,
@@ -56,7 +56,7 @@ public class ArmSubsystem {
     TriggerReader rtReader;
     TriggerReader ltReader;
 
-    public ArmSubsystem(HardwareMap hardwareMap) {
+    public ArmSubsystem2(HardwareMap hardwareMap) {
         // Map actuator variables to actual hardware
         slides = hardwareMap.get(DcMotor.class, "slides");
         slides2 = hardwareMap.get(DcMotor.class, "slides2");
@@ -65,12 +65,12 @@ public class ArmSubsystem {
 
         // Motor behavior setup
         slides.setDirection(DcMotorSimple.Direction.REVERSE);
-        slides.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        slides.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         slides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         slides.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         slides2.setDirection(DcMotorSimple.Direction.REVERSE);
-        slides2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        slides2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         slides2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         slides2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
@@ -100,7 +100,7 @@ public class ArmSubsystem {
 //    boolean a;
 
     public void runArm(GamepadEx gamepad1, GamepadEx gamepad2) {
-        int SLIDE_LIMIT = 1800;
+        int SLIDE_LIMIT = 9000;
         double MIN_MULTIPLIER = 0.3;
         switch (slideState) {
             case REST:
@@ -113,16 +113,16 @@ public class ArmSubsystem {
                 }
                 if (timer.seconds() > 3.5 && !(slides.getCurrentPosition() <= 10)) {
                     // Account for slippage and prevent motor stalling
+//                    slides2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                     slides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                    slides2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                 }
                 break;
             case RUNNING:
                 liftMultiplier = ((float) SLIDE_LIMIT/slides.getCurrentPosition())/10 + MIN_MULTIPLIER; // 0.2 is the minimum multiplier
                 if (gamepad1.isDown(GamepadKeys.Button.RIGHT_BUMPER) && slides.getCurrentPosition() < SLIDE_LIMIT) {
-                    runToPosition(slides.getCurrentPosition()+100, 0.8);
+                    runToPosition(slides.getCurrentPosition()+100, 1);
                 } else if (gamepad1.isDown(GamepadKeys.Button.LEFT_BUMPER) && slides.getCurrentPosition() > 100) {
-                    runToPosition(slides.getCurrentPosition()-100, 0.8);
+                    runToPosition(slides.getCurrentPosition()-100, 1);
                 }
 
                 if (gamepad1.wasJustReleased(GamepadKeys.Button.X)) {
@@ -207,11 +207,7 @@ public class ArmSubsystem {
 
         slides.setTargetPosition(position);
         slides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        slides.setPower(powerPID(power));
-
-//        slides2.setTargetPosition(position);
-//        slides2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//        slides2.setPower(powerPID(power));
+        slides.setPower((power));
     }
 
     // Telemetry
