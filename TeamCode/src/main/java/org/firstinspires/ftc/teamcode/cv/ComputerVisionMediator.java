@@ -63,9 +63,10 @@ public class ComputerVisionMediator {
 
         imu.initialize(myIMUparameters);
 
-        initCV(hardwareMap, octopusPipeline);
         if (useAprilTag) {
             initAprilTagCV();
+        } else {
+            initCV(hardwareMap, octopusPipeline);
         }
 
         visionPortal = builder.build();
@@ -88,9 +89,10 @@ public class ComputerVisionMediator {
 
         imu.initialize(myIMUparameters);
 
-        initCV(hardwareMap, octopusPipeline);
         if (useAprilTag) {
             initAprilTagCV();
+        } else {
+            initCV(hardwareMap, octopusPipeline);
         }
 
         visionPortal = builder.build();

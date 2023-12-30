@@ -35,8 +35,8 @@ public class ArmSubsystem2 {
 
     private int SLIDE_LIMIT = 1900;
 
-    private final DcMotor slides;
-    private final DcMotor slides2;
+    public final DcMotor slides;
+    public final DcMotor slides2;
     private final Servo virtualBar;
     private final CRServo outtake;
 
@@ -111,7 +111,7 @@ public class ArmSubsystem2 {
         currentSlides.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
-    public double powerPID(double power) {
+    private double powerPID(double power) {
         if (Math.abs(currentSlides.getCurrentPosition() - currentTarget) > 15){
             // our threshold is within
             // 15 encoder ticks of our target.
@@ -228,7 +228,6 @@ public class ArmSubsystem2 {
     public String getCurrentSlides() {return currentSlides == slides ? "114 RPM" : "435 RPM"; }
 
     // Autonomous Functions
-
     public Action spinOuttake(double power, double duration) {
         return new Action() {
             boolean set = false;
