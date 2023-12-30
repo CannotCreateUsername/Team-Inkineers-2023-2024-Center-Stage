@@ -108,6 +108,7 @@ public class BlueSideDrive extends LinearOpMode {
             telemetry.addData("Lift State", arm.getLiftState());
             telemetry.addData("Drone Launch State", endgame.getLauncherState());
             telemetry.addData("Drive Multiplier", arm.getPowerMultiplier());
+            telemetry.addData("Current VSlides Motor", arm.getCurrentSlides());
             telemetry.update();
         }
     }
