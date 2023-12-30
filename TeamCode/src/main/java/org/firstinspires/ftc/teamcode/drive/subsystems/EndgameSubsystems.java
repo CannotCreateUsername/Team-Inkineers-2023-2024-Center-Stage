@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 public class EndgameSubsystems {
 
     /** @noinspection FieldCanBeLocal*/ // Drone Launcher Positions
-    private final double TAKEOFF = -1;
+    private final double TAKEOFF = -0.01;
     /** @noinspection FieldCanBeLocal*/ // Lol die warnings
     private final double LAUNCHED = 1;
 
