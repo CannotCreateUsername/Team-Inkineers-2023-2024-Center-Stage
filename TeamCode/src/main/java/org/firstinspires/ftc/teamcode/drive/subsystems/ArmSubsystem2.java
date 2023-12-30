@@ -96,6 +96,7 @@ public class ArmSubsystem2 {
     }
 
     public void setCurrentSlides(DcMotor motor) {
+        // Disable the unused motor
         if (motor == slides) {
             SLIDE_LIMIT = 7000;
             slides2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
