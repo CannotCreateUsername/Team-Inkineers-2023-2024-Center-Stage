@@ -7,7 +7,6 @@ import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.drive.subsystems.ArmSubsystem;
 import org.firstinspires.ftc.teamcode.drive.subsystems.ArmSubsystem2;
 import org.firstinspires.ftc.teamcode.drive.subsystems.EndgameSubsystems;
 import org.firstinspires.ftc.teamcode.drive.subsystems.IntakeSubsystem;
@@ -30,6 +29,10 @@ public class ArmTest extends LinearOpMode {
                 Actions.runBlocking(new SequentialAction(
                         armSubsystem.dropYellowPixel()
                 ));
+            } else if (gamepadEx1.wasJustPressed(GamepadKeys.Button.A) && armSubsystem.intakePower <= 1) {
+                armSubsystem.intakePower += 0.1;
+            } else if (gamepadEx1.wasJustPressed(GamepadKeys.Button.B) && armSubsystem.intakePower >= -1) {
+                armSubsystem.intakePower -= 0.1;
             }
 
             armSubsystem.runArm(gamepadEx1, gamepadEx2);
@@ -41,7 +44,8 @@ public class ArmTest extends LinearOpMode {
             gamepadEx2.readButtons();
 
             telemetry.addData("Slide State", armSubsystem.getLiftState());
-            telemetry.addData("Slide Position", armSubsystem.getSlidePosition());
+            telemetry.addData("Slide Position 114", armSubsystem.getSlidePosition114());
+            telemetry.addData("Slide Position 435", armSubsystem.getSlidePosition435());
             telemetry.addData("V4B Position", armSubsystem.getV4bPosition());
             telemetry.addData("Arm Timer", armSubsystem.getArmTimer());
             telemetry.addData("Outtake State", armSubsystem.getOuttakeState());
@@ -50,6 +54,7 @@ public class ArmTest extends LinearOpMode {
 //            telemetry.addData("Right Bumper Down?", armSubsystem.rightBumperDown());
             telemetry.addData("FIRST Slide motor power", armSubsystem.getSlide1Power());
             telemetry.addData("SECOND Slide motor power", armSubsystem.getSlide2Power());
+            telemetry.addData("Intake Power", armSubsystem.intakePower);
             telemetry.update();
         }
     }

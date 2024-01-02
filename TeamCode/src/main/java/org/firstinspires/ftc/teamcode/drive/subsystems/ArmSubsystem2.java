@@ -33,26 +33,31 @@ public class ArmSubsystem2 {
 
     private final static double Kp = .05;
 
-    private int SLIDE_LIMIT = 1900;
-
     public final DcMotor slides;
     public final DcMotor slides2;
     private final Servo virtualBar;
     private final CRServo outtake;
+    private final RevTouchSensor limitSwitch;
 
     private DcMotor currentSlides;
 
-    private final RevTouchSensor limitSwitch;
+    // Changed later when motors are set
+    private int SLIDE_LIMIT = 1900;
 
+    // Virtual 4 Bar Positions
     public final int DROP = -1;
     public final int LOAD = 1;
 
+    public double intakePower = 0.5;
+
+    // For manipulating driving speed
     private double liftMultiplier = 1;
 
     SlideState slideState;
     OuttakeState outtakeState;
 
     private double currentTarget;
+
     private boolean dropped = false;
     private boolean drop = false;
 
@@ -139,7 +144,7 @@ public class ArmSubsystem2 {
                     slideState = SlideState.RUNNING;
                 }
                 if (timer.seconds() > 1.5) {
-                    runToPosition(5);
+                    runToPosition(0);
                 }
                 if (limitSwitch.isPressed()) {
                     slides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -183,7 +188,7 @@ public class ArmSubsystem2 {
             case IDLE:
                 if (rtReader.isDown()) {
                     outtakeState = OuttakeState.IN;
-                    outtake.setPower(-0.5);
+                    outtake.setPower(-intakePower);
                 } else if (ltReader.isDown() && !rtReader.isDown()) {
                     outtakeState = OuttakeState.OUT;
                 }
@@ -195,7 +200,7 @@ public class ArmSubsystem2 {
                 }
                 break;
             case OUT:
-                outtake.setPower(0.5);
+                outtake.setPower(intakePower);
                 if (!ltReader.isDown()) {
                     outtakeState = OuttakeState.IDLE;
                     outtake.setPower(0);
@@ -220,7 +225,8 @@ public class ArmSubsystem2 {
 
     // Telemetry
     public String getLiftState() { return slideState.name(); }
-    public int getSlidePosition() { return slides.getCurrentPosition(); }
+    public int getSlidePosition114() { return slides.getCurrentPosition(); }
+    public int getSlidePosition435() { return slides2.getCurrentPosition(); }
     public double getV4bPosition() { return virtualBar.getPosition(); }
     public double getArmTimer() { return timer.seconds(); }
     public String getOuttakeState() { return outtakeState.name(); }
