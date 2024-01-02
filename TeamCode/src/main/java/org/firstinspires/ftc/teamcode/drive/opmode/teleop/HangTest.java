@@ -1,11 +1,13 @@
 package org.firstinspires.ftc.teamcode.drive.opmode.teleop;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
-@TeleOp(name = "Hang Weird", group = "LinearOpmode")
+@Disabled
+@TeleOp(name = "Hang Weird", group = "Linear Opmode")
 public class HangTest extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
