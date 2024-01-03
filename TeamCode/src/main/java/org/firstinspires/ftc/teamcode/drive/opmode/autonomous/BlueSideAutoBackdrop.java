@@ -13,6 +13,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.cv.BlueOctopusPipeline;
 import org.firstinspires.ftc.teamcode.cv.ComputerVisionMediator;
+import org.firstinspires.ftc.teamcode.drive.AutoCoordinates;
 import org.firstinspires.ftc.teamcode.drive.subsystems.ArmSubsystem2;
 
 @Autonomous(name = "Blue Alliance Backdrop Auto", group = "Backdrop Side")
@@ -24,8 +25,11 @@ public class BlueSideAutoBackdrop extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         ElapsedTime timer1 = new ElapsedTime();
 
+        // Get the coordinates
+        AutoCoordinates coords = new AutoCoordinates(false);
+
         // Initialize the drive
-        Pose2d startPose = new Pose2d(0, 0, Math.toRadians(0));
+        Pose2d startPose = coords.startPos;
         MecanumDrive drive = new MecanumDrive(hardwareMap, startPose);
         ArmSubsystem2 arm = new ArmSubsystem2(hardwareMap);
         ComputerVisionMediator CVMediator = new ComputerVisionMediator();
@@ -35,35 +39,35 @@ public class BlueSideAutoBackdrop extends LinearOpMode {
 
         // Run to the left spike location
         Action runToLeftProp = drive.actionBuilder(startPose)
-                .strafeToConstantHeading(new Vector2d(28, 0))
-                .strafeToConstantHeading(new Vector2d(28, -12))
-                .strafeToConstantHeading(new Vector2d(24, -12))
-                .strafeToConstantHeading(new Vector2d(16.5, -34))
+                .strafeToLinearHeading(coords.betweenSidePropPos, coords.STRAIGHT)
+                .strafeToLinearHeading(coords.propLeftPos, coords.STRAIGHT)
+                .strafeToLinearHeading(coords.backFromLeftPropPos, coords.STRAIGHT)
+                .strafeToLinearHeading(coords.backdropLeftPos, coords.STRAIGHT)
                 .build();
         // Run to the center spike location
         Action runToCenterProp = drive.actionBuilder(startPose)
-                .strafeToConstantHeading(new Vector2d(32, 0))
-                .strafeToConstantHeading(new Vector2d(24, 0))
-                .strafeToConstantHeading(new Vector2d(26, -31))
+                .strafeToLinearHeading(coords.propCenterPos, coords.STRAIGHT)
+                .strafeToLinearHeading(coords.backFromCenterPropPos, coords.STRAIGHT)
+                .strafeToLinearHeading(coords.backdropCenterPos, coords.STRAIGHT)
                 .build();
         // Run to the right spike location
         Action runToRightProp = drive.actionBuilder(startPose)
-                .strafeToConstantHeading(new Vector2d(28, 0))
-                .strafeToConstantHeading(new Vector2d(28, 12))
-                .strafeToConstantHeading(new Vector2d(24, 12))
-                .strafeToConstantHeading(new Vector2d(31, -30))
+                .strafeToLinearHeading(coords.betweenSidePropPos, coords.STRAIGHT)
+                .strafeToLinearHeading(coords.propRightPos, coords.STRAIGHT)
+                .strafeToLinearHeading(coords.backFromRightPropPos, coords.STRAIGHT)
+                .strafeToLinearHeading(coords.backdropRightPos, coords.STRAIGHT)
                 .build();
 
         Action scoot = drive.actionBuilder(new Pose2d(new Vector2d(24, -34), Math.toRadians(90)))
-                .strafeToConstantHeading(new Vector2d(24, -28))
+                .strafeToLinearHeading(new Vector2d(24, -28), coords.ROTATED)
                 .build();
 
         // Park in backstage
         Action leftPark = drive.actionBuilder(new Pose2d(new Vector2d(24, -30), Math.toRadians(90)))
-                .strafeToConstantHeading(new Vector2d(-4, -34))
+                .strafeToLinearHeading(new Vector2d(-4, -34), coords.ROTATED)
                 .build();
         Action middlePark = drive.actionBuilder(new Pose2d(new Vector2d(24, -30), Math.toRadians(90)))
-                .strafeToConstantHeading(new Vector2d(4, -36))
+                .strafeToLinearHeading(new Vector2d(4, -36), coords.ROTATED)
                 .build();
 
         CVMediator.init(hardwareMap, drive, octopusPipeline, false, this);

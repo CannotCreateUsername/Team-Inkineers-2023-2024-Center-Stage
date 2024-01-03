@@ -221,7 +221,12 @@ public class ComputerVisionMediator {
     }
 
     // VERY COOL ACTIONS
-    public Action turnAlign() { return new TurnAlign(); }
+    public Action turn90(boolean reverse) {
+        return telemetryPacket -> {
+            turnPID(reverse ? -90:90);
+            return false;
+        };
+    }
     public Action distanceAlign() { return new DistanceAlign(); }
 
     /**

@@ -13,7 +13,7 @@ import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.cv.ComputerVisionMediator;
 import org.firstinspires.ftc.teamcode.cv.RedOctopusPipeline;
 
-@Disabled
+//@Disabled
 @TeleOp(name = "Dual CV Testing", group = "CV")
 public class DualCVTester extends LinearOpMode {
 
@@ -37,9 +37,9 @@ public class DualCVTester extends LinearOpMode {
         while (opModeIsActive()) {
 
             if (gamepad1.a) {
-                computerVisionMediator.turnPID(90);
+                Actions.runBlocking(computerVisionMediator.turn90(false));
             } else if (gamepad1.b) {
-                Actions.runBlocking(computerVisionMediator.distanceAlign());
+                Actions.runBlocking(computerVisionMediator.turn90(true));
             }
 
             // Take gamepad input and pass it into the mecanum drive function

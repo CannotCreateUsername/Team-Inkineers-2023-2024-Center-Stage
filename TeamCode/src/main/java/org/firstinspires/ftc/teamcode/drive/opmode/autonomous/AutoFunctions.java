@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.drive.opmode.autonomous;
 
+
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
@@ -26,7 +27,7 @@ public class AutoFunctions {
 
     public void intakePixel(Pose2d startPose) {
         Action moveToStack = drive.actionBuilder(startPose)
-                .strafeToConstantHeading(new Vector2d(40, isOnBlueSide?26:-26))
+                .strafeToConstantHeading(new Vector2d(24, isOnBlueSide?26:-26))
                 .build();
 
         Actions.runBlocking(
