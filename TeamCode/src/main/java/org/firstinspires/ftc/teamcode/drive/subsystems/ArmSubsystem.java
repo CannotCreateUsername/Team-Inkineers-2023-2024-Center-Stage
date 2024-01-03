@@ -12,6 +12,7 @@ import com.acmerobotics.roadrunner.SleepAction;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.arcrobotics.ftclib.gamepad.TriggerReader;
+import com.qualcomm.hardware.rev.RevTouchSensor;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -22,7 +23,6 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 public class ArmSubsystem {
     public enum SlideState {
         RUNNING,
-        PAUSED,
         REST
     }
     public enum OuttakeState {
@@ -37,6 +37,7 @@ public class ArmSubsystem {
     private final DcMotor slides2;
     private final Servo virtualBar;
     private final CRServo outtake;
+    private final RevTouchSensor limitSwitch;
 
     public final int DROP = -1;
     public final int LOAD = 1;
@@ -62,6 +63,7 @@ public class ArmSubsystem {
         slides2 = hardwareMap.get(DcMotor.class, "slides2");
         virtualBar = hardwareMap.get(Servo.class, "bar");
         outtake = hardwareMap.get(CRServo.class, "outtake");
+        limitSwitch = hardwareMap.get(RevTouchSensor.class, "limit_switch");
 
         // Motor behavior setup
         slides.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -70,7 +72,7 @@ public class ArmSubsystem {
         slides.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         slides2.setDirection(DcMotorSimple.Direction.REVERSE);
-        slides2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        slides2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         slides2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         slides2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
@@ -100,7 +102,7 @@ public class ArmSubsystem {
 //    boolean a;
 
     public void runArm(GamepadEx gamepad1, GamepadEx gamepad2) {
-        int SLIDE_LIMIT = 1800;
+        int SLIDE_LIMIT = 1900;
         double MIN_MULTIPLIER = 0.3;
         switch (slideState) {
             case REST:
@@ -109,9 +111,9 @@ public class ArmSubsystem {
                     slideState = SlideState.RUNNING;
                 }
                 if (timer.seconds() > 1.5) {
-                    runToPosition(5);
+                    runToPosition(0);
                 }
-                if (timer.seconds() > 3.5 && !(slides.getCurrentPosition() <= 10)) {
+                if (limitSwitch.isPressed()) {
                     // Account for slippage and prevent motor stalling
                     slides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                     slides2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -126,28 +128,6 @@ public class ArmSubsystem {
                 }
 
                 if (gamepad1.wasJustReleased(GamepadKeys.Button.X)) {
-                    virtualBar.setPosition(LOAD);
-                    slideState = SlideState.REST;
-                    timer.reset();
-                } else if (gamepad1.wasJustReleased(GamepadKeys.Button.RIGHT_BUMPER) || gamepad1.wasJustReleased(GamepadKeys.Button.LEFT_BUMPER)) {
-                    slideState = SlideState.PAUSED;
-                }
-
-                // Code to run the virtual four bar
-                if (gamepad1.wasJustPressed(GamepadKeys.Button.A) && !drop) {
-                    virtualBar.setPosition(DROP);
-                    drop = true;
-                } else if (gamepad1.wasJustPressed(GamepadKeys.Button.A) && drop) {
-                    virtualBar.setPosition(LOAD);
-                    drop = false;
-                }
-                break;
-            case PAUSED:
-                liftMultiplier = ((float) SLIDE_LIMIT/slides.getCurrentPosition())/10 + MIN_MULTIPLIER;
-                if (gamepad1.isDown(GamepadKeys.Button.RIGHT_BUMPER) || gamepad1.isDown(GamepadKeys.Button.LEFT_BUMPER)) {
-                    slideState = SlideState.RUNNING;
-                }
-                if (gamepad1.wasJustPressed(GamepadKeys.Button.X)) {
                     virtualBar.setPosition(LOAD);
                     slideState = SlideState.REST;
                     timer.reset();
@@ -209,9 +189,9 @@ public class ArmSubsystem {
         slides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         slides.setPower(powerPID(power));
 
-//        slides2.setTargetPosition(position);
-//        slides2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//        slides2.setPower(powerPID(power));
+        slides2.setTargetPosition(position);
+        slides2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        slides2.setPower(powerPID(power));
     }
 
     // Telemetry
