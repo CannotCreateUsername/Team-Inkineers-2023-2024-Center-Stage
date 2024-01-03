@@ -4,35 +4,48 @@ import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.Vector2d;
 
 public class AutoCoordinates {
+    public double ROTATED = Math.toRadians(90);
+    public double STRAIGHT = Math.toRadians(0);
+
+    public AutoCoordinates(boolean isRedSide) {
+        if (isRedSide) {
+            ROTATED = Math.toRadians(-90);
+            
+            backdropCenterPos = new Vector2d(26, 32);
+            backdropLeftPos = new Vector2d(31, 32);
+            backdropRightPos = new Vector2d(16.5, 32);
+
+            parkInsidePos = new Vector2d(52, 28); // Rotated
+            parkOutsidePos = new Vector2d(52, 28); // Rotated
+
+            toBackdropFromPixelStack = new Vector2d(47, 76); // Rotated
+        }
+    }
+    // Starting position
+    public Pose2d startPos = new Pose2d(new Vector2d(0, 0), Math.toRadians(0));
 
     // Team prop exact coordinates
-    public Pose2d centerPropPos = new Pose2d(new Vector2d(32, 0), Math.toRadians(0));
-    public Pose2d leftPropPos = new Pose2d(new Vector2d(28, -12), Math.toRadians(0));
-    public Pose2d rightPropPos = new Pose2d(new Vector2d(28, 12), Math.toRadians(0));
+    public Vector2d propCenterPos = new Vector2d(32, 0); // Straight
+    public Vector2d propLeftPos = new Vector2d(28, -12); // Straight
+    public Vector2d propRightPos = new Vector2d(28, 12); // Straight
 
     // Around the team prop for side randomization
-    public Pose2d sidePropReadyPos = new Pose2d(new Vector2d(28, 0), Math.toRadians(0)); // Run between the spike marks to strafe
-    public Pose2d backFromLeftPropPos = new Pose2d(new Vector2d(24, -12), Math.toRadians(0)); // Scoot back 4 inches from left prop
-    public Pose2d backFromRightPropPos = new Pose2d(new Vector2d(24, 12), Math.toRadians(0)); // Scoot back 4 inches from right prop
+    public Vector2d betweenSidePropPos = new Vector2d(28, 0); // Run between the spike marks to strafe Straight
+    public Vector2d backFromCenterPropPos = new Vector2d(24, 0); // Scoot back 8 inches from center prop Straight
+    public Vector2d backFromLeftPropPos = new Vector2d(24, -12); // Scoot back 4 inches from left prop Straight
+    public Vector2d backFromRightPropPos = new Vector2d(24, 12); // Scoot back 4 inches from right prop Straight
 
     // Backdrop coordinates for BLUE side (Do I rotate before or after?? Adjust the angle.)
-    public Pose2d blueCenterBackdropPos = new Pose2d(new Vector2d(26, -32), Math.toRadians(0)); // Center position for backdrop
-    public Pose2d blueLeftBackdropPos = new Pose2d(new Vector2d(16.5, -32), Math.toRadians(0)); // Left position for backdrop
-    public Pose2d blueRightBackdropPos = new Pose2d(new Vector2d(31, -32), Math.toRadians(0)); // Right position for backdrop
-
-    // Backdrop coordinates for RED side (Do I rotate before or after?? Adjust the angle.)
-    public Pose2d redCenterBackdropPos = new Pose2d(new Vector2d(26, 32), Math.toRadians(0)); // Center position for backdrop
-    public Pose2d redLeftBackdropPos = new Pose2d(new Vector2d(31, 32), Math.toRadians(0)); // Left position for backdrop
-    public Pose2d redRightBackdropPos = new Pose2d(new Vector2d(16.5, 32), Math.toRadians(0)); // Right position for backdrop
+    public Vector2d backdropCenterPos = new Vector2d(26, -32); // Straight
+    public Vector2d backdropLeftPos = new Vector2d(16.5, -32); // Straight
+    public Vector2d backdropRightPos = new Vector2d(31, -32); // Straight
 
     // Parking options for BLUE side
-    public Pose2d blueInsideParkPos = new Pose2d(new Vector2d(52, -28), Math.toRadians(90)); // Inside parking position
-    public Pose2d blueOutsideParkPos = new Pose2d(new Vector2d(52, -28), Math.toRadians(90)); // Outside parking position
-
-    // Parking options for RED side
-    public Pose2d redInsideParkPos = new Pose2d(new Vector2d(52, 28), Math.toRadians(-90)); // Inside parking position
-    public Pose2d redOutsideParkPos = new Pose2d(new Vector2d(52, 28), Math.toRadians(-90)); // Outside parking position
+    public Vector2d parkInsidePos = new Vector2d(52, -28); // Rotated
+    public Vector2d parkOutsidePos = new Vector2d(52, -28); // Rotated
 
     // Substation side stuff
     // Exists in AutoFunctions.java
+    public Vector2d toBackdropFromPixelStack = new Vector2d(47, -76); // Rotated
+
 }
