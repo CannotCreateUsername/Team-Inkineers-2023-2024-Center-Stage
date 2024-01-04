@@ -14,11 +14,14 @@ import org.firstinspires.ftc.teamcode.drive.subsystems.ArmSubsystem;
 public class HangTestOld extends LinearOpMode {
     boolean selected = false;
     boolean hardcode = false;
+    boolean selected2 = false;
 
     DcMotor slides = null;
     DcMotor slides2 = null;
 
     ArmSubsystem arm = null;
+
+    private double position = 0;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -29,13 +32,27 @@ public class HangTestOld extends LinearOpMode {
                 slides2 = hardwareMap.get(DcMotor.class, "slides2");
                 slides.setDirection(DcMotorSimple.Direction.REVERSE);
                 slides.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+                slides.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                 slides2.setDirection(DcMotorSimple.Direction.REVERSE);
                 slides2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+                slides2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                 selected = true;
             } else if (gamepad1.y) {
                 hardcode = false;
                 arm = new ArmSubsystem(hardwareMap);
                 selected = true;
+            }
+
+            if (hardcode) {
+                while (!selected2) {
+                    if (gamepad1.a) {
+                        break;
+                    } else if (gamepad1.b) {
+                        selected2 = true;
+                    }
+                    telemetry.addData("Select mode again", "A for normal, B for PID");
+                    telemetry.update();
+                }
             }
 
             telemetry.addData("Select your mode", "X for simple, Y for subsystem");
@@ -50,12 +67,19 @@ public class HangTestOld extends LinearOpMode {
 
         waitForStart();
         while (opModeIsActive()) {
-            if (gamepad1.dpad_down && hardcode) {
+            if (gamepad1.dpad_down && hardcode && !selected2) {
                 slides.setPower(-1);
                 slides2.setPower(-1);
-            } else if (gamepad1.dpad_up && hardcode) {
+            } else if (gamepad1.dpad_up && hardcode && !selected2) {
                 slides.setPower(0.5);
                 slides2.setPower(0.5);
+            } else if (hardcode && selected2) {
+                if (gamepad1.dpad_up && position <= 1900) {
+                    position += 100;
+                } else if (gamepad1.dpad_down && position > 100) {
+                    position -= 100;
+                }
+                PowerP();
             } else {
                 if (hardcode) {
                     slides.setPower(0);
@@ -68,6 +92,15 @@ public class HangTestOld extends LinearOpMode {
             }
             gamepadEx1.readButtons();
             gamepadEx2.readButtons();
+        }
+    }
+
+    private void PowerP() {
+        double kP = 0.05;
+        double error = position - slides.getCurrentPosition();
+        if (Math.abs(error) > 2) {
+            slides.setPower(error * kP);
+            slides2.setPower(error * kP);
         }
     }
 }
