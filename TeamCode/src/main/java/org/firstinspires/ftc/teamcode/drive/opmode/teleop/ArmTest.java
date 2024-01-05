@@ -7,7 +7,7 @@ import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.drive.subsystems.ArmSubsystem2;
+import org.firstinspires.ftc.teamcode.drive.subsystems.ArmSubsystem;
 import org.firstinspires.ftc.teamcode.drive.subsystems.EndgameSubsystems;
 import org.firstinspires.ftc.teamcode.drive.subsystems.IntakeSubsystem;
 
@@ -19,9 +19,9 @@ public class ArmTest extends LinearOpMode {
         GamepadEx gamepadEx1 = new GamepadEx(gamepad1);
         GamepadEx gamepadEx2 = new GamepadEx(gamepad2);
 
-        ArmSubsystem2 armSubsystem = new ArmSubsystem2(hardwareMap);
+        ArmSubsystem armSubsystem = new ArmSubsystem(hardwareMap);
         IntakeSubsystem intakeSubsystem = new IntakeSubsystem(hardwareMap);
-        EndgameSubsystems endgameSubsystems = new EndgameSubsystems(hardwareMap);
+//        EndgameSubsystems endgameSubsystems = new EndgameSubsystems(hardwareMap);
 
         waitForStart();
         while (opModeIsActive()) {
@@ -38,19 +38,19 @@ public class ArmTest extends LinearOpMode {
             armSubsystem.runArm(gamepadEx1, gamepadEx2);
             armSubsystem.runOuttake(gamepadEx1);
             intakeSubsystem.runIntake(gamepadEx1);
-            endgameSubsystems.run(gamepadEx1, gamepadEx2);
+//            endgameSubsystems.run(gamepadEx1, gamepadEx2);
 
             gamepadEx1.readButtons();
             gamepadEx2.readButtons();
 
             telemetry.addData("Slide State", armSubsystem.getLiftState());
-            telemetry.addData("Slide Position 114", armSubsystem.getSlidePosition114());
-            telemetry.addData("Slide Position 435", armSubsystem.getSlidePosition435());
+            telemetry.addData("Slide Position", armSubsystem.getSlidePosition());
+            telemetry.addData("Current Target", armSubsystem.getCurrentTarget());
             telemetry.addData("V4B Position", armSubsystem.getV4bPosition());
             telemetry.addData("Arm Timer", armSubsystem.getArmTimer());
             telemetry.addData("Outtake State", armSubsystem.getOuttakeState());
             telemetry.addData("Intake State", intakeSubsystem.getIntakeState());
-            telemetry.addData("Drone Launch State", endgameSubsystems.getLauncherState());
+//            telemetry.addData("Drone Launch State", endgameSubsystems.getLauncherState());
 //            telemetry.addData("Right Bumper Down?", armSubsystem.rightBumperDown());
             telemetry.addData("FIRST Slide motor power", armSubsystem.getSlide1Power());
             telemetry.addData("SECOND Slide motor power", armSubsystem.getSlide2Power());

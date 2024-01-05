@@ -21,7 +21,7 @@ public class HangTestOld extends LinearOpMode {
 
     ArmSubsystem arm = null;
 
-    private double position = 0;
+    private double currentTarget = 0;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -31,7 +31,7 @@ public class HangTestOld extends LinearOpMode {
                 upperSlides = hardwareMap.get(DcMotor.class, "top_slide");
                 lowerSlides = hardwareMap.get(DcMotor.class, "bottom_slide");
                 upperSlides.setDirection(DcMotorSimple.Direction.REVERSE);
-                upperSlides.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+                upperSlides.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
                 upperSlides.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                 lowerSlides.setDirection(DcMotorSimple.Direction.REVERSE);
                 lowerSlides.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -68,20 +68,20 @@ public class HangTestOld extends LinearOpMode {
         waitForStart();
         while (opModeIsActive()) {
             if (gamepad1.dpad_down && hardcode && !selected2) {
-                upperSlides.setPower(-1);
-                lowerSlides.setPower(-1);
+                upperSlides.setPower(-0.5);
+                lowerSlides.setPower(-0.5);
             } else if (gamepad1.dpad_up && hardcode && !selected2) {
                 upperSlides.setPower(0.5);
                 lowerSlides.setPower(0.5);
             } else if (hardcode && selected2) {
-                if (gamepad1.dpad_up && position <= 1900) {
-                    position += 5;
-                } else if (gamepad1.dpad_down && position > 100) {
-                    position -= 5;
+                if (gamepadEx1.isDown(GamepadKeys.Button.RIGHT_BUMPER) && currentTarget <= 1900) {
+                    currentTarget += 25;
+                } else if (gamepadEx1.isDown(GamepadKeys.Button.LEFT_BUMPER) && currentTarget > 25) {
+                    currentTarget -= 25;
                 }
                 PowerP();
             } else {
-                if (hardcode && gamepadEx1.wasJustReleased(GamepadKeys.Button.DPAD_UP)) {
+                if (hardcode && gamepadEx1.wasJustReleased(GamepadKeys.Button.DPAD_UP) && !selected2) {
                     upperSlides.setPower(0);
                     lowerSlides.setPower(0);
                 }
@@ -90,8 +90,10 @@ public class HangTestOld extends LinearOpMode {
             if (!hardcode) {
                 arm.runArm(gamepadEx1, gamepadEx2);
                 telemetry.addData("Encoder Position", arm.getSlidePosition());
+                telemetry.addData("is left bumper down", arm.leftBumperDown());
+            } else {
+                telemetry.addData("Encoder Position", lowerSlides.getCurrentPosition());
             }
-            telemetry.addData("is left bumper down", arm.leftBumperDown());
             gamepadEx1.readButtons();
             gamepadEx2.readButtons();
             telemetry.update();
@@ -99,11 +101,11 @@ public class HangTestOld extends LinearOpMode {
     }
 
     private void PowerP() {
-        double kP = 0.05;
-        double error = position - lowerSlides.getCurrentPosition();
+        double kP = 0.01;
+        double error = currentTarget - lowerSlides.getCurrentPosition();
         if (Math.abs(error) > 2) {
-            upperSlides.setPower(error * kP);
-            lowerSlides.setPower(error * kP);
+            upperSlides.setPower(error * kP * 0.6);
+            lowerSlides.setPower(error * kP * 0.6);
         }
     }
 }
