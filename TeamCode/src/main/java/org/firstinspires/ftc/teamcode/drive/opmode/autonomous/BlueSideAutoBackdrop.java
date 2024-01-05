@@ -35,7 +35,7 @@ public class BlueSideAutoBackdrop extends LinearOpMode {
         ComputerVisionMediator CVMediator = new ComputerVisionMediator();
 
         // Change to torque motor for reliability
-        arm.setCurrentSlides(arm.slides);
+        arm.setCurrentSlides(arm.upperSlides);
 
         // Run to the left spike location
         Action runToLeftProp = drive.actionBuilder(startPose)

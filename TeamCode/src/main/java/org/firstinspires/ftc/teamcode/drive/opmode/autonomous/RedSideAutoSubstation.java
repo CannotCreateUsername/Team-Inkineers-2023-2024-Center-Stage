@@ -35,7 +35,7 @@ public class RedSideAutoSubstation extends LinearOpMode {
         functions.init(intake, arm, drive, false);
 
         // Change to torque motor for reliability
-        arm.setCurrentSlides(arm.slides);
+        arm.setCurrentSlides(arm.upperSlides);
 
         // Run to the left spike location
         Action runToLeftProp = drive.actionBuilder(drive.pose)

@@ -33,8 +33,8 @@ public class ArmSubsystem2 {
 
     private final static double Kp = .05;
 
-    public final DcMotor slides;
-    public final DcMotor slides2;
+    public final DcMotor upperSlides;
+    public final DcMotor lowerSlides;
     private final Servo virtualBar;
     private final CRServo outtake;
     private final RevTouchSensor limitSwitch;
@@ -69,25 +69,25 @@ public class ArmSubsystem2 {
 
     public ArmSubsystem2(HardwareMap hardwareMap) {
         // Map actuator variables to actual hardware
-        slides = hardwareMap.get(DcMotor.class, "slides");
-        slides2 = hardwareMap.get(DcMotor.class, "slides2");
+        upperSlides = hardwareMap.get(DcMotor.class, "top_slide");
+        lowerSlides = hardwareMap.get(DcMotor.class, "bottom_slide");
         virtualBar = hardwareMap.get(Servo.class, "bar");
         outtake = hardwareMap.get(CRServo.class, "outtake");
         limitSwitch = hardwareMap.get(RevTouchSensor.class, "limit_switch");
 
         // Motor behavior setup
         // 114 RPM - Hanging Motor
-        slides.setDirection(DcMotorSimple.Direction.REVERSE);
-        slides.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        slides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        slides.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        upperSlides.setDirection(DcMotorSimple.Direction.REVERSE);
+        upperSlides.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        upperSlides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        upperSlides.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         // 435 RPM - Backdrop Motor
-        slides2.setDirection(DcMotorSimple.Direction.REVERSE);
-        slides2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        slides2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        slides2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        lowerSlides.setDirection(DcMotorSimple.Direction.REVERSE);
+        lowerSlides.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        lowerSlides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        lowerSlides.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        setCurrentSlides(slides2);
+        setCurrentSlides(lowerSlides);
 
         // Initialize virtual four bar
         virtualBar.setPosition(LOAD);
@@ -102,14 +102,14 @@ public class ArmSubsystem2 {
 
     public void setCurrentSlides(DcMotor motor) {
         // Disable the unused motor
-        if (motor == slides) {
+        if (motor == upperSlides) {
             SLIDE_LIMIT = 7000;
-            slides2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-            slides2.setPower(0);
-        } else if (motor == slides2) {
+            lowerSlides.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+            lowerSlides.setPower(0);
+        } else if (motor == lowerSlides) {
             SLIDE_LIMIT = 1900;
-            slides.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-            slides.setPower(0);
+            upperSlides.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+            upperSlides.setPower(0);
         }
 
         // Change the current motor
@@ -137,18 +137,18 @@ public class ArmSubsystem2 {
             case REST:
                 liftMultiplier = 1;
                 if (gamepad1.wasJustPressed(GamepadKeys.Button.RIGHT_BUMPER)) {
-                    setCurrentSlides(slides2);
+                    setCurrentSlides(lowerSlides);
                     slideState = SlideState.RUNNING;
                 } else if (gamepad2.wasJustPressed(GamepadKeys.Button.RIGHT_BUMPER) && timer.seconds() > 1.5) {
-                    setCurrentSlides(slides);
+                    setCurrentSlides(upperSlides);
                     slideState = SlideState.RUNNING;
                 }
                 if (timer.seconds() > 1.5) {
                     runToPosition(0);
                 }
                 if (limitSwitch.isPressed()) {
-                    slides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                    slides2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                    upperSlides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                    lowerSlides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                     currentSlides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                 }
                 break;
@@ -225,14 +225,14 @@ public class ArmSubsystem2 {
 
     // Telemetry
     public String getLiftState() { return slideState.name(); }
-    public int getSlidePosition114() { return slides.getCurrentPosition(); }
-    public int getSlidePosition435() { return slides2.getCurrentPosition(); }
+    public int getSlidePosition114() { return upperSlides.getCurrentPosition(); }
+    public int getSlidePosition435() { return lowerSlides.getCurrentPosition(); }
     public double getV4bPosition() { return virtualBar.getPosition(); }
     public double getArmTimer() { return timer.seconds(); }
     public String getOuttakeState() { return outtakeState.name(); }
-    public double getSlide1Power() { return slides.getPower(); }
-    public double getSlide2Power() { return slides2.getPower(); }
-    public String getCurrentSlides() {return currentSlides == slides ? "114 RPM" : "435 RPM"; }
+    public double getSlide1Power() { return upperSlides.getPower(); }
+    public double getSlide2Power() { return lowerSlides.getPower(); }
+    public String getCurrentSlides() {return currentSlides == upperSlides ? "114 RPM" : "435 RPM"; }
 
     // Autonomous Functions
     public Action spinOuttake(double power, double duration) {
@@ -264,7 +264,7 @@ public class ArmSubsystem2 {
     public Action resetSlides() {
         return telemetryPacket -> {
             runToPosition(5);
-            return !(slides.getCurrentPosition() <= 5);
+            return !(upperSlides.getCurrentPosition() <= 5);
         };
     }
 
