@@ -13,7 +13,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.cv.ComputerVisionMediator;
 import org.firstinspires.ftc.teamcode.cv.RedOctopusPipeline;
-import org.firstinspires.ftc.teamcode.drive.subsystems.ArmSubsystem2;
+import org.firstinspires.ftc.teamcode.drive.subsystems.ArmSubsystem;
+import org.firstinspires.ftc.teamcode.drive.subsystems.IntakeSubsystem;
 
 @Autonomous(name = "Red Alliance Backdrop Auto 2", group = "Backdrop Side")
 public class RedSideAutoBackdrop2 extends LinearOpMode {
@@ -27,11 +28,12 @@ public class RedSideAutoBackdrop2 extends LinearOpMode {
         // Initialize the drive
         Pose2d startPose = new Pose2d(0, 0, Math.toRadians(0));
         MecanumDrive drive = new MecanumDrive(hardwareMap, startPose);
-        ArmSubsystem2 arm = new ArmSubsystem2(hardwareMap);
+        ArmSubsystem arm = new ArmSubsystem(hardwareMap);
         ComputerVisionMediator CVMediator = new ComputerVisionMediator();
 
-        // Change to torque motor for reliability
-        arm.setCurrentSlides(arm.upperSlides);
+        // Initialize some functions
+        AutoFunctions functions = new AutoFunctions();
+        functions.init(new IntakeSubsystem(hardwareMap), arm, drive, false);
 
         // Run to the left spike location
         Action runToLeftProp = drive.actionBuilder(startPose)

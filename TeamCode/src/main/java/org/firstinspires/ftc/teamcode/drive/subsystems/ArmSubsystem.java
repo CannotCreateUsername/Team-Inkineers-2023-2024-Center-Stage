@@ -38,6 +38,7 @@ public class ArmSubsystem {
     private final Servo virtualBar;
     private final CRServo outtake;
     private final RevTouchSensor limitSwitch;
+    private final RevTouchSensor boxSwitch;
 
     public final int DROP = -1;
     public final int LOAD = 1;
@@ -50,7 +51,6 @@ public class ArmSubsystem {
     OuttakeState outtakeState;
 
     private int currentTarget;
-    private boolean dropped = false;
     private boolean drop = false;
 
     ElapsedTime timer;
@@ -66,6 +66,7 @@ public class ArmSubsystem {
         virtualBar = hardwareMap.get(Servo.class, "bar");
         outtake = hardwareMap.get(CRServo.class, "outtake");
         limitSwitch = hardwareMap.get(RevTouchSensor.class, "limit_switch");
+        boxSwitch = hardwareMap.get(RevTouchSensor.class, "box_switch");
 
         // Motor behavior setup
         upperSlides.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -160,7 +161,7 @@ public class ArmSubsystem {
                 if (rtReader.isDown()) {
                     outtakeState = OuttakeState.IN;
                     outtake.setPower(-intakePower);
-                } else if (ltReader.isDown() && !rtReader.isDown()) {
+                } else if ((ltReader.isDown() && !rtReader.isDown()) || boxSwitch.isPressed()) {
                     outtakeState = OuttakeState.OUT;
                 }
                 break;
@@ -172,7 +173,7 @@ public class ArmSubsystem {
                 break;
             case OUT:
                 outtake.setPower(intakePower);
-                if (!ltReader.isDown()) {
+                if (!ltReader.isDown() || !boxSwitch.isPressed()) {
                     outtakeState = OuttakeState.IDLE;
                     outtake.setPower(0);
                 }
@@ -192,6 +193,8 @@ public class ArmSubsystem {
     public double getSlide2Power() { return lowerSlides.getPower(); }
 
     // Autonomous Functions
+    public boolean touching() { return boxSwitch.isPressed(); }
+    private boolean dropped = false;
 
     public Action spinOuttake(double power, double duration) {
         return new Action() {

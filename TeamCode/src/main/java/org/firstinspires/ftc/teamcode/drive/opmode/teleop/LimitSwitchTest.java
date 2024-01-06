@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 public class LimitSwitchTest extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
-        RevTouchSensor boxSwitch = hardwareMap.get(RevTouchSensor.class, "boxSwitch");
+        RevTouchSensor boxSwitch = hardwareMap.get(RevTouchSensor.class, "box_switch");
 
         waitForStart();
         while (opModeIsActive()) {

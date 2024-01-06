@@ -14,7 +14,8 @@ import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.cv.BlueOctopusPipeline;
 import org.firstinspires.ftc.teamcode.cv.ComputerVisionMediator;
 import org.firstinspires.ftc.teamcode.drive.AutoCoordinates;
-import org.firstinspires.ftc.teamcode.drive.subsystems.ArmSubsystem2;
+import org.firstinspires.ftc.teamcode.drive.subsystems.ArmSubsystem;
+import org.firstinspires.ftc.teamcode.drive.subsystems.IntakeSubsystem;
 
 @Autonomous(name = "Blue Alliance Backdrop Auto", group = "Backdrop Side")
 public class BlueSideAutoBackdrop extends LinearOpMode {
@@ -31,11 +32,12 @@ public class BlueSideAutoBackdrop extends LinearOpMode {
         // Initialize the drive
         Pose2d startPose = coords.startPos;
         MecanumDrive drive = new MecanumDrive(hardwareMap, startPose);
-        ArmSubsystem2 arm = new ArmSubsystem2(hardwareMap);
+        ArmSubsystem arm = new ArmSubsystem(hardwareMap);
         ComputerVisionMediator CVMediator = new ComputerVisionMediator();
 
-        // Change to torque motor for reliability
-        arm.setCurrentSlides(arm.upperSlides);
+        // Initialize some functions
+        AutoFunctions functions = new AutoFunctions();
+        functions.init(new IntakeSubsystem(hardwareMap), arm, drive, true);
 
         // Run to the left spike location
         Action runToLeftProp = drive.actionBuilder(startPose)
@@ -56,10 +58,6 @@ public class BlueSideAutoBackdrop extends LinearOpMode {
                 .strafeToLinearHeading(coords.propRightPos, coords.STRAIGHT)
                 .strafeToLinearHeading(coords.backFromRightPropPos, coords.STRAIGHT)
                 .strafeToLinearHeading(coords.backdropRightPos, coords.STRAIGHT)
-                .build();
-
-        Action scoot = drive.actionBuilder(new Pose2d(new Vector2d(24, -34), Math.toRadians(90)))
-                .strafeToLinearHeading(new Vector2d(24, -28), coords.ROTATED)
                 .build();
 
         // Park in backstage
@@ -92,7 +90,7 @@ public class BlueSideAutoBackdrop extends LinearOpMode {
                 CVMediator.turnPID(90);
                 Actions.runBlocking(new SequentialAction(
                         new ParallelAction(
-                                scoot,
+                                functions.touchBackdrop(),
                                 arm.dropYellowPixel()
                         ),
                         middlePark
@@ -103,7 +101,7 @@ public class BlueSideAutoBackdrop extends LinearOpMode {
                 CVMediator.turnPID(90);
                 Actions.runBlocking(new SequentialAction(
                         new ParallelAction(
-                                scoot,
+                                functions.touchBackdrop(),
                                 arm.dropYellowPixel()
                         ),
                         leftPark
@@ -114,7 +112,7 @@ public class BlueSideAutoBackdrop extends LinearOpMode {
                 CVMediator.turnPID(90);
                 Actions.runBlocking(new SequentialAction(
                         new ParallelAction(
-                                scoot,
+                                functions.touchBackdrop(),
                                 arm.dropYellowPixel()
                         ),
                         middlePark
