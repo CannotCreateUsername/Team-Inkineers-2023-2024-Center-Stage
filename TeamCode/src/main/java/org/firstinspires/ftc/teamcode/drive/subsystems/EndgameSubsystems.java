@@ -10,7 +10,7 @@ public class EndgameSubsystems {
     /** @noinspection FieldCanBeLocal*/ // Drone Launcher Positions
     private final double TAKEOFF = 0.5;
     /** @noinspection FieldCanBeLocal*/ // Lol die warnings
-    private final double LAUNCHED = 1;
+    private final double LAUNCHED = 0.7;
 
     private final Servo droneLauncher;
 
@@ -30,8 +30,10 @@ public class EndgameSubsystems {
     public String getLauncherState() {
         if (droneLauncher.getPosition() == LAUNCHED) {
             return "LAUNCHED";
-        } else {
+        } else if (droneLauncher.getPosition() == TAKEOFF) {
             return "TAKEOFF";
+        } else {
+            return "WEIRD";
         }
     }
 }

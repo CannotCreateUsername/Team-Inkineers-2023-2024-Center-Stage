@@ -21,7 +21,7 @@ public class ArmTest extends LinearOpMode {
 
         ArmSubsystem armSubsystem = new ArmSubsystem(hardwareMap);
         IntakeSubsystem intakeSubsystem = new IntakeSubsystem(hardwareMap);
-//        EndgameSubsystems endgameSubsystems = new EndgameSubsystems(hardwareMap);
+        EndgameSubsystems endgameSubsystems = new EndgameSubsystems(hardwareMap);
 
         waitForStart();
         while (opModeIsActive()) {
@@ -38,7 +38,7 @@ public class ArmTest extends LinearOpMode {
             armSubsystem.runArm(gamepadEx1, gamepadEx2);
             armSubsystem.runOuttake(gamepadEx1);
             intakeSubsystem.runIntake(gamepadEx1);
-//            endgameSubsystems.run(gamepadEx1, gamepadEx2);
+            endgameSubsystems.run(gamepadEx1, gamepadEx2);
 
             gamepadEx1.readButtons();
             gamepadEx2.readButtons();
@@ -50,7 +50,7 @@ public class ArmTest extends LinearOpMode {
             telemetry.addData("Arm Timer", armSubsystem.getArmTimer());
             telemetry.addData("Outtake State", armSubsystem.getOuttakeState());
             telemetry.addData("Intake State", intakeSubsystem.getIntakeState());
-//            telemetry.addData("Drone Launch State", endgameSubsystems.getLauncherState());
+            telemetry.addData("Drone Launch State", endgameSubsystems.getLauncherState());
 //            telemetry.addData("Right Bumper Down?", armSubsystem.rightBumperDown());
             telemetry.addData("FIRST Slide motor power", armSubsystem.getSlide1Power());
             telemetry.addData("SECOND Slide motor power", armSubsystem.getSlide2Power());
