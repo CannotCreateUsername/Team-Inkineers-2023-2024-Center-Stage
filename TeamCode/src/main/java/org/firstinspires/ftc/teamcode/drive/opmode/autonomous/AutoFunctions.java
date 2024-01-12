@@ -1,9 +1,6 @@
 package org.firstinspires.ftc.teamcode.drive.opmode.autonomous;
 
 
-import androidx.annotation.NonNull;
-
-import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
@@ -13,18 +10,18 @@ import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 
 import org.firstinspires.ftc.teamcode.MecanumDrive;
-import org.firstinspires.ftc.teamcode.drive.subsystems.ArmSubsystem;
+import org.firstinspires.ftc.teamcode.drive.subsystems.ArmSubsystem3;
 import org.firstinspires.ftc.teamcode.drive.subsystems.IntakeSubsystem;
 
 import javax.annotation.Nullable;
 
 public class AutoFunctions {
-    private ArmSubsystem arm;
+    private ArmSubsystem3 arm;
     private IntakeSubsystem intake;
     private MecanumDrive drive;
     private boolean isOnBlueSide;
 
-    public void init(@Nullable IntakeSubsystem intakeSubsystem, ArmSubsystem armSubsystem, MecanumDrive mecanumDrive, boolean blueSide) {
+    public void init(@Nullable IntakeSubsystem intakeSubsystem, ArmSubsystem3 armSubsystem, MecanumDrive mecanumDrive, boolean blueSide) {
         intake = intakeSubsystem;
         arm = armSubsystem;
         drive = mecanumDrive;

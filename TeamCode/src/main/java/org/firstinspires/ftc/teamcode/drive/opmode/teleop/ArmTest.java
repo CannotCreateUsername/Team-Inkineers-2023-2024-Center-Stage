@@ -7,7 +7,7 @@ import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.drive.subsystems.ArmSubsystem;
+import org.firstinspires.ftc.teamcode.drive.subsystems.ArmSubsystem3;
 import org.firstinspires.ftc.teamcode.drive.subsystems.EndgameSubsystems;
 import org.firstinspires.ftc.teamcode.drive.subsystems.IntakeSubsystem;
 
@@ -19,7 +19,7 @@ public class ArmTest extends LinearOpMode {
         GamepadEx gamepadEx1 = new GamepadEx(gamepad1);
         GamepadEx gamepadEx2 = new GamepadEx(gamepad2);
 
-        ArmSubsystem armSubsystem = new ArmSubsystem(hardwareMap);
+        ArmSubsystem3 armSubsystem = new ArmSubsystem3(hardwareMap);
         IntakeSubsystem intakeSubsystem = new IntakeSubsystem(hardwareMap);
         EndgameSubsystems endgameSubsystems = new EndgameSubsystems(hardwareMap);
 

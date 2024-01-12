@@ -14,7 +14,7 @@ import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.cv.BlueOctopusPipeline;
 import org.firstinspires.ftc.teamcode.cv.ComputerVisionMediator;
 import org.firstinspires.ftc.teamcode.drive.AutoCoordinates;
-import org.firstinspires.ftc.teamcode.drive.subsystems.ArmSubsystem;
+import org.firstinspires.ftc.teamcode.drive.subsystems.ArmSubsystem3;
 import org.firstinspires.ftc.teamcode.drive.subsystems.IntakeSubsystem;
 
 @Autonomous(name = "Blue Alliance Backdrop Auto", group = "Backdrop Side")
@@ -32,7 +32,7 @@ public class BlueSideAutoBackdrop extends LinearOpMode {
         // Initialize the drive
         Pose2d startPose = coords.startPos;
         MecanumDrive drive = new MecanumDrive(hardwareMap, startPose);
-        ArmSubsystem arm = new ArmSubsystem(hardwareMap);
+        ArmSubsystem3 arm = new ArmSubsystem3(hardwareMap);
         ComputerVisionMediator CVMediator = new ComputerVisionMediator();
 
         // Initialize some functions

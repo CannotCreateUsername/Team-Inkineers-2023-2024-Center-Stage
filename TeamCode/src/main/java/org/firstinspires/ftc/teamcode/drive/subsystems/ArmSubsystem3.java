@@ -20,9 +20,13 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-public class ArmSubsystem {
+public class ArmSubsystem3 {
     public enum SlideState {
-        RUNNING,
+        FIRST,
+        SECOND,
+        THIRD,
+        FOURTH,
+        MANUAL,
         REST
     }
     public enum OuttakeState {
@@ -40,8 +44,8 @@ public class ArmSubsystem {
     private final RevTouchSensor limitSwitch;
     private final RevTouchSensor boxSwitch;
 
-    public final int DROP = -1;
-    public final int LOAD = 1;
+    public final int DROP = 1;
+    public final int LOAD = 0;
 
     public double intakePower = 0.01;
 
@@ -50,7 +54,7 @@ public class ArmSubsystem {
     SlideState slideState;
     OuttakeState outtakeState;
 
-    private int currentTarget;
+    private int currentTarget = 5;
     private boolean drop = false;
 
     ElapsedTime timer;
@@ -59,7 +63,7 @@ public class ArmSubsystem {
     TriggerReader rtReader;
     TriggerReader ltReader;
 
-    public ArmSubsystem(HardwareMap hardwareMap) {
+    public ArmSubsystem3(HardwareMap hardwareMap) {
         // Map actuator variables to actual hardware
         upperSlides = hardwareMap.get(DcMotor.class, "top_slide");
         lowerSlides = hardwareMap.get(DcMotor.class, "bottom_slide");
@@ -71,10 +75,12 @@ public class ArmSubsystem {
         // Motor behavior setup
         upperSlides.setDirection(DcMotorSimple.Direction.REVERSE);
         upperSlides.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        upperSlides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         upperSlides.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         lowerSlides.setDirection(DcMotorSimple.Direction.REVERSE);
         lowerSlides.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        lowerSlides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         lowerSlides.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         virtualBar.setPosition(LOAD);
@@ -103,18 +109,22 @@ public class ArmSubsystem {
     boolean reset = false;
 
     public void runArm(GamepadEx gamepad1, GamepadEx gamepad2) {
-        int SLIDE_LIMIT = 1900;
-        int positionIncrement = 25;
+        int slideLimit = 1800;
+        int firstLvl = slideLimit/4;
+        int secondLvl = slideLimit/4*2;
+        int thirdLvl = slideLimit/4*3;
+        int positionIncrement = 50;
         double MIN_MULTIPLIER = 0.3;
         switch (slideState) {
             case REST:
                 liftMultiplier = 1;
-                if (gamepad1.wasJustPressed(GamepadKeys.Button.RIGHT_BUMPER)) {
+                if (gamepad1.wasJustReleased(GamepadKeys.Button.RIGHT_BUMPER)) {
                     reset = false;
-                    slideState = SlideState.RUNNING;
+                    currentTarget = firstLvl;
+                    slideState = SlideState.FIRST;
                 }
                 if (timer.seconds() > 1.5) {
-                    currentTarget = 0;
+                    currentTarget = 5;
                 }
                 if (limitSwitch.isPressed() && !reset) {
                     // Account for slippage and prevent motor stalling
@@ -123,29 +133,70 @@ public class ArmSubsystem {
                     lowerSlides.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                 }
                 break;
-            case RUNNING:
-                liftMultiplier = ((float) SLIDE_LIMIT/ lowerSlides.getCurrentPosition())/10 + MIN_MULTIPLIER; // 0.2 is the minimum multiplier
-                if (gamepad1.isDown(GamepadKeys.Button.RIGHT_BUMPER) && currentTarget < SLIDE_LIMIT) {
-                    currentTarget += positionIncrement;
-                } else if (gamepad1.isDown(GamepadKeys.Button.LEFT_BUMPER) && currentTarget > 25) {
-                    currentTarget -= positionIncrement;
-                }
-
-                if (gamepad1.wasJustReleased(GamepadKeys.Button.X)) {
+            case FIRST:
+                liftMultiplier = ((float) slideLimit/ lowerSlides.getCurrentPosition())/10 + MIN_MULTIPLIER; // 0.2 is the minimum multiplier
+                if (gamepad1.wasJustReleased(GamepadKeys.Button.RIGHT_BUMPER)) {
+                    currentTarget = secondLvl;
+                    slideState = SlideState.SECOND;
+                } else if (gamepad1.isDown(GamepadKeys.Button.LEFT_BUMPER)) {
+                    slideState = SlideState.MANUAL;
+                } else if (gamepad1.wasJustReleased(GamepadKeys.Button.LEFT_BUMPER) || gamepad1.wasJustReleased(GamepadKeys.Button.X)) {
                     virtualBar.setPosition(LOAD);
                     slideState = SlideState.REST;
                     timer.reset();
                 }
-
-                // Code to run the virtual four bar
-                if (gamepad1.wasJustPressed(GamepadKeys.Button.A) && !drop) {
-                    virtualBar.setPosition(DROP);
-                    drop = true;
-                } else if (gamepad1.wasJustPressed(GamepadKeys.Button.A) && drop) {
+                break;
+            case SECOND:
+                liftMultiplier = ((float) slideLimit/ lowerSlides.getCurrentPosition())/10 + MIN_MULTIPLIER; // 0.2 is the minimum multiplier
+                if (gamepad1.wasJustReleased(GamepadKeys.Button.RIGHT_BUMPER)) {
+                    currentTarget = thirdLvl;
+                    slideState = SlideState.THIRD;
+                } else if (gamepad1.isDown(GamepadKeys.Button.LEFT_BUMPER)) {
+                    slideState = SlideState.MANUAL;
+                } else if (gamepad1.wasJustReleased(GamepadKeys.Button.X)) {
                     virtualBar.setPosition(LOAD);
-                    drop = false;
+                    slideState = SlideState.REST;
+                    timer.reset();
                 }
                 break;
+            case THIRD:
+                liftMultiplier = ((float) slideLimit/ lowerSlides.getCurrentPosition())/10 + MIN_MULTIPLIER; // 0.2 is the minimum multiplier
+                if (gamepad1.wasJustReleased(GamepadKeys.Button.RIGHT_BUMPER)) {
+                    currentTarget = slideLimit;
+                    slideState = SlideState.FOURTH;
+                } else if (gamepad1.isDown(GamepadKeys.Button.LEFT_BUMPER)) {
+                    slideState = SlideState.MANUAL;
+                } else if (gamepad1.wasJustReleased(GamepadKeys.Button.X)) {
+                    virtualBar.setPosition(LOAD);
+                    slideState = SlideState.REST;
+                    timer.reset();
+                }
+                break;
+            case FOURTH:
+                liftMultiplier = ((float) slideLimit/ lowerSlides.getCurrentPosition())/10 + MIN_MULTIPLIER; // 0.2 is the minimum multiplier
+                if (gamepad1.isDown(GamepadKeys.Button.LEFT_BUMPER)) {
+                    slideState = SlideState.MANUAL;
+                } else if (gamepad1.wasJustReleased(GamepadKeys.Button.X)) {
+                    virtualBar.setPosition(LOAD);
+                    slideState = SlideState.REST;
+                    timer.reset();
+                }
+                break;
+            case MANUAL:
+                if (gamepad1.isDown(GamepadKeys.Button.LEFT_BUMPER) && currentTarget > 100) {
+                    currentTarget = lowerSlides.getCurrentPosition() - positionIncrement;
+                }
+                break;
+        }
+        // Code to run the virtual four bar. Don't move in REST state
+        if (slideState != SlideState.REST) {
+            if (gamepad1.wasJustPressed(GamepadKeys.Button.A) && !drop) {
+                virtualBar.setPosition(DROP);
+                drop = true;
+            } else if (gamepad1.wasJustPressed(GamepadKeys.Button.A) && drop) {
+                virtualBar.setPosition(LOAD);
+                drop = false;
+            }
         }
         powerPID(0.6);
     }

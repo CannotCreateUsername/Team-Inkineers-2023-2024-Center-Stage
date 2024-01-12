@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
-import org.firstinspires.ftc.teamcode.drive.subsystems.ArmSubsystem;
+import org.firstinspires.ftc.teamcode.drive.subsystems.ArmSubsystem3;
 
 //@Disabled
 @TeleOp(name = "Hang Weirder", group = "Linear Opmode")
@@ -19,7 +19,7 @@ public class HangTestOld extends LinearOpMode {
     DcMotor upperSlides = null;
     DcMotor lowerSlides = null;
 
-    ArmSubsystem arm = null;
+    ArmSubsystem3 arm = null;
 
     private double currentTarget = 0;
 
@@ -39,7 +39,7 @@ public class HangTestOld extends LinearOpMode {
                 selected = true;
             } else if (gamepad1.y) {
                 hardcode = false;
-                arm = new ArmSubsystem(hardwareMap);
+                arm = new ArmSubsystem3(hardwareMap);
                 selected = true;
             }
 

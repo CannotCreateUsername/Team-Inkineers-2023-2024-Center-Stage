@@ -11,7 +11,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.cv.ComputerVisionMediator;
 import org.firstinspires.ftc.teamcode.cv.RedOctopusPipeline;
-import org.firstinspires.ftc.teamcode.drive.subsystems.ArmSubsystem;
+import org.firstinspires.ftc.teamcode.drive.subsystems.ArmSubsystem3;
 import org.firstinspires.ftc.teamcode.drive.subsystems.IntakeSubsystem;
 
 @Autonomous(name = "Red Alliance Substation Auto", group = "Substation Side")
@@ -26,7 +26,7 @@ public class RedSideAutoSubstation extends LinearOpMode {
         // Initialize the drive
         Pose2d startPose = new Pose2d(0, 0, Math.toRadians(0));
         MecanumDrive drive = new MecanumDrive(hardwareMap, startPose);
-        ArmSubsystem arm = new ArmSubsystem(hardwareMap);
+        ArmSubsystem3 arm = new ArmSubsystem3(hardwareMap);
         ComputerVisionMediator CVMediator = new ComputerVisionMediator();
 
         // Initialize some functions
