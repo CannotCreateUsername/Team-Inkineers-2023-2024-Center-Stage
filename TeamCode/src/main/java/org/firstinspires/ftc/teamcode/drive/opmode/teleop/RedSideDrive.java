@@ -57,26 +57,26 @@ public class RedSideDrive extends LinearOpMode {
 
         waitForStart();
         while (opModeIsActive()) {
-            switch (turnState) {
-                case ROTATED:
+//            switch (turnState) {
+//                case ROTATED:
                     leftXInput = leftStickY.getRampingValue(gamepad1.left_stick_y);
                     leftYInput = -leftStickX.getRampingValue(gamepad1.left_stick_x);
                     rightXInput = rightStickX.getRampingValue(gamepad1.right_stick_x);
-                    if (gamepadEx1.wasJustReleased(GamepadKeys.Button.Y)) {
-                        functions.turnPID(90);
-                        turnState = TurnState.STRAIGHT;
-                    }
-                    break;
-                case STRAIGHT:
-                    leftXInput = leftStickX.getRampingValue(gamepad1.left_stick_x);
-                    leftYInput = leftStickY.getRampingValue(gamepad1.left_stick_y);
-                    rightXInput = rightStickX.getRampingValue(gamepad1.right_stick_x);
-                    if (gamepadEx1.wasJustReleased(GamepadKeys.Button.Y)) {
-                        functions.turnPID(-90);
-                        turnState = TurnState.ROTATED;
-                    }
-                    break;
-            }
+//                    if (gamepadEx1.wasJustReleased(GamepadKeys.Button.Y)) {
+//                        functions.turnPID(90);
+//                        turnState = TurnState.STRAIGHT;
+//                    }
+//                    break;
+//                case STRAIGHT:
+//                    leftXInput = leftStickX.getRampingValue(gamepad1.left_stick_x);
+//                    leftYInput = leftStickY.getRampingValue(gamepad1.left_stick_y);
+//                    rightXInput = rightStickX.getRampingValue(gamepad1.right_stick_x);
+//                    if (gamepadEx1.wasJustReleased(GamepadKeys.Button.Y)) {
+//                        functions.turnPID(-90);
+//                        turnState = TurnState.ROTATED;
+//                    }
+//                    break;
+//            }
             leftXInput *= arm.getPowerMultiplier();
             leftYInput *= arm.getPowerMultiplier();
             rightXInput*= arm.getPowerMultiplier();

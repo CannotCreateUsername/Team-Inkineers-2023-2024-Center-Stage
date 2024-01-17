@@ -15,4 +15,8 @@ public class PIDConstants {
     // Lateral constants for strafing
     public static double YKp = 0.05;
     public static double YKd = 0.02;
+
+    // ViperSlide constants
+    public static double VKp = 0.003; // !! if you change higher the slides go crazy !!
+    public static double VKd = 0.02;
 }

@@ -19,11 +19,14 @@ public class EndgameSubsystems {
         droneLauncher.setPosition(TAKEOFF);
     }
 
+    private boolean launched = false;
     public void run(GamepadEx gamepad1, GamepadEx gamepad2) {
-        if (gamepad1.wasJustReleased(GamepadKeys.Button.DPAD_UP) || gamepad2.wasJustReleased(GamepadKeys.Button.DPAD_UP)) {
+        if ((gamepad1.wasJustReleased(GamepadKeys.Button.Y) || gamepad2.wasJustReleased(GamepadKeys.Button.Y)) && !launched) {
             droneLauncher.setPosition(LAUNCHED);
-        } else if (gamepad1.wasJustPressed(GamepadKeys.Button.DPAD_DOWN) || gamepad2.wasJustPressed(GamepadKeys.Button.DPAD_DOWN)) {
+            launched = true;
+        } else if ((gamepad1.wasJustReleased(GamepadKeys.Button.Y) || gamepad2.wasJustReleased(GamepadKeys.Button.Y)) && launched) {
             droneLauncher.setPosition(TAKEOFF);
+            launched = false;
         }
     }
 
