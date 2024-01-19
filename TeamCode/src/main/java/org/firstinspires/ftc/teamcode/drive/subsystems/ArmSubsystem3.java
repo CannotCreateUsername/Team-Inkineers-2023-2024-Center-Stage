@@ -2,9 +2,6 @@ package org.firstinspires.ftc.teamcode.drive.subsystems;
 
 
 
-import static org.firstinspires.ftc.teamcode.drive.constants.PIDConstants.VKd;
-import static org.firstinspires.ftc.teamcode.drive.constants.PIDConstants.VKp;
-
 import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
@@ -39,6 +36,10 @@ public class ArmSubsystem3 {
         IDLE
     }
 
+    // ViperSlide PID constants
+    private double VKp = 0.003; // !! if you change higher the slides go crazy !!
+    private final double VKd = 0.02;
+
     private final DcMotor upperSlides;
     private final DcMotor lowerSlides;
     private final Servo virtualBar;
@@ -71,6 +72,7 @@ public class ArmSubsystem3 {
 
     ElapsedTime timer;
     ElapsedTime dropTimer;
+    ElapsedTime hangTimer;
 
     TriggerReader rtReader;
     TriggerReader ltReader;
@@ -103,6 +105,7 @@ public class ArmSubsystem3 {
 
         timer = new ElapsedTime();
         dropTimer = new ElapsedTime();
+        hangTimer = new ElapsedTime();
     }
 
     public void powerPID(double power) {
@@ -136,7 +139,7 @@ public class ArmSubsystem3 {
                     lowerSlides.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                 }
                 if (timer.seconds() > 1) {
-                    currentTarget = 5;
+                    currentTarget = 0;
                 }
                 break;
             case FIRST:
@@ -173,7 +176,7 @@ public class ArmSubsystem3 {
                     slideState = SlideState.FOURTH;
                 } else if (gamepad1.isDown(GamepadKeys.Button.LEFT_BUMPER)) {
                     slideState = SlideState.MANUAL;
-                } else if (gamepad1.wasJustReleased(GamepadKeys.Button.DPAD_DOWN)) {
+                } else if (gamepad1.isDown(GamepadKeys.Button.DPAD_UP)) {
                     currentTarget = hangLvl;
                     slideState = SlideState.HANG;
                 } else if (gamepad1.wasJustReleased(GamepadKeys.Button.X)) {
@@ -186,7 +189,7 @@ public class ArmSubsystem3 {
                 liftMultiplier = ((float) SLIDE_LIMIT/ lowerSlides.getCurrentPosition())/10 + MIN_MULTIPLIER; // 0.2 is the minimum multiplier
                 if (gamepad1.isDown(GamepadKeys.Button.LEFT_BUMPER)) {
                     slideState = SlideState.MANUAL;
-                } else if (gamepad1.wasJustReleased(GamepadKeys.Button.DPAD_DOWN)) {
+                } else if (gamepad1.isDown(GamepadKeys.Button.DPAD_UP)) {
                     currentTarget = hangLvl;
                     slideState = SlideState.HANG;
                 } else if (gamepad1.wasJustReleased(GamepadKeys.Button.X)) {
@@ -200,7 +203,7 @@ public class ArmSubsystem3 {
                     currentTarget = lowerSlides.getCurrentPosition() - positionIncrement;
                 } else if (gamepad1.wasJustReleased(GamepadKeys.Button.RIGHT_BUMPER)) {
                     currentTarget = nextLvl();
-                } else if (gamepad1.wasJustReleased(GamepadKeys.Button.DPAD_DOWN)) {
+                } else if (gamepad1.isDown(GamepadKeys.Button.DPAD_UP)) {
                     currentTarget = hangLvl;
                     slideState = SlideState.HANG;
                 } else if (gamepad1.wasJustReleased(GamepadKeys.Button.X)) {
@@ -210,11 +213,27 @@ public class ArmSubsystem3 {
                 }
                 break;
             case HANG:
-                hanging = true;
+                if (gamepad1.isDown(GamepadKeys.Button.DPAD_UP)) {
+                    VKp = 0.003;
+                    currentTarget = hangLvl;
+                }
                 if (gamepad1.wasJustReleased(GamepadKeys.Button.DPAD_UP)) {
-                    currentTarget = 0;
+                    hangTimer.reset();
+                    hanging = true;
+                    VKp = 0.001;
+                    currentTarget = hangLvl;
+                } else if (gamepad1.wasJustReleased(GamepadKeys.Button.DPAD_DOWN)) {
                     hanging = false;
+                    VKp = 0.003;
+                    currentTarget = 0;
                     slideState = SlideState.REST;
+                }
+
+                if (hanging && currentTarget < 550) {
+                    if (hangTimer.seconds() > 1) {
+                        currentTarget += 5;
+                        hangTimer.reset();
+                    }
                 }
                 break;
         }
@@ -229,14 +248,14 @@ public class ArmSubsystem3 {
             }
         }
         if (hanging) {
-            powerPID(0.6);
+            powerPID(0.05);
         } else {
             powerPID(0.6);
         }
     }
 
     int nextLvl() {
-        int percentage = lowerSlides.getCurrentPosition()/SLIDE_LIMIT;
+        double percentage = (double)lowerSlides.getCurrentPosition()/SLIDE_LIMIT;
         if (percentage < 0.25) {
             slideState = SlideState.FIRST;
             return firstLvl;
@@ -249,8 +268,9 @@ public class ArmSubsystem3 {
         } else if (percentage >= 0.75) {
             slideState = SlideState.FOURTH;
             return SLIDE_LIMIT;
+        } else {
+            return firstLvl;
         }
-        return 0;
     }
 
     // Decrease driving speed for more control when the slides are lifted
@@ -320,7 +340,7 @@ public class ArmSubsystem3 {
 
     public Action readySlides() {
         return telemetryPacket -> {
-            currentTarget = 100;
+            currentTarget = 450;
             powerPID(0.4);
             return !dropped;
         };
@@ -330,7 +350,10 @@ public class ArmSubsystem3 {
         return telemetryPacket -> {
             currentTarget = 0;
             powerPID(0.4);
-            return !(lowerSlides.getCurrentPosition() <= 5);
+            if (limitSwitch.isPressed()) {
+                VKp = 0.003;
+            }
+            return !limitSwitch.isPressed();
         };
     }
 
@@ -368,6 +391,7 @@ public class ArmSubsystem3 {
     }
 
     public Action dropYellowPixel() {
+        VKp = 0.002;
         return new SequentialAction (
                 new ParallelAction(
                         readySlides(),

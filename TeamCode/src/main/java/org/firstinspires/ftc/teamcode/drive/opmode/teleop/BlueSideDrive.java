@@ -4,12 +4,10 @@ import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
-import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.MecanumDrive;
-import org.firstinspires.ftc.teamcode.drive.DriveFunctions;
 import org.firstinspires.ftc.teamcode.drive.subsystems.ArmSubsystem3;
 import org.firstinspires.ftc.teamcode.drive.subsystems.EndgameSubsystems;
 import org.firstinspires.ftc.teamcode.drive.GamepadHelper;
@@ -36,7 +34,7 @@ public class BlueSideDrive extends LinearOpMode {
 
         // Initialize the drive code
         MecanumDrive drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, Math.toRadians(0)));
-        DriveFunctions functions = new DriveFunctions(hardwareMap, drive, this);
+//        DriveFunctions functions = new DriveFunctions(hardwareMap, drive, this);
 
         // Initialize intakeSubsystem code
         IntakeSubsystem intake = new IntakeSubsystem(hardwareMap);
@@ -107,6 +105,7 @@ public class BlueSideDrive extends LinearOpMode {
             telemetry.addData("Lift State", arm.getLiftState());
             telemetry.addData("Drone Launch State", endgame.getLauncherState());
             telemetry.addData("Drive Multiplier", arm.getPowerMultiplier());
+            telemetry.addData("Current Elevator Target", arm.getCurrentTarget());
             telemetry.update();
         }
     }
