@@ -51,6 +51,7 @@ public class ArmSubsystem3 {
     public final int LOAD = 0;
 
     public double intakePower = 0.5;
+    public double hangingMultiplier = 0.8;
 
     private double liftMultiplier = 1;
 
@@ -69,6 +70,7 @@ public class ArmSubsystem3 {
     private boolean drop = false;
 
     private boolean hanging = false;
+    private boolean hangRelease = false;
 
     ElapsedTime timer;
     ElapsedTime dropTimer;
@@ -177,7 +179,8 @@ public class ArmSubsystem3 {
                 } else if (gamepad1.isDown(GamepadKeys.Button.LEFT_BUMPER)) {
                     slideState = SlideState.MANUAL;
                 } else if (gamepad1.isDown(GamepadKeys.Button.DPAD_UP)) {
-                    currentTarget = hangLvl;
+                    // Hanging mode
+                    hanging = true;
                     slideState = SlideState.HANG;
                 } else if (gamepad1.wasJustReleased(GamepadKeys.Button.X)) {
                     virtualBar.setPosition(LOAD);
@@ -190,7 +193,8 @@ public class ArmSubsystem3 {
                 if (gamepad1.isDown(GamepadKeys.Button.LEFT_BUMPER)) {
                     slideState = SlideState.MANUAL;
                 } else if (gamepad1.isDown(GamepadKeys.Button.DPAD_UP)) {
-                    currentTarget = hangLvl;
+                    // Hanging mode
+                    hanging = true;
                     slideState = SlideState.HANG;
                 } else if (gamepad1.wasJustReleased(GamepadKeys.Button.X)) {
                     virtualBar.setPosition(LOAD);
@@ -204,7 +208,8 @@ public class ArmSubsystem3 {
                 } else if (gamepad1.wasJustReleased(GamepadKeys.Button.RIGHT_BUMPER)) {
                     currentTarget = nextLvl();
                 } else if (gamepad1.isDown(GamepadKeys.Button.DPAD_UP)) {
-                    currentTarget = hangLvl;
+                    // Hanging mode
+                    hanging = true;
                     slideState = SlideState.HANG;
                 } else if (gamepad1.wasJustReleased(GamepadKeys.Button.X)) {
                     virtualBar.setPosition(LOAD);
@@ -214,25 +219,37 @@ public class ArmSubsystem3 {
                 break;
             case HANG:
                 if (gamepad1.isDown(GamepadKeys.Button.DPAD_UP)) {
-                    VKp = 0.003;
-                    currentTarget = hangLvl;
+                    hangingMultiplier = 0.8;
+                    hangRelease = false;
+//                    VKp = 0.003;
+//                    currentTarget = hangLvl;
+                    lowerSlides.setPower(-1*hangingMultiplier);
+                    upperSlides.setPower(-1*hangingMultiplier);
                 }
                 if (gamepad1.wasJustReleased(GamepadKeys.Button.DPAD_UP)) {
+                    hangingMultiplier = 0.25;
                     hangTimer.reset();
-                    hanging = true;
-                    VKp = 0.001;
-                    currentTarget = hangLvl;
+                    hangRelease = true;
+//                    VKp = 0.001;
+//                    currentTarget = hangLvl;
                 } else if (gamepad1.wasJustReleased(GamepadKeys.Button.DPAD_DOWN)) {
                     hanging = false;
-                    VKp = 0.003;
+                    hangRelease = false;
+                    hangingMultiplier = 1;
+//                    VKp = 0.003;
                     currentTarget = 0;
                     slideState = SlideState.REST;
                 }
 
-                if (hanging && currentTarget < 550) {
-                    if (hangTimer.seconds() > 1) {
-                        currentTarget += 5;
+                if (hangRelease) {
+                    lowerSlides.setPower(-hangingMultiplier);
+                    upperSlides.setPower(-hangingMultiplier);
+                    if (hangTimer.seconds() > 1 && lowerSlides.getPower() < 0) {
+                        hangingMultiplier -= 0.05;
                         hangTimer.reset();
+                    }
+                    if (hangingMultiplier <= 0) {
+                        hangingMultiplier = 0;
                     }
                 }
                 break;
@@ -247,9 +264,7 @@ public class ArmSubsystem3 {
                 drop = false;
             }
         }
-        if (hanging) {
-            powerPID(0.05);
-        } else {
+        if (!hanging) {
             powerPID(0.6);
         }
     }

@@ -30,9 +30,9 @@ public class ArmTest extends LinearOpMode {
                         armSubsystem.dropYellowPixel()
                 ));
             } else if (gamepadEx1.wasJustPressed(GamepadKeys.Button.A) && armSubsystem.intakePower <= 1) {
-                armSubsystem.intakePower += 0.1;
+                armSubsystem.hangingMultiplier += 0.1;
             } else if (gamepadEx1.wasJustPressed(GamepadKeys.Button.B) && armSubsystem.intakePower >= -1) {
-                armSubsystem.intakePower -= 0.1;
+                armSubsystem.hangingMultiplier -= 0.1;
             }
 
             armSubsystem.runArm(gamepadEx1, gamepadEx2);
@@ -55,6 +55,7 @@ public class ArmTest extends LinearOpMode {
             telemetry.addData("FIRST Slide motor power", armSubsystem.getSlide1Power());
             telemetry.addData("SECOND Slide motor power", armSubsystem.getSlide2Power());
             telemetry.addData("Intake Power", armSubsystem.intakePower);
+            telemetry.addData("Hanging Power", armSubsystem.hangingMultiplier);
             telemetry.update();
         }
     }
