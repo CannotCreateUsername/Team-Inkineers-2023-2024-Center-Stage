@@ -38,7 +38,6 @@ public class ArmSubsystem3 {
 
     // ViperSlide PID constants
     private double VKp = 0.003; // !! if you change higher the slides go crazy !!
-    private final double VKd = 0.02;
 
     private final DcMotor upperSlides;
     private final DcMotor lowerSlides;
@@ -61,7 +60,7 @@ public class ArmSubsystem3 {
     private final int secondLvl = SLIDE_LIMIT/4*2;
     private final int thirdLvl = SLIDE_LIMIT/4*3;
     /** @noinspection FieldCanBeLocal*/
-    private final int hangLvl = 500;
+//    private final int hangLvl = 500;
 
     SlideState slideState;
     OuttakeState outtakeState;
@@ -117,6 +116,7 @@ public class ArmSubsystem3 {
             // 15 encoder ticks of our target.
             // this is pretty arbitrary, and would have to be
             // tweaked for each robot.
+            double VKd = 0.02;
             lowerSlides.setPower((posErr * VKp + VKd) * power); //instead of fixed power, use the concept of PID and increase power in proportion with the error
             upperSlides.setPower((posErr * VKp + VKd) * power);
         }
@@ -221,8 +221,6 @@ public class ArmSubsystem3 {
                 if (gamepad1.isDown(GamepadKeys.Button.DPAD_UP)) {
                     hangingMultiplier = 0.8;
                     hangRelease = false;
-//                    VKp = 0.003;
-//                    currentTarget = hangLvl;
                     lowerSlides.setPower(-1*hangingMultiplier);
                     upperSlides.setPower(-1*hangingMultiplier);
                 }
@@ -230,13 +228,10 @@ public class ArmSubsystem3 {
                     hangingMultiplier = 0.3;
                     hangTimer.reset();
                     hangRelease = true;
-//                    VKp = 0.001;
-//                    currentTarget = hangLvl;
                 } else if (gamepad1.wasJustReleased(GamepadKeys.Button.DPAD_DOWN)) {
                     hanging = false;
                     hangRelease = false;
                     hangingMultiplier = 1;
-//                    VKp = 0.003;
                     currentTarget = 0;
                     slideState = SlideState.REST;
                 }
