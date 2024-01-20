@@ -227,7 +227,7 @@ public class ArmSubsystem3 {
                     upperSlides.setPower(-1*hangingMultiplier);
                 }
                 if (gamepad1.wasJustReleased(GamepadKeys.Button.DPAD_UP)) {
-                    hangingMultiplier = 0.25;
+                    hangingMultiplier = 0.3;
                     hangTimer.reset();
                     hangRelease = true;
 //                    VKp = 0.001;
