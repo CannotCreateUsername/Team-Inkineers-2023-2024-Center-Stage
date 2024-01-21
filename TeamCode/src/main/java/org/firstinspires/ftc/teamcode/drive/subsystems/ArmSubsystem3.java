@@ -56,7 +56,7 @@ public class ArmSubsystem3 {
 
     // Linear Slides Positions
     private final int SLIDE_LIMIT = 1800;
-    private final int firstLvl = SLIDE_LIMIT/4;
+    private final int firstLvl = SLIDE_LIMIT/4-20;
     private final int secondLvl = SLIDE_LIMIT/4*2;
     private final int thirdLvl = SLIDE_LIMIT/4*3;
     /** @noinspection FieldCanBeLocal*/
@@ -146,7 +146,7 @@ public class ArmSubsystem3 {
                 break;
             case FIRST:
                 currentTarget = firstLvl;
-                liftMultiplier = ((float) SLIDE_LIMIT/ lowerSlides.getCurrentPosition())/10 + MIN_MULTIPLIER; // 0.2 is the minimum multiplier
+                liftMultiplier = 0.5;
                 if (gamepad1.wasJustReleased(GamepadKeys.Button.RIGHT_BUMPER)) {
                     currentTarget = secondLvl;
                     slideState = SlideState.SECOND;
@@ -159,7 +159,7 @@ public class ArmSubsystem3 {
                 }
                 break;
             case SECOND:
-                liftMultiplier = ((float) SLIDE_LIMIT/ lowerSlides.getCurrentPosition())/10 + MIN_MULTIPLIER; // 0.2 is the minimum multiplier
+                liftMultiplier = 0.4;
                 if (gamepad1.wasJustReleased(GamepadKeys.Button.RIGHT_BUMPER)) {
                     currentTarget = thirdLvl;
                     slideState = SlideState.THIRD;
@@ -172,7 +172,7 @@ public class ArmSubsystem3 {
                 }
                 break;
             case THIRD:
-                liftMultiplier = ((float) SLIDE_LIMIT/ lowerSlides.getCurrentPosition())/10 + MIN_MULTIPLIER; // 0.2 is the minimum multiplier
+                liftMultiplier = 0.3;
                 if (gamepad1.wasJustReleased(GamepadKeys.Button.RIGHT_BUMPER)) {
                     currentTarget = SLIDE_LIMIT;
                     slideState = SlideState.FOURTH;
@@ -189,7 +189,7 @@ public class ArmSubsystem3 {
                 }
                 break;
             case FOURTH:
-                liftMultiplier = ((float) SLIDE_LIMIT/ lowerSlides.getCurrentPosition())/10 + MIN_MULTIPLIER; // 0.2 is the minimum multiplier
+                liftMultiplier = 0.2;
                 if (gamepad1.isDown(GamepadKeys.Button.LEFT_BUMPER)) {
                     slideState = SlideState.MANUAL;
                 } else if (gamepad1.isDown(GamepadKeys.Button.DPAD_UP)) {
@@ -294,7 +294,7 @@ public class ArmSubsystem3 {
                 if (rtReader.isDown()) {
                     outtakeState = OuttakeState.IN;
                     outtake.setPower(-intakePower);
-                } else if ((ltReader.isDown() && !rtReader.isDown()) || boxSwitch.isPressed()) {
+                } else if (ltReader.isDown() || boxSwitch.isPressed()) {
                     outtakeState = OuttakeState.OUT;
                 }
                 break;
