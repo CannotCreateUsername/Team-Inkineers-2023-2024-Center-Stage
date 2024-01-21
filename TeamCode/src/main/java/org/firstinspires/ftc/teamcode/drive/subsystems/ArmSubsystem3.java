@@ -296,7 +296,6 @@ public class ArmSubsystem3 {
                     outtake.setPower(-intakePower);
                 } else if ((ltReader.isDown() && !rtReader.isDown()) || boxSwitch.isPressed()) {
                     outtakeState = OuttakeState.OUT;
-                    outtake.setPower(intakePower);
                 }
                 break;
             case IN:
@@ -306,7 +305,8 @@ public class ArmSubsystem3 {
                 }
                 break;
             case OUT:
-                if (!ltReader.isDown() || !boxSwitch.isPressed()) {
+                outtake.setPower(intakePower);
+                if (!ltReader.isDown() && !boxSwitch.isPressed()) {
                     outtakeState = OuttakeState.IDLE;
                     outtake.setPower(0);
                 }

@@ -16,7 +16,8 @@ public class IntakeSubsystem {
     public enum IntakeState {
         IDLE,
         IN,
-        OUT
+        OUT,
+        EXPEL
     }
 
     private final DcMotor intake;
@@ -27,6 +28,7 @@ public class IntakeSubsystem {
     TriggerReader ltReader;
 
     ElapsedTime intakeTimer;
+    ElapsedTime expelTimer;
 
     public IntakeSubsystem(@NonNull HardwareMap hardwareMap) {
         intake = hardwareMap.get(DcMotor.class, "intake");
@@ -34,6 +36,8 @@ public class IntakeSubsystem {
         intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
         intakeState = IntakeState.IDLE;
+        intakeTimer = new ElapsedTime();
+        expelTimer = new ElapsedTime();
     }
 
     public void runIntake(GamepadEx gamepad1) {
@@ -43,9 +47,12 @@ public class IntakeSubsystem {
             case IDLE:
                 if (rtReader.isDown()) {
                     intakeState = IntakeState.IN;
-                    intake.setPower(0.5);
-                } else if (ltReader.isDown() && !rtReader.isDown()) {
+                    intake.setPower(0.8);
+                } else if (ltReader.isDown()) {
                     intakeState = IntakeState.OUT;
+                } else if (gamepad1.wasJustPressed(GamepadKeys.Button.B)) {
+                    expelTimer.reset();
+                    intakeState = IntakeState.EXPEL;
                 }
                 break;
             case IN:
@@ -55,8 +62,15 @@ public class IntakeSubsystem {
                 }
                 break;
             case OUT:
-                intake.setPower(-0.5);
+                intake.setPower(-0.8);
                 if (!ltReader.isDown()) {
+                    intakeState = IntakeState.IDLE;
+                    intake.setPower(0);
+                }
+                break;
+            case EXPEL:
+                intake.setPower(-0.8);
+                if (expelTimer.seconds() > 2) {
                     intakeState = IntakeState.IDLE;
                     intake.setPower(0);
                 }
