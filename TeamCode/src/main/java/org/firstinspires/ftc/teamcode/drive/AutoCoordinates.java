@@ -14,6 +14,7 @@ public class AutoCoordinates {
             backdropCenterPos = new Vector2d(26, 32);
             backdropLeftPos = new Vector2d(31, 32);
             backdropRightPos = new Vector2d(16.5, 32);
+            afterDropPixel = new Vector2d(24, 30);
 
             parkInsidePos = new Vector2d(52, 28); // Rotated
             parkOutsidePos = new Vector2d(52, 28); // Rotated
@@ -39,6 +40,7 @@ public class AutoCoordinates {
     public Vector2d backdropCenterPos = new Vector2d(26, -32); // Straight
     public Vector2d backdropLeftPos = new Vector2d(16.5, -32); // Straight
     public Vector2d backdropRightPos = new Vector2d(31, -32); // Straight
+    public Vector2d afterDropPixel = new Vector2d(24, -30); // Rotated
 
     // Parking options for BLUE side
     public Vector2d parkInsidePos = new Vector2d(52, -28); // Rotated

@@ -13,6 +13,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.cv.ComputerVisionMediator;
 import org.firstinspires.ftc.teamcode.cv.RedOctopusPipeline;
+import org.firstinspires.ftc.teamcode.drive.AutoCoordinates;
 import org.firstinspires.ftc.teamcode.drive.subsystems.ArmSubsystem3;
 import org.firstinspires.ftc.teamcode.drive.subsystems.IntakeSubsystem;
 
@@ -24,6 +25,9 @@ public class RedSideAutoBackdrop extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         ElapsedTime timer1 = new ElapsedTime();
+
+        // Get the coordinates
+        AutoCoordinates coords = new AutoCoordinates(true);
 
         // Initialize the drive
         Pose2d startPose = new Pose2d(0, 0, Math.toRadians(0));
@@ -37,35 +41,31 @@ public class RedSideAutoBackdrop extends LinearOpMode {
 
         // Run to the left spike location
         Action runToLeftProp = drive.actionBuilder(startPose)
-                .strafeToConstantHeading(new Vector2d(28, 0))
-                .strafeToConstantHeading(new Vector2d(28, -11))
-                .strafeToConstantHeading(new Vector2d(24, -11))
-                .strafeToConstantHeading(new Vector2d(31, 31))
+                .strafeToLinearHeading(coords.betweenSidePropPos, coords.STRAIGHT)
+                .strafeToLinearHeading(coords.propLeftPos, coords.STRAIGHT)
+                .strafeToLinearHeading(coords.backFromLeftPropPos, coords.STRAIGHT)
+                .strafeToLinearHeading(coords.backdropLeftPos, coords.STRAIGHT)
                 .build();
         // Run to the center spike location
         Action runToCenterProp = drive.actionBuilder(startPose)
-                .strafeToConstantHeading(new Vector2d(31, 0))
-                .strafeToConstantHeading(new Vector2d(24, 0))
-                .strafeToConstantHeading(new Vector2d(26, 32))
+                .strafeToLinearHeading(coords.propCenterPos, coords.STRAIGHT)
+                .strafeToLinearHeading(coords.backFromCenterPropPos, coords.STRAIGHT)
+                .strafeToLinearHeading(coords.backdropCenterPos, coords.STRAIGHT)
                 .build();
         // Run to the right spike location
         Action runToRightProp = drive.actionBuilder(startPose)
-                .strafeToConstantHeading(new Vector2d(28, 0))
-                .strafeToConstantHeading(new Vector2d(28, 12))
-                .strafeToConstantHeading(new Vector2d(24, 12))
-                .strafeToConstantHeading(new Vector2d(18, 34))
-                .build();
-
-        Action scoot = drive.actionBuilder(new Pose2d(new Vector2d(24, 34), Math.toRadians(-90)))
-                .strafeToConstantHeading(new Vector2d(24, 28))
+                .strafeToLinearHeading(coords.betweenSidePropPos, coords.STRAIGHT)
+                .strafeToLinearHeading(coords.propRightPos, coords.STRAIGHT)
+                .strafeToLinearHeading(coords.backFromRightPropPos, coords.STRAIGHT)
+                .strafeToLinearHeading(coords.backdropRightPos, coords.STRAIGHT)
                 .build();
 
         // Park in backstage
-        Action rightPark = drive.actionBuilder(new Pose2d(new Vector2d(24, 34), Math.toRadians(-90)))
-                .strafeToConstantHeading(new Vector2d(-8, 34))
+        Action rightPark = drive.actionBuilder(new Pose2d(coords.afterDropPixel, coords.ROTATED))
+                .strafeToLinearHeading(new Vector2d(-4, 34), coords.ROTATED)
                 .build();
-        Action middlePark = drive.actionBuilder(new Pose2d(new Vector2d(24, 30), Math.toRadians(-90)))
-                .strafeToConstantHeading(new Vector2d(4, 36))
+        Action middlePark = drive.actionBuilder(new Pose2d(coords.afterDropPixel, coords.ROTATED))
+                .strafeToLinearHeading(new Vector2d(4, 36), coords.ROTATED)
                 .build();
 
         // Initialize all computer vision stuff
@@ -92,7 +92,7 @@ public class RedSideAutoBackdrop extends LinearOpMode {
                 CVMediator.turnPID(-90);
                 Actions.runBlocking(new SequentialAction(
                         new ParallelAction(
-                                scoot,
+                                functions.touchBackdrop(),
                                 arm.dropYellowPixel()
                         ),
                         middlePark
@@ -103,7 +103,7 @@ public class RedSideAutoBackdrop extends LinearOpMode {
                 CVMediator.turnPID(-90);
                 Actions.runBlocking(new SequentialAction(
                         new ParallelAction(
-                                scoot,
+                                functions.touchBackdrop(),
                                 arm.dropYellowPixel()
                         ),
                         rightPark
@@ -114,7 +114,7 @@ public class RedSideAutoBackdrop extends LinearOpMode {
                 CVMediator.turnPID(-90);
                 Actions.runBlocking(new SequentialAction(
                         new ParallelAction(
-                                scoot,
+                                functions.touchBackdrop(),
                                 arm.dropYellowPixel()
                         ),
                         middlePark

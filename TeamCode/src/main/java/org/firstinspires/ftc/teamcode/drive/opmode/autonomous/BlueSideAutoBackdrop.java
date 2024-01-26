@@ -61,13 +61,14 @@ public class BlueSideAutoBackdrop extends LinearOpMode {
                 .build();
 
         // Park in backstage
-        Action leftPark = drive.actionBuilder(new Pose2d(new Vector2d(24, -30), Math.toRadians(90)))
+        Action leftPark = drive.actionBuilder(new Pose2d(coords.afterDropPixel, coords.ROTATED))
                 .strafeToLinearHeading(new Vector2d(-4, -34), coords.ROTATED)
                 .build();
-        Action middlePark = drive.actionBuilder(new Pose2d(new Vector2d(24, -30), Math.toRadians(90)))
+        Action middlePark = drive.actionBuilder(new Pose2d(coords.afterDropPixel, coords.ROTATED))
                 .strafeToLinearHeading(new Vector2d(4, -36), coords.ROTATED)
                 .build();
 
+        // Initialize all computer vision stuff
         CVMediator.init(hardwareMap, drive, octopusPipeline, false, this);
 
         // Display Telemetry
