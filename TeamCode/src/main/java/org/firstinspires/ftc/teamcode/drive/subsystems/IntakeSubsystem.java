@@ -81,6 +81,7 @@ public class IntakeSubsystem {
     public String getIntakeState() { return intakeState.name(); }
 
     // Autonomous Functions
+    // Negative power = OUT, positive power = IN
     public Action spinIntake(double power, double duration) {
         return new Action() {
             boolean set = false;
@@ -96,6 +97,21 @@ public class IntakeSubsystem {
                     intake.setPower(0);
                 }
                 return intakeTimer.seconds() < duration;
+            }
+        };
+    }
+
+    public Action expelPixel() {
+        return new Action() {
+            boolean set = false;
+            @Override
+            public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+                if (!set) {
+                    expelTimer.reset();
+                    set = true;
+                }
+                intake.setPower(-0.8);
+                return expelTimer.seconds() < 2;
             }
         };
     }
