@@ -4,7 +4,6 @@ import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.SequentialAction;
-import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -17,7 +16,7 @@ import org.firstinspires.ftc.teamcode.drive.AutoCoordinates;
 import org.firstinspires.ftc.teamcode.drive.subsystems.ArmSubsystem3;
 import org.firstinspires.ftc.teamcode.drive.subsystems.IntakeSubsystem;
 
-@Autonomous(name = "Red Alliance Backdrop Auto", group = "Backdrop Side")
+@Autonomous(name = "Red Alliance Backdrop Inside", group = "Backdrop Side")
 public class RedSideAutoBackdrop extends LinearOpMode {
 
     RedOctopusPipeline octopusPipeline = new RedOctopusPipeline();
@@ -41,31 +40,34 @@ public class RedSideAutoBackdrop extends LinearOpMode {
 
         // Run to the left spike location
         Action runToLeftProp = drive.actionBuilder(startPose)
-                .strafeToLinearHeading(coords.betweenSidePropPos, coords.STRAIGHT)
+                .strafeToLinearHeading(coords.betweenSideProp, coords.STRAIGHT)
                 .strafeToLinearHeading(coords.propLeftPos, coords.STRAIGHT)
-                .strafeToLinearHeading(coords.backFromLeftPropPos, coords.STRAIGHT)
+                .strafeToLinearHeading(coords.backFromLeftProp, coords.STRAIGHT)
                 .strafeToLinearHeading(coords.backdropLeftPos, coords.STRAIGHT)
                 .build();
         // Run to the center spike location
         Action runToCenterProp = drive.actionBuilder(startPose)
                 .strafeToLinearHeading(coords.propCenterPos, coords.STRAIGHT)
-                .strafeToLinearHeading(coords.backFromCenterPropPos, coords.STRAIGHT)
+                .strafeToLinearHeading(coords.backFromCenterProp, coords.STRAIGHT)
                 .strafeToLinearHeading(coords.backdropCenterPos, coords.STRAIGHT)
                 .build();
         // Run to the right spike location
         Action runToRightProp = drive.actionBuilder(startPose)
-                .strafeToLinearHeading(coords.betweenSidePropPos, coords.STRAIGHT)
+                .strafeToLinearHeading(coords.betweenSideProp, coords.STRAIGHT)
                 .strafeToLinearHeading(coords.propRightPos, coords.STRAIGHT)
-                .strafeToLinearHeading(coords.backFromRightPropPos, coords.STRAIGHT)
+                .strafeToLinearHeading(coords.backFromRightProp, coords.STRAIGHT)
                 .strafeToLinearHeading(coords.backdropRightPos, coords.STRAIGHT)
                 .build();
 
         // Park in backstage
-        Action rightPark = drive.actionBuilder(new Pose2d(coords.afterDropPixel, coords.ROTATED))
-                .strafeToLinearHeading(new Vector2d(-4, 34), coords.ROTATED)
+        Action leftPark = drive.actionBuilder(new Pose2d(coords.afterDropLeft, coords.ROTATED))
+                .strafeToLinearHeading(coords.parkInsidePos, coords.ROTATED)
                 .build();
-        Action middlePark = drive.actionBuilder(new Pose2d(coords.afterDropPixel, coords.ROTATED))
-                .strafeToLinearHeading(new Vector2d(4, 36), coords.ROTATED)
+        Action middlePark = drive.actionBuilder(new Pose2d(coords.afterDropCenter, coords.ROTATED))
+                .strafeToLinearHeading(coords.parkInsidePos, coords.ROTATED)
+                .build();
+        Action rightPark = drive.actionBuilder(new Pose2d(coords.afterDropRight, coords.ROTATED))
+                .strafeToLinearHeading(coords.parkInsidePos, coords.ROTATED)
                 .build();
 
         // Initialize all computer vision stuff
@@ -106,7 +108,7 @@ public class RedSideAutoBackdrop extends LinearOpMode {
                                 functions.touchBackdrop(),
                                 arm.dropYellowPixel()
                         ),
-                        rightPark
+                        leftPark
                 ));
                 break;
             case RIGHT:
@@ -117,7 +119,7 @@ public class RedSideAutoBackdrop extends LinearOpMode {
                                 functions.touchBackdrop(),
                                 arm.dropYellowPixel()
                         ),
-                        middlePark
+                        rightPark
                 ));
                 break;
         }
