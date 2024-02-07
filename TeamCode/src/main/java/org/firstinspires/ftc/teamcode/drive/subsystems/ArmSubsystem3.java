@@ -98,6 +98,8 @@ public class ArmSubsystem3 {
         lowerSlides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         lowerSlides.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
+        outtake.setDirection(DcMotorSimple.Direction.REVERSE);
+
         virtualBar.setPosition(LOAD);
 
         // Initialize finite state machines
@@ -126,7 +128,6 @@ public class ArmSubsystem3 {
 
     public void runArm(GamepadEx gamepad1, GamepadEx gamepad2) {
         int positionIncrement = 50;
-        double MIN_MULTIPLIER = 0.3;
         switch (slideState) {
             case REST:
                 liftMultiplier = 1;
@@ -293,7 +294,7 @@ public class ArmSubsystem3 {
             case IDLE:
                 if (rtReader.isDown()) {
                     outtakeState = OuttakeState.IN;
-                    outtake.setPower(-intakePower);
+                    outtake.setPower(intakePower);
                 } else if (ltReader.isDown() || boxSwitch.isPressed()) {
                     outtakeState = OuttakeState.OUT;
                 }
@@ -305,7 +306,7 @@ public class ArmSubsystem3 {
                 }
                 break;
             case OUT:
-                outtake.setPower(intakePower);
+                outtake.setPower(-intakePower);
                 if (!ltReader.isDown() && !boxSwitch.isPressed()) {
                     outtakeState = OuttakeState.IDLE;
                     outtake.setPower(0);
