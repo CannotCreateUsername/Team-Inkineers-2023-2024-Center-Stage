@@ -54,6 +54,9 @@ public class AutoCoordinates {
 
     // Substation side stuff
     // Exists in AutoFunctions.java
+    public Vector2d beforeCrossTrussPos = new Vector2d(48, 0);
+    public Vector2d afterCrossTrussPos = new Vector2d(48, -76);
+
     public Vector2d toBackdropFromPixelStack = new Vector2d(47, -76); // Rotated
 
 }
