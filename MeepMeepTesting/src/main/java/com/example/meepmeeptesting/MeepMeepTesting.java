@@ -34,7 +34,13 @@ public class MeepMeepTesting {
         // Image must be in PNG format! (Webp is sucks)
         Image img = null;
         try { img = ImageIO.read(new File("C:\\Users\\A\\Documents\\cs-field.png")); }
-        catch (IOException e) {}
+        catch (IOException e) {
+            try { img = ImageIO.read(new File("C:\\Users\\pecke\\Documents\\cs-field.png")); }
+            catch (IOException e2) {
+                System.out.println("Your PNG image was not found");
+            }
+        }
+
 
         meepMeep.getWindowFrame().setResizable(true);
 
