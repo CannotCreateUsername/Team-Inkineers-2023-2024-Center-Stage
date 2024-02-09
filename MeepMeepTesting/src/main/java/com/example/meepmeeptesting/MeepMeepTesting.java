@@ -20,7 +20,7 @@ public class MeepMeepTesting {
     public static void main(String[] args) {
         MeepMeep meepMeep = new MeepMeep(800);
 
-        RoadRunnerBotEntity closeBotBlue = new DefaultBotBuilder(meepMeep)
+        RoadRunnerBotEntity closeBotBlueRight = new DefaultBotBuilder(meepMeep)
                 // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
                 .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 15)
                 .setColorScheme(new ColorSchemeBlueDark())
@@ -37,8 +37,26 @@ public class MeepMeepTesting {
                                 .strafeTo(new Vector2d(-60, 48))
                                 .build()
                 );
+        RoadRunnerBotEntity closeBotRedRight = new DefaultBotBuilder(meepMeep)
+                // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
+                .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 15)
+                .setColorScheme(new ColorSchemeRedLight())
+                .followTrajectorySequence(drive ->
+                        drive.trajectorySequenceBuilder(new Pose2d(61, 12, Math.toRadians(180)))
+                                .forward(28)
+                                .strafeRight(12)
+                                .back(4)
+                                .strafeTo(new Vector2d(32, 48))
+                                .turn(Math.toRadians(-90))
+                                .forward(2)
+                                .waitSeconds(2)
+                                .back(2)
+                                .strafeTo(new Vector2d(60, 48))
+                                .build()
+                );
 
-        RoadRunnerBotEntity closeBotRed = new DefaultBotBuilder(meepMeep)
+        // LEFT
+        RoadRunnerBotEntity closeBotRedLeft = new DefaultBotBuilder(meepMeep)
                 // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
                 .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 15)
                 .setColorScheme(new ColorSchemeRedLight())
@@ -56,7 +74,7 @@ public class MeepMeepTesting {
                                 .build()
                 );
 
-        RoadRunnerBotEntity farBotBlue = new DefaultBotBuilder(meepMeep)
+        RoadRunnerBotEntity farBotBlueRight = new DefaultBotBuilder(meepMeep)
                 // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
                 .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 15)
                 .setColorScheme(new ColorSchemeBlueDark())
@@ -77,7 +95,29 @@ public class MeepMeepTesting {
                                 .build()
                 );
 
-        RoadRunnerBotEntity farBotRed = new DefaultBotBuilder(meepMeep)
+        RoadRunnerBotEntity farBotRedRight = new DefaultBotBuilder(meepMeep)
+                // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
+                .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 15)
+                .setColorScheme(new ColorSchemeRedLight())
+                .followTrajectorySequence(drive ->
+                        drive.trajectorySequenceBuilder(new Pose2d(61, -36, Math.toRadians(180)))
+                                .waitSeconds(4)
+                                .forward(28)
+                                .strafeRight(12)
+                                .back(4)
+                                .strafeLeft(12)
+                                .forward(24)
+                                .turn(Math.toRadians(-90))
+                                .strafeTo(new Vector2d(12, 48))
+                                .strafeRight(31)
+                                .forward(2)
+                                .waitSeconds(2)
+                                .back(2)
+                                .build()
+                );
+
+        // LEFT
+        RoadRunnerBotEntity farBotRedLeft = new DefaultBotBuilder(meepMeep)
                 // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
                 .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 15)
                 .setColorScheme(new ColorSchemeRedLight())
@@ -117,10 +157,10 @@ public class MeepMeepTesting {
         meepMeep.setBackground(img)
                 .setDarkMode(true)
                 .setBackgroundAlpha(0.95f)
-                .addEntity(closeBotBlue)
-                .addEntity(farBotBlue)
-                .addEntity(closeBotRed)
-                .addEntity(farBotRed)
+                .addEntity(closeBotBlueRight)
+                .addEntity(farBotBlueRight)
+                .addEntity(closeBotRedRight)
+                .addEntity(farBotRedRight)
                 .start();
     }
 }
