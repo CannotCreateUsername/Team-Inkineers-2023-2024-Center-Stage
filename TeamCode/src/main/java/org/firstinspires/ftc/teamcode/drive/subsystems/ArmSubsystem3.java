@@ -17,7 +17,8 @@ import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.PwmControl;
+import com.qualcomm.robotcore.hardware.ServoImplEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 public class ArmSubsystem3 {
@@ -41,13 +42,16 @@ public class ArmSubsystem3 {
 
     private final DcMotor upperSlides;
     private final DcMotor lowerSlides;
-    private final Servo virtualBar;
+    private final ServoImplEx rightVirtualBar;
+    private final ServoImplEx leftVirtualBar;
     private final CRServo outtake;
     private final RevTouchSensor limitSwitch;
     private final RevTouchSensor boxSwitch;
 
-    public final int DROP = 1;
-    public final int LOAD = 0;
+    public final double rLOAD = 1;
+    public final double rDROP = 1-0.25;
+    public final double lLOAD = 0;
+    public final double lDROP = 0.25;
 
     public double intakePower = 0.5;
     public double hangingMultiplier = 0.8;
@@ -82,7 +86,8 @@ public class ArmSubsystem3 {
         // Map actuator variables to actual hardware
         upperSlides = hardwareMap.get(DcMotor.class, "top_slide");
         lowerSlides = hardwareMap.get(DcMotor.class, "bottom_slide");
-        virtualBar = hardwareMap.get(Servo.class, "bar");
+        rightVirtualBar = hardwareMap.get(ServoImplEx.class, "bar_right");
+        leftVirtualBar = hardwareMap.get(ServoImplEx.class, "bar_left");
         outtake = hardwareMap.get(CRServo.class, "outtake");
         limitSwitch = hardwareMap.get(RevTouchSensor.class, "limit_switch");
         boxSwitch = hardwareMap.get(RevTouchSensor.class, "box_switch");
@@ -100,7 +105,15 @@ public class ArmSubsystem3 {
 
         outtake.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        virtualBar.setPosition(LOAD);
+        // Get the servo to use the same positions as the servo programmer
+        rightVirtualBar.setPwmRange(new PwmControl.PwmRange(540, 2460));
+        leftVirtualBar.setPwmRange(new PwmControl.PwmRange(540, 2460));
+
+        rightVirtualBar.setPwmEnable();
+        leftVirtualBar.setPwmEnable();
+
+        rightVirtualBar.setPosition(rLOAD);
+        leftVirtualBar.setPosition(lLOAD);
 
         // Initialize finite state machines
         slideState = SlideState.REST;
@@ -154,7 +167,7 @@ public class ArmSubsystem3 {
                 } else if (gamepad1.isDown(GamepadKeys.Button.LEFT_BUMPER)) {
                     slideState = SlideState.MANUAL;
                 } else if (gamepad1.wasJustReleased(GamepadKeys.Button.LEFT_BUMPER) || gamepad1.wasJustReleased(GamepadKeys.Button.X)) {
-                    virtualBar.setPosition(LOAD);
+                    rightVirtualBar.setPosition(rLOAD);
                     slideState = SlideState.REST;
                     timer.reset();
                 }
@@ -167,7 +180,7 @@ public class ArmSubsystem3 {
                 } else if (gamepad1.isDown(GamepadKeys.Button.LEFT_BUMPER)) {
                     slideState = SlideState.MANUAL;
                 } else if (gamepad1.wasJustReleased(GamepadKeys.Button.X)) {
-                    virtualBar.setPosition(LOAD);
+                    rightVirtualBar.setPosition(rLOAD);
                     slideState = SlideState.REST;
                     timer.reset();
                 }
@@ -184,7 +197,7 @@ public class ArmSubsystem3 {
                     hanging = true;
                     slideState = SlideState.HANG;
                 } else if (gamepad1.wasJustReleased(GamepadKeys.Button.X)) {
-                    virtualBar.setPosition(LOAD);
+                    rightVirtualBar.setPosition(rLOAD);
                     slideState = SlideState.REST;
                     timer.reset();
                 }
@@ -198,7 +211,7 @@ public class ArmSubsystem3 {
                     hanging = true;
                     slideState = SlideState.HANG;
                 } else if (gamepad1.wasJustReleased(GamepadKeys.Button.X)) {
-                    virtualBar.setPosition(LOAD);
+                    rightVirtualBar.setPosition(rLOAD);
                     slideState = SlideState.REST;
                     timer.reset();
                 }
@@ -213,7 +226,7 @@ public class ArmSubsystem3 {
                     hanging = true;
                     slideState = SlideState.HANG;
                 } else if (gamepad1.wasJustReleased(GamepadKeys.Button.X)) {
-                    virtualBar.setPosition(LOAD);
+                    rightVirtualBar.setPosition(rLOAD);
                     slideState = SlideState.REST;
                     timer.reset();
                 }
@@ -253,10 +266,12 @@ public class ArmSubsystem3 {
         // Code to run the virtual four bar. Don't move in REST state
         if (slideState != SlideState.REST) {
             if (gamepad1.wasJustPressed(GamepadKeys.Button.A) && !drop) {
-                virtualBar.setPosition(DROP);
+                rightVirtualBar.setPosition(rDROP);
+                leftVirtualBar.setPosition(lDROP);
                 drop = true;
             } else if (gamepad1.wasJustPressed(GamepadKeys.Button.A) && drop) {
-                virtualBar.setPosition(LOAD);
+                rightVirtualBar.setPosition(rLOAD);
+                leftVirtualBar.setPosition(lLOAD);
                 drop = false;
             }
         }
@@ -320,7 +335,7 @@ public class ArmSubsystem3 {
     public String getLiftState() { return slideState.name(); }
     public int getSlidePosition() { return lowerSlides.getCurrentPosition(); }
     public int getCurrentTarget() { return currentTarget; }
-    public double getV4bPosition() { return virtualBar.getPosition(); }
+    public double getV4bPosition() { return rightVirtualBar.getPosition(); }
     public double getArmTimer() { return timer.seconds(); }
     public String getOuttakeState() { return outtakeState.name(); }
     public double getSlide1Power() { return upperSlides.getPower(); }
@@ -377,7 +392,8 @@ public class ArmSubsystem3 {
                     dropTimer.reset();
                     set = true;
                 }
-                virtualBar.setPosition(DROP);
+                leftVirtualBar.setPosition(lDROP);
+                rightVirtualBar.setPosition(rDROP);
                 return dropTimer.seconds() < 2;
             }
         };
@@ -392,7 +408,8 @@ public class ArmSubsystem3 {
                     dropTimer.reset();
                     set = true;
                 }
-                virtualBar.setPosition(LOAD);
+                leftVirtualBar.setPosition(lLOAD);
+                rightVirtualBar.setPosition(rLOAD);
                 if (dropTimer.seconds() > 1.9) {
                     dropped = true;
                 }
@@ -409,7 +426,7 @@ public class ArmSubsystem3 {
                         new SequentialAction(
                                 ready4bar(),
                                 new SleepAction(0.5),
-                                spinOuttake(0.5, 3),
+                                spinOuttake(-0.5, 3),
                                 new ParallelAction(
                                         readySlides(),
                                         reset4Bar()
