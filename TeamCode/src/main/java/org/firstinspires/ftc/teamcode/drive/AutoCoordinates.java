@@ -13,14 +13,14 @@ public class AutoCoordinates {
             
             backdropCenterPos = new Vector2d(26, 32);
             backdropLeftPos = new Vector2d(31, 32);
-            backdropRightPos = new Vector2d(16.5, 32);
+            backdropRightPos = new Vector2d(18, 32);
 
             afterDropCenter = new Vector2d(26, 34);
-            afterDropLeft = new Vector2d(16.5, 34);
-            afterDropRight = new Vector2d(31, 34);
+            afterDropLeft = new Vector2d(31, 34);
+            afterDropRight = new Vector2d(18, 34);
 
-            parkInsidePos = new Vector2d(52, 28); // Rotated
-            parkOutsidePos = new Vector2d(0, 28); // Rotated
+            parkInsidePos = new Vector2d(52, 30); // Rotated
+            parkOutsidePos = new Vector2d(8, 30); // Rotated
 
             toBackdropFromPixelStack = new Vector2d(47, 76); // Rotated
         }
@@ -41,16 +41,16 @@ public class AutoCoordinates {
 
     // Backdrop coordinates for BLUE side (Do I rotate before or after?? Adjust the angle.)
     public Vector2d backdropCenterPos = new Vector2d(26, -32); // Straight
-    public Vector2d backdropLeftPos = new Vector2d(16.5, -32); // Straight
+    public Vector2d backdropLeftPos = new Vector2d(18, -32); // Straight
     public Vector2d backdropRightPos = new Vector2d(31, -32); // Straight
 
     public Vector2d afterDropCenter = new Vector2d(26, -34); // Rotated
-    public Vector2d afterDropLeft = new Vector2d(16.5, -34); // Rotated
+    public Vector2d afterDropLeft = new Vector2d(18, -34); // Rotated
     public Vector2d afterDropRight = new Vector2d(31, -34); // Rotated
 
     // Parking options for BLUE side
-    public Vector2d parkInsidePos = new Vector2d(52, -28); // Rotated
-    public Vector2d parkOutsidePos = new Vector2d(0, -28); // Rotated
+    public Vector2d parkInsidePos = new Vector2d(52, -30); // Rotated
+    public Vector2d parkOutsidePos = new Vector2d(8, -30); // Rotated
 
     // Substation side stuff
     // Exists in AutoFunctions.java

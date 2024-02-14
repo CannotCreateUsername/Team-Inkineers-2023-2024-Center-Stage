@@ -14,7 +14,7 @@ import org.firstinspires.ftc.teamcode.cv.ComputerVisionMediator;
 import org.firstinspires.ftc.teamcode.drive.subsystems.ArmSubsystem3;
 import org.firstinspires.ftc.teamcode.drive.subsystems.IntakeSubsystem;
 
-@Autonomous(name = "Blue Alliance Substation Auto", group = "Substation Side")
+@Autonomous(name = "Blue Alliance Substation Inside", group = "Substation Side")
 public class BlueSideAutoSubstation extends LinearOpMode {
 
     BlueOctopusPipeline octopusPipeline = new BlueOctopusPipeline();
