@@ -64,7 +64,6 @@ public class ArmSubsystem3 {
     private final int secondLvl = SLIDE_LIMIT/4*2;
     private final int thirdLvl = SLIDE_LIMIT/4*3;
     /** @noinspection FieldCanBeLocal*/
-//    private final int hangLvl = 500;
 
     SlideState slideState;
     OuttakeState outtakeState;
