@@ -61,7 +61,7 @@ public class AutoFunctions {
                     moveTimer.reset();
                     set = true;
                 }
-                if (!arm.touching() && moveTimer.seconds() < 1.9) {
+                if (!arm.touching() && moveTimer.seconds() < 2.5) {
                     drive.setDrivePowers(new PoseVelocity2d(
                             new Vector2d(0.1, 0), Math.toRadians(0)
                     ));
@@ -70,7 +70,7 @@ public class AutoFunctions {
                             new Vector2d(0, 0), Math.toRadians(0)
                     ));
                 }
-                if (moveTimer.seconds() > 2) {
+                if (moveTimer.seconds() > 2.6) {
                     return false;
                 }
                 return (!arm.touching());

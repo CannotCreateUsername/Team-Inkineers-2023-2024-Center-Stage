@@ -27,7 +27,7 @@ public class ArmTest extends LinearOpMode {
         while (opModeIsActive()) {
             if (gamepadEx2.wasJustPressed(GamepadKeys.Button.X)) {
                 Actions.runBlocking(new SequentialAction(
-                        armSubsystem.dropYellowPixel()
+                        armSubsystem.dropYellowPixel(true)
                 ));
             } else if (gamepadEx1.wasJustPressed(GamepadKeys.Button.A) && armSubsystem.intakePower <= 1) {
                 armSubsystem.hangingMultiplier += 0.1;

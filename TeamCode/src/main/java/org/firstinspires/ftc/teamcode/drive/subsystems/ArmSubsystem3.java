@@ -388,9 +388,13 @@ public class ArmSubsystem3 {
         };
     }
 
-    public Action readySlides() {
+    public Action readySlides(boolean high) {
         return telemetryPacket -> {
-            currentTarget = 450;
+            if (high) {
+                currentTarget = 450;
+            } else {
+                currentTarget = 200;
+            }
             powerPID(0.4);
             return !dropped;
         };
@@ -442,17 +446,17 @@ public class ArmSubsystem3 {
         };
     }
 
-    public Action dropYellowPixel() {
+    public Action dropYellowPixel(boolean high) {
         VKp = 0.002;
         return new SequentialAction (
                 new ParallelAction(
-                        readySlides(),
+                        readySlides(high),
                         new SequentialAction(
                                 ready4bar(),
                                 new SleepAction(0.5),
                                 spinOuttake(-0.5, 3),
                                 new ParallelAction(
-                                        readySlides(),
+                                        readySlides(high),
                                         reset4Bar()
                                 )
                         )

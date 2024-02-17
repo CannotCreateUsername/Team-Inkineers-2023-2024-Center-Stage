@@ -62,13 +62,13 @@ public class BlueSideAutoBackdrop2 extends LinearOpMode {
                 .build();
 
         // Park in backstage
-        Action leftPark = drive.actionBuilder(new Pose2d(coords.afterDropLeft, coords.ROTATED))
+        Action leftPark = drive.actionBuilder(new Pose2d(coords.afterDropRight, coords.ROTATED))
                 .strafeToLinearHeading(coords.parkOutsidePos, coords.ROTATED)
                 .build();
         Action middlePark = drive.actionBuilder(new Pose2d(coords.afterDropCenter, coords.ROTATED))
                 .strafeToLinearHeading(coords.parkOutsidePos, coords.ROTATED)
                 .build();
-        Action rightPark = drive.actionBuilder(new Pose2d(coords.afterDropRight, coords.ROTATED))
+        Action rightPark = drive.actionBuilder(new Pose2d(coords.afterDropLeft, coords.ROTATED))
                 .strafeToLinearHeading(coords.parkOutsidePos, coords.ROTATED)
                 .build();
 
@@ -96,7 +96,7 @@ public class BlueSideAutoBackdrop2 extends LinearOpMode {
                 Actions.runBlocking(new SequentialAction(
                         new ParallelAction(
                                 functions.touchBackdrop(),
-                                arm.dropYellowPixel()
+                                arm.dropYellowPixel(false)
                         ),
                         middlePark
                 ));
@@ -107,7 +107,7 @@ public class BlueSideAutoBackdrop2 extends LinearOpMode {
                 Actions.runBlocking(new SequentialAction(
                         new ParallelAction(
                                 functions.touchBackdrop(),
-                                arm.dropYellowPixel()
+                                arm.dropYellowPixel(false)
                         ),
                         leftPark
                 ));
@@ -118,7 +118,7 @@ public class BlueSideAutoBackdrop2 extends LinearOpMode {
                 Actions.runBlocking(new SequentialAction(
                         new ParallelAction(
                                 functions.touchBackdrop(),
-                                arm.dropYellowPixel()
+                                arm.dropYellowPixel(false)
                         ),
                         rightPark
                 ));

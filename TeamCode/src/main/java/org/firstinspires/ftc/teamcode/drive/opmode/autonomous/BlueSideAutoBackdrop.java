@@ -94,7 +94,7 @@ public class BlueSideAutoBackdrop extends LinearOpMode {
                 Actions.runBlocking(new SequentialAction(
                         new ParallelAction(
                                 functions.touchBackdrop(),
-                                arm.dropYellowPixel()
+                                arm.dropYellowPixel(false)
                         ),
                         middlePark
                 ));
@@ -105,7 +105,7 @@ public class BlueSideAutoBackdrop extends LinearOpMode {
                 Actions.runBlocking(new SequentialAction(
                         new ParallelAction(
                                 functions.touchBackdrop(),
-                                arm.dropYellowPixel()
+                                arm.dropYellowPixel(false)
                         ),
                         leftPark
                 ));
@@ -116,7 +116,7 @@ public class BlueSideAutoBackdrop extends LinearOpMode {
                 Actions.runBlocking(new SequentialAction(
                         new ParallelAction(
                                 functions.touchBackdrop(),
-                                arm.dropYellowPixel()
+                                arm.dropYellowPixel(false)
                         ),
                         rightPark
                 ));
