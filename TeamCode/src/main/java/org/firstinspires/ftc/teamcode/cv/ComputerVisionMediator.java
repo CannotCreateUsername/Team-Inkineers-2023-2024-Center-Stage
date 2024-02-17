@@ -195,7 +195,7 @@ public class ComputerVisionMediator {
         imu.resetYaw();
         timer.reset();
         double YAW_ERROR_THRESH = 0.1;
-        while (Math.abs(error) > YAW_ERROR_THRESH && timer.seconds() < 3 && opMode.opModeIsActive()) {
+        while (timer.seconds() < 3 && opMode.opModeIsActive()) {
             // calculate the error , regardless of the target or current turn angle
             error = Math.abs(imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES)) - Math.abs(degrees);
             power = (error * IMUKp) + IMUKd;

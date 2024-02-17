@@ -23,23 +23,23 @@ public class DualCVTester extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         drive = new MecanumDrive(hardwareMap, new Pose2d(new Vector2d(0, 0), Math.toRadians(0)));
-        computerVisionMediator.init(hardwareMap, drive, new RedOctopusPipeline(), true, this);
+        computerVisionMediator.init(hardwareMap, drive, new RedOctopusPipeline(), false, this);
 
         ElapsedTime cringeTimer = new ElapsedTime();
 
-        while (!opModeIsActive() && !isStopRequested()) {
-            computerVisionMediator.telemetryAprilTag(this);
-            telemetry.update();
-        }
+//        while (!opModeIsActive() && !isStopRequested()) {
+//            computerVisionMediator.telemetryAprilTag(this);
+//            telemetry.update();
+//        }
 
         waitForStart();
         cringeTimer.reset();
         while (opModeIsActive()) {
 
             if (gamepad1.a) {
-                Actions.runBlocking(computerVisionMediator.turn90(false));
+                computerVisionMediator.turnPID(90);
             } else if (gamepad1.b) {
-                Actions.runBlocking(computerVisionMediator.turn90(true));
+                computerVisionMediator.turnPID(-90);
             }
 
             // Take gamepad input and pass it into the mecanum drive function
@@ -53,7 +53,7 @@ public class DualCVTester extends LinearOpMode {
 
             telemetry.addData("Yaw Angle", computerVisionMediator.getYawAngle());
 
-            computerVisionMediator.telemetryAprilTag(this);
+//            computerVisionMediator.telemetryAprilTag(this);
 
 //            telemetry.addLine("Never gonna");
 //

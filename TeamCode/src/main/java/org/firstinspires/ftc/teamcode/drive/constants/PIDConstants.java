@@ -6,7 +6,7 @@ import com.acmerobotics.dashboard.config.Config;
 public class PIDConstants {
     // IMU yaw constants for turning
     public static double IMUKp = 0.02;
-    public static double IMUKd = 0.09;
+    public static double IMUKd = 0.1;
 
     // Straight constants for forward/backwards
     public static double XKp = 0.05;
