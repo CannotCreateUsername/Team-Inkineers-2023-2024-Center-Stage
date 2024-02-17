@@ -13,7 +13,7 @@ import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.cv.ComputerVisionMediator;
 import org.firstinspires.ftc.teamcode.cv.RedOctopusPipeline;
 
-//@Disabled
+@Disabled
 @TeleOp(name = "Dual CV Testing", group = "CV")
 public class DualCVTester extends LinearOpMode {
 

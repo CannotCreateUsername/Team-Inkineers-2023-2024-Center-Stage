@@ -16,6 +16,7 @@ import com.qualcomm.hardware.rev.RevTouchSensor;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PwmControl;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
@@ -81,6 +82,9 @@ public class ArmSubsystem3 {
     TriggerReader rtReader;
     TriggerReader ltReader;
 
+    private final DigitalChannel greenLED;
+    private final DigitalChannel redLED;
+
     public ArmSubsystem3(HardwareMap hardwareMap) {
         // Map actuator variables to actual hardware
         upperSlides = hardwareMap.get(DcMotor.class, "top_slide");
@@ -90,6 +94,11 @@ public class ArmSubsystem3 {
         outtake = hardwareMap.get(CRServo.class, "outtake");
         limitSwitch = hardwareMap.get(RevTouchSensor.class, "limit_switch");
         boxSwitch = hardwareMap.get(RevTouchSensor.class, "box_switch");
+        greenLED = hardwareMap.get(DigitalChannel.class, "green");
+        redLED = hardwareMap.get(DigitalChannel.class, "red");
+
+        greenLED.setMode(DigitalChannel.Mode.OUTPUT);
+        redLED.setMode(DigitalChannel.Mode.OUTPUT);
 
         // Motor behavior setup
         upperSlides.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -274,6 +283,8 @@ public class ArmSubsystem3 {
                 drop = false;
             }
         }
+
+        // Disable PID when hanging
         if (!hanging) {
             powerPID(0.6);
         }
@@ -309,7 +320,8 @@ public class ArmSubsystem3 {
                 if (rtReader.isDown()) {
                     outtakeState = OuttakeState.IN;
                     outtake.setPower(intakePower);
-                } else if (ltReader.isDown() || boxSwitch.isPressed()) {
+//                } else if (ltReader.isDown() || boxSwitch.isPressed()) {
+                } else if (ltReader.isDown()) {
                     outtakeState = OuttakeState.OUT;
                 }
                 break;
@@ -321,11 +333,24 @@ public class ArmSubsystem3 {
                 break;
             case OUT:
                 outtake.setPower(-intakePower);
-                if (!ltReader.isDown() && !boxSwitch.isPressed()) {
+//                if (!ltReader.isDown() && !boxSwitch.isPressed()) {
+                if (!ltReader.isDown()) {
                     outtakeState = OuttakeState.IDLE;
                     outtake.setPower(0);
                 }
                 break;
+        }
+        if (drop) {
+            if (limitSwitch.isPressed()) {
+                greenLED.setState(true);
+                redLED.setState(false);
+            } else {
+                greenLED.setState(false);
+                redLED.setState(true);
+            }
+        } else {
+            greenLED.setState(false);
+            redLED.setState(false);
         }
     }
 
