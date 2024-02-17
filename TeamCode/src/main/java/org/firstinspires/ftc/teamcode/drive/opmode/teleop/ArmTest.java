@@ -56,6 +56,7 @@ public class ArmTest extends LinearOpMode {
             telemetry.addData("SECOND Slide motor power", armSubsystem.getSlide2Power());
             telemetry.addData("Intake Power", armSubsystem.intakePower);
             telemetry.addData("Hanging Power", armSubsystem.hangingMultiplier);
+            telemetry.addData("Box Switch Pressed?", armSubsystem.touching());
             telemetry.update();
         }
     }

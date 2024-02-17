@@ -151,16 +151,18 @@ public class ArmSubsystem3 {
         int positionIncrement = 50;
         switch (slideState) {
             case REST:
-                liftMultiplier = 1;
+                liftMultiplier = 1; // Normal drive speed
+
+                // Account for slippage and prevent motor stalling
+                if (limitSwitch.isPressed()) {
+                    lowerSlides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                    lowerSlides.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                }
                 if (gamepad1.wasJustReleased(GamepadKeys.Button.RIGHT_BUMPER)) {
                     slideState = SlideState.FIRST;
                 } else if (gamepad1.wasJustReleased(GamepadKeys.Button.DPAD_UP)) {
                     currentTarget = 1800;
                     slideState = SlideState.HANG;
-                } else if (limitSwitch.isPressed()) {
-                    // Account for slippage and prevent motor stalling
-                    lowerSlides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                    lowerSlides.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                 }
                 if (timer.seconds() > 1) {
                     currentTarget = 0;
@@ -340,17 +342,15 @@ public class ArmSubsystem3 {
                 }
                 break;
         }
-        if (drop) {
-            if (limitSwitch.isPressed()) {
-                greenLED.setState(true);
-                redLED.setState(false);
-            } else {
-                greenLED.setState(false);
-                redLED.setState(true);
-            }
+        if (limitSwitch.isPressed()) {
+            greenLED.setMode(DigitalChannel.Mode.OUTPUT);
+            redLED.setMode(DigitalChannel.Mode.INPUT);
+        } else if (drop) {
+            greenLED.setMode(DigitalChannel.Mode.INPUT);
+            redLED.setMode(DigitalChannel.Mode.OUTPUT);
         } else {
-            greenLED.setState(false);
-            redLED.setState(false);
+            greenLED.setMode(DigitalChannel.Mode.OUTPUT);
+            redLED.setMode(DigitalChannel.Mode.OUTPUT);
         }
     }
 
