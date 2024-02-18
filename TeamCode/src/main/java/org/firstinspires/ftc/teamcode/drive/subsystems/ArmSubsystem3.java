@@ -39,7 +39,7 @@ public class ArmSubsystem3 {
     }
 
     // ViperSlide PID constants
-    private double VKp = 0.003; // !! if you change higher the slides go crazy !!
+    private double VKp = 0.0015; // !! if you change higher the slides go crazy !!
 
     private final DcMotor upperSlides;
     private final DcMotor lowerSlides;
@@ -107,7 +107,7 @@ public class ArmSubsystem3 {
         upperSlides.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         lowerSlides.setDirection(DcMotorSimple.Direction.REVERSE);
-        lowerSlides.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        lowerSlides.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         lowerSlides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         lowerSlides.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
@@ -178,6 +178,7 @@ public class ArmSubsystem3 {
                     slideState = SlideState.MANUAL;
                 } else if (gamepad1.wasJustReleased(GamepadKeys.Button.LEFT_BUMPER) || gamepad1.wasJustReleased(GamepadKeys.Button.X)) {
                     rightVirtualBar.setPosition(rLOAD);
+                    leftVirtualBar.setPosition(lLOAD);
                     slideState = SlideState.REST;
                     timer.reset();
                 }
@@ -191,6 +192,7 @@ public class ArmSubsystem3 {
                     slideState = SlideState.MANUAL;
                 } else if (gamepad1.wasJustReleased(GamepadKeys.Button.X)) {
                     rightVirtualBar.setPosition(rLOAD);
+                    leftVirtualBar.setPosition(lLOAD);
                     slideState = SlideState.REST;
                     timer.reset();
                 }
@@ -208,6 +210,7 @@ public class ArmSubsystem3 {
                     slideState = SlideState.HANG;
                 } else if (gamepad1.wasJustReleased(GamepadKeys.Button.X)) {
                     rightVirtualBar.setPosition(rLOAD);
+                    leftVirtualBar.setPosition(lLOAD);
                     slideState = SlideState.REST;
                     timer.reset();
                 }
@@ -222,6 +225,7 @@ public class ArmSubsystem3 {
                     slideState = SlideState.HANG;
                 } else if (gamepad1.wasJustReleased(GamepadKeys.Button.X)) {
                     rightVirtualBar.setPosition(rLOAD);
+                    leftVirtualBar.setPosition(lLOAD);
                     slideState = SlideState.REST;
                     timer.reset();
                 }
@@ -237,6 +241,7 @@ public class ArmSubsystem3 {
                     slideState = SlideState.HANG;
                 } else if (gamepad1.wasJustReleased(GamepadKeys.Button.X)) {
                     rightVirtualBar.setPosition(rLOAD);
+                    leftVirtualBar.setPosition(lLOAD);
                     slideState = SlideState.REST;
                     timer.reset();
                 }
@@ -393,7 +398,7 @@ public class ArmSubsystem3 {
             if (high) {
                 currentTarget = 450;
             } else {
-                currentTarget = 200;
+                currentTarget = 240;
             }
             powerPID(0.4);
             return !dropped;
