@@ -49,7 +49,7 @@ public class BlueSideAutoBackdrop extends LinearOpMode {
         Action runToCenterProp = drive.actionBuilder(startPose)
                 .strafeToLinearHeading(coords.propCenterPos, coords.STRAIGHT)
                 .strafeToLinearHeading(coords.backFromCenterProp, coords.STRAIGHT)
-                .strafeToLinearHeading(coords.backdropCenterPos, coords.STRAIGHT)
+                .strafeToLinearHeading(coords.backdropCenterPos, coords.ROTATED)
                 .build();
         // Run to the right spike location
         Action runToRightProp = drive.actionBuilder(startPose)
@@ -57,6 +57,16 @@ public class BlueSideAutoBackdrop extends LinearOpMode {
                 .strafeToLinearHeading(coords.propRightPos, coords.STRAIGHT)
                 .strafeToLinearHeading(coords.backFromRightProp, coords.STRAIGHT)
                 .strafeToLinearHeading(coords.backdropRightPos, coords.STRAIGHT)
+                .build();
+
+        Action backInCenter = drive.actionBuilder(new Pose2d(coords.backdropCenterPos, coords.ROTATED))
+                .strafeToLinearHeading(coords.afterDropCenter, coords.ROTATED)
+                .build();
+        Action backInLeft = drive.actionBuilder(new Pose2d(coords.backdropLeftPos, coords.ROTATED))
+                .strafeToLinearHeading(coords.afterDropLeft, coords.ROTATED)
+                .build();
+        Action backInRight = drive.actionBuilder(new Pose2d(coords.backdropRightPos, coords.ROTATED))
+                .strafeToLinearHeading(coords.afterDropRight, coords.ROTATED)
                 .build();
 
         // Park in backstage
@@ -93,7 +103,7 @@ public class BlueSideAutoBackdrop extends LinearOpMode {
                 CVMediator.turnPID(90);
                 Actions.runBlocking(new SequentialAction(
                         new ParallelAction(
-                                functions.touchBackdrop(),
+                                backInCenter,
                                 arm.dropYellowPixel(false)
                         ),
                         middlePark
@@ -104,7 +114,7 @@ public class BlueSideAutoBackdrop extends LinearOpMode {
                 CVMediator.turnPID(90);
                 Actions.runBlocking(new SequentialAction(
                         new ParallelAction(
-                                functions.touchBackdrop(),
+                                backInLeft,
                                 arm.dropYellowPixel(false)
                         ),
                         leftPark
@@ -115,7 +125,7 @@ public class BlueSideAutoBackdrop extends LinearOpMode {
                 CVMediator.turnPID(90);
                 Actions.runBlocking(new SequentialAction(
                         new ParallelAction(
-                                functions.touchBackdrop(),
+                                backInRight,
                                 arm.dropYellowPixel(false)
                         ),
                         rightPark
