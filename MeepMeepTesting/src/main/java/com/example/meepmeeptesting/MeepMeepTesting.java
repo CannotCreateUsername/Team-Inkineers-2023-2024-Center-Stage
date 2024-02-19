@@ -99,7 +99,7 @@ public class MeepMeepTesting {
                 .setColorScheme(new ColorSchemeRedLight())
                 .followTrajectorySequence(drive ->
                         drive.trajectorySequenceBuilder(new Pose2d(61, -36, Math.toRadians(180)))
-                                .waitSeconds(4)
+                                .waitSeconds(2)
                                 .forward(28)
                                 .strafeRight(12)
                                 .back(4)
@@ -143,9 +143,10 @@ public class MeepMeepTesting {
         Image img = null;
         try { img = ImageIO.read(new File("C:\\Users\\A\\Documents\\cs-field.png")); }
         catch (IOException e) {
+            System.out.println("Location for image 1 not valid");
             try { img = ImageIO.read(new File("C:\\Users\\pecke\\Documents\\cs-field.png")); }
             catch (IOException e2) {
-                System.out.println("Your PNG image was not found");
+                System.out.println("Your PNG image was not valid");
             }
         }
 
@@ -155,10 +156,10 @@ public class MeepMeepTesting {
         meepMeep.setBackground(img)
                 .setDarkMode(true)
                 .setBackgroundAlpha(0.95f)
-                .addEntity(closeBotBlueRight)
+//                .addEntity(closeBotBlueRight)
                 .addEntity(farBotBlueRight)
-                .addEntity(closeBotRedRight)
-                .addEntity(farBotRedRight)
+//                .addEntity(closeBotRedRight)
+//                .addEntity(farBotRedRight)
                 .start();
     }
 }
