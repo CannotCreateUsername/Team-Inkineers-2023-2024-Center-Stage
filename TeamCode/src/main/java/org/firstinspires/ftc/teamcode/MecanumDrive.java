@@ -50,7 +50,7 @@ public final class MecanumDrive {
     public static class Params {
         // drive model parameters
         public double inPerTick = 0.00295700689202494256645881194618; //Avg Ticks: 30470 29800.333 Distance: 90 inches (Meet 0)
-        public double lateralInPerTick = -0.001832293990833905;
+        public double lateralInPerTick = 0.001832293990833905;
         public double trackWidthTicks = 3994.2774019102985; // 3603.57260358197 (Meet 0)
 
         // feedforward parameters (in tick units)
@@ -69,12 +69,12 @@ public final class MecanumDrive {
 
         // path controller gains
         public double axialGain = 3.0;
-        public double lateralGain = 0.0;
-        public double headingGain = 1.8; // shared with turn
+        public double lateralGain = 0.1;
+        public double headingGain = 2.2; // shared with turn
 
-        public double axialVelGain = 2.5;
-        public double lateralVelGain = 0.1;
-        public double headingVelGain = 0.5; // shared with turn
+        public double axialVelGain = 0.05;
+        public double lateralVelGain = 0;
+        public double headingVelGain = 0.1; // shared with turn
     }
 
     public static Params PARAMS = new Params();
