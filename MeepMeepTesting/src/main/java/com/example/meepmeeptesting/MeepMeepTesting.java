@@ -29,6 +29,7 @@ public class MeepMeepTesting {
                                 .back(4)
                                 .strafeTo(new Vector2d(-28, 48))
                                 .turn(Math.toRadians(90))
+                                .waitSeconds(2)
                                 .forward(2)
                                 .waitSeconds(2)
                                 .back(2)
@@ -46,6 +47,7 @@ public class MeepMeepTesting {
                                 .back(4)
                                 .strafeTo(new Vector2d(32, 48))
                                 .turn(Math.toRadians(-90))
+                                .waitSeconds(2)
                                 .forward(2)
                                 .waitSeconds(2)
                                 .back(2)
@@ -65,6 +67,7 @@ public class MeepMeepTesting {
                                 .back(4)
                                 .strafeTo(new Vector2d(28, 48))
                                 .turn(Math.toRadians(-90))
+                                .waitSeconds(2)
                                 .forward(2)
                                 .waitSeconds(2)
                                 .back(2)
@@ -85,6 +88,7 @@ public class MeepMeepTesting {
                                 .strafeLeft(12)
                                 .forward(24)
                                 .turn(Math.toRadians(90))
+                                .waitSeconds(2)
                                 .strafeTo(new Vector2d(-12, 48))
                                 .strafeLeft(16)
                                 .forward(2)
@@ -106,6 +110,7 @@ public class MeepMeepTesting {
                                 .strafeLeft(12)
                                 .forward(24)
                                 .turn(Math.toRadians(-90))
+                                .waitSeconds(2)
                                 .strafeTo(new Vector2d(12, 48))
                                 .strafeRight(31)
                                 .forward(2)
@@ -128,6 +133,7 @@ public class MeepMeepTesting {
                                 .strafeRight(12)
                                 .forward(24)
                                 .turn(Math.toRadians(-90))
+                                .waitSeconds(2)
                                 .strafeTo(new Vector2d(12, 48))
                                 .strafeRight(16)
                                 .forward(2)
@@ -144,7 +150,7 @@ public class MeepMeepTesting {
         try { img = ImageIO.read(new File("C:\\Users\\A\\Documents\\cs-field.png")); }
         catch (IOException e) {
             System.out.println("Location for image 1 not valid");
-            try { img = ImageIO.read(new File("C:\\Users\\pecke\\Documents\\cs-field.png")); }
+            try { img = ImageIO.read(new File("C:\\Users\\pecke\\Documents\\cs-field-light.png")); }
             catch (IOException e2) {
                 System.out.println("Your PNG image was not valid");
             }
@@ -156,10 +162,10 @@ public class MeepMeepTesting {
         meepMeep.setBackground(img)
                 .setDarkMode(true)
                 .setBackgroundAlpha(0.95f)
-//                .addEntity(closeBotBlueRight)
+                .addEntity(closeBotBlueRight)
                 .addEntity(farBotBlueRight)
-//                .addEntity(closeBotRedRight)
-//                .addEntity(farBotRedRight)
+                .addEntity(closeBotRedRight)
+                .addEntity(farBotRedRight)
                 .start();
     }
 }
