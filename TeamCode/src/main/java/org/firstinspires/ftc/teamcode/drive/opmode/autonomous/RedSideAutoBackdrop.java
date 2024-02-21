@@ -43,20 +43,20 @@ public class RedSideAutoBackdrop extends LinearOpMode {
                 .strafeToLinearHeading(coords.betweenSideProp, coords.STRAIGHT)
                 .strafeToLinearHeading(coords.propLeftPos, coords.STRAIGHT)
                 .strafeToLinearHeading(coords.backFromLeftProp, coords.STRAIGHT)
-                .strafeToLinearHeading(coords.backdropLeftPos, coords.STRAIGHT)
+                .strafeToLinearHeading(coords.backdropLeftPos, coords.ROTATED)
                 .build();
         // Run to the center spike location
         Action runToCenterProp = drive.actionBuilder(startPose)
                 .strafeToLinearHeading(coords.propCenterPos, coords.STRAIGHT)
                 .strafeToLinearHeading(coords.backFromCenterProp, coords.STRAIGHT)
-                .strafeToLinearHeading(coords.backdropCenterPos, coords.STRAIGHT)
+                .strafeToLinearHeading(coords.backdropCenterPos, coords.ROTATED)
                 .build();
         // Run to the right spike location
         Action runToRightProp = drive.actionBuilder(startPose)
                 .strafeToLinearHeading(coords.betweenSideProp, coords.STRAIGHT)
                 .strafeToLinearHeading(coords.propRightPos, coords.STRAIGHT)
                 .strafeToLinearHeading(coords.backFromRightProp, coords.STRAIGHT)
-                .strafeToLinearHeading(coords.backdropRightPos, coords.STRAIGHT)
+                .strafeToLinearHeading(coords.backdropRightPos, coords.ROTATED)
                 .build();
 
         // Park in backstage
@@ -91,7 +91,7 @@ public class RedSideAutoBackdrop extends LinearOpMode {
             case NONE:
             case MIDDLE:
                 Actions.runBlocking(runToCenterProp);
-                CVMediator.turnPID(-90);
+//                CVMediator.turnPID(-90);
                 Actions.runBlocking(new SequentialAction(
                         new ParallelAction(
                                 functions.touchBackdrop(),
@@ -102,7 +102,7 @@ public class RedSideAutoBackdrop extends LinearOpMode {
                 break;
             case LEFT:
                 Actions.runBlocking(runToLeftProp);
-                CVMediator.turnPID(-90);
+//                CVMediator.turnPID(-90);
                 Actions.runBlocking(new SequentialAction(
                         new ParallelAction(
                                 functions.touchBackdrop(),
@@ -113,7 +113,7 @@ public class RedSideAutoBackdrop extends LinearOpMode {
                 break;
             case RIGHT:
                 Actions.runBlocking(runToRightProp);
-                CVMediator.turnPID(-90);
+//                CVMediator.turnPID(-90);
                 Actions.runBlocking(new SequentialAction(
                         new ParallelAction(
                                 functions.touchBackdrop(),
