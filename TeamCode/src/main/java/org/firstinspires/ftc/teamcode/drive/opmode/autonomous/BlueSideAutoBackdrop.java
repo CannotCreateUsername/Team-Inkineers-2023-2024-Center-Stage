@@ -49,7 +49,7 @@ public class BlueSideAutoBackdrop extends LinearOpMode {
         Action runToCenterProp = drive.actionBuilder(startPose)
                 .strafeToLinearHeading(coords.propCenterPos, coords.STRAIGHT)
                 .strafeToLinearHeading(coords.backFromCenterProp, coords.STRAIGHT)
-                .strafeToLinearHeading(coords.backdropCenterPos, coords.ROTATED)
+                .strafeToLinearHeading(coords.backdropCenterPos, coords.STRAIGHT)
                 .build();
         // Run to the right spike location
         Action runToRightProp = drive.actionBuilder(startPose)
@@ -59,25 +59,15 @@ public class BlueSideAutoBackdrop extends LinearOpMode {
                 .strafeToLinearHeading(coords.backdropRightPos, coords.STRAIGHT)
                 .build();
 
-        Action backInCenter = drive.actionBuilder(new Pose2d(coords.backdropCenterPos, coords.ROTATED))
-                .strafeToLinearHeading(coords.afterDropCenter, coords.ROTATED)
-                .build();
-        Action backInLeft = drive.actionBuilder(new Pose2d(coords.backdropLeftPos, coords.ROTATED))
-                .strafeToLinearHeading(coords.afterDropLeft, coords.ROTATED)
-                .build();
-        Action backInRight = drive.actionBuilder(new Pose2d(coords.backdropRightPos, coords.ROTATED))
-                .strafeToLinearHeading(coords.afterDropRight, coords.ROTATED)
-                .build();
-
         // Park in backstage
-        Action leftPark = drive.actionBuilder(new Pose2d(coords.afterDropRight, coords.ROTATED))
-                .strafeToLinearHeading(coords.parkInsidePos, coords.ROTATED)
+        Action leftPark = drive.actionBuilder(new Pose2d(coords.backdropLeftPos, coords.ROTATED))
+                .strafeToConstantHeading(coords.parkOutsidePos)
                 .build();
-        Action middlePark = drive.actionBuilder(new Pose2d(coords.afterDropCenter, coords.ROTATED))
-                .strafeToLinearHeading(coords.parkInsidePos, coords.ROTATED)
+        Action middlePark = drive.actionBuilder(new Pose2d(coords.backdropCenterPos, coords.ROTATED))
+                .strafeToConstantHeading(coords.parkOutsidePos)
                 .build();
-        Action rightPark = drive.actionBuilder(new Pose2d(coords.afterDropLeft, coords.ROTATED))
-                .strafeToLinearHeading(coords.parkInsidePos, coords.ROTATED)
+        Action rightPark = drive.actionBuilder(new Pose2d(coords.backdropRightPos, coords.ROTATED))
+                .strafeToConstantHeading(coords.parkOutsidePos)
                 .build();
 
         // Initialize all computer vision stuff
@@ -103,7 +93,7 @@ public class BlueSideAutoBackdrop extends LinearOpMode {
                 CVMediator.turnPID(90);
                 Actions.runBlocking(new SequentialAction(
                         new ParallelAction(
-                                backInCenter,
+                                functions.touchBackdrop(),
                                 arm.dropYellowPixel(false)
                         ),
                         middlePark
@@ -114,7 +104,7 @@ public class BlueSideAutoBackdrop extends LinearOpMode {
                 CVMediator.turnPID(90);
                 Actions.runBlocking(new SequentialAction(
                         new ParallelAction(
-                                backInLeft,
+                                functions.touchBackdrop(),
                                 arm.dropYellowPixel(false)
                         ),
                         leftPark
@@ -125,7 +115,7 @@ public class BlueSideAutoBackdrop extends LinearOpMode {
                 CVMediator.turnPID(90);
                 Actions.runBlocking(new SequentialAction(
                         new ParallelAction(
-                                backInRight,
+                                functions.touchBackdrop(),
                                 arm.dropYellowPixel(false)
                         ),
                         rightPark
