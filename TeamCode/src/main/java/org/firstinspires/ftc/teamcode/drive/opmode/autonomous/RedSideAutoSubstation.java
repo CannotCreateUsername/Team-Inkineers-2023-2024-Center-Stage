@@ -63,6 +63,8 @@ public class RedSideAutoSubstation extends LinearOpMode {
                 .strafeToLinearHeading(coords.backToIntakePixel, coords.ROTATED)
                 .waitSeconds(1)
                 .strafeToLinearHeading(coords.pixelStackPos, coords.ROTATED)
+                .strafeToLinearHeading(coords.backToIntakePixel, coords.ROTATED)
+                .strafeToLinearHeading(coords.pixelStackPos, coords.ROTATED)
                 .build();
 
         Action runAcrossField = drive.actionBuilder(new Pose2d(coords.pixelStackPos, coords.ROTATED))
@@ -91,6 +93,11 @@ public class RedSideAutoSubstation extends LinearOpMode {
 
         timer1.reset();
         if (isStopRequested()) return;
+
+        // Store which path to take
+        Action runToScoreYellow = runToScoreCenter;
+        Action runToScoreWhite = runToScoreLeft;
+
         switch (octopusPipeline.getLocation()) {
             case NONE:
             case MIDDLE:
@@ -99,66 +106,46 @@ public class RedSideAutoSubstation extends LinearOpMode {
                         new ParallelAction(
                                 runToPixelStack,
                                 functions.intakePixel()
-                        ),
-                        runAcrossField,
-                        new ParallelAction(
-                                runToScoreLeft,
-                                new SequentialAction(
-                                        arm.readySlides(true),
-                                        arm.ready4bar()
-                                )
-                        ),
-                        arm.spinOuttake(-0.5, 0.35),
-                        runToScoreCenter,
-                        arm.spinOuttake(-1, 0.5),
-                        arm.reset4Bar(),
-                        arm.resetSlides()
+                        )
                 ));
                 break;
             case LEFT:
+                runToScoreYellow = runToScoreLeft;
+                runToScoreWhite = runToScoreCenter;
                 Actions.runBlocking(new SequentialAction(
                         runToLeftProp,
                         new ParallelAction(
                                 runToPixelStack,
                                 functions.intakePixel()
-                        ),
-                        runAcrossField,
-                        new ParallelAction(
-                                runToScoreCenter,
-                                new SequentialAction(
-                                        arm.readySlides(true),
-                                        arm.ready4bar()
-                                )
-                        ),
-                        arm.spinOuttake(-0.5, 0.35),
-                        runToScoreLeft,
-                        arm.spinOuttake(-1, 0.5),
-                        arm.reset4Bar(),
-                        arm.resetSlides()
+                        )
                 ));
                 break;
             case RIGHT:
+                runToScoreYellow = runToScoreRight;
+                runToScoreWhite = runToScoreCenter;
                 Actions.runBlocking(new SequentialAction(
                         runToRightProp,
                         new ParallelAction(
                                 runToPixelStack,
                                 functions.intakePixel()
-                        ),
-                        runAcrossField,
-                        new ParallelAction(
-                                runToScoreCenter,
-                                new SequentialAction(
-                                        arm.readySlides(true),
-                                        arm.ready4bar()
-                                )
-                        ),
-                        arm.spinOuttake(-0.5, 0.35),
-                        runToScoreRight,
-                        arm.spinOuttake(-1, 0.5),
-                        arm.reset4Bar(),
-                        arm.resetSlides()
+                        )
                 ));
                 break;
         }
+        Actions.runBlocking(new SequentialAction(
+                runAcrossField,
+                new ParallelAction(
+                        runToScoreWhite,
+                        new SequentialAction(
+                                arm.readySlides(true),
+                                arm.ready4bar()
+                        )
+                ),
+                arm.spinOuttake(-0.5, 0.35),
+                runToScoreYellow,
+                arm.spinOuttake(-1, 0.5),
+                arm.reset4Bar(),
+                arm.resetSlides()
+        ));
     }
 }
