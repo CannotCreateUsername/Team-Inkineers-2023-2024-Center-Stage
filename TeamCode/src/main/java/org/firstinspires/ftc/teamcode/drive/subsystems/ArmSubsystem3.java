@@ -410,7 +410,7 @@ public class ArmSubsystem3 {
                     currentTarget = 240;
                 }
                 powerPID(0.4);
-                return !dropped && slideTimer.seconds() < 2;
+                return !dropped && slideTimer.seconds() < 1.5;
             }
         };
     }

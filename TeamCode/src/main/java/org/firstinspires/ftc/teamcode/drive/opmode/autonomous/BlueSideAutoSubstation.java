@@ -65,17 +65,18 @@ public class BlueSideAutoSubstation extends LinearOpMode {
                 .waitSeconds(1)
                 .strafeToLinearHeading(coords.pixelStackPos, coords.ROTATED)
                 .build();
-        // Run to scoring on backdrop
-        Action runToScoreCenter = drive.actionBuilder(new Pose2d(coords.pixelStackPos, coords.ROTATED))
+
+        Action runAcrossField = drive.actionBuilder(new Pose2d(coords.pixelStackPos, coords.ROTATED))
                 .strafeToLinearHeading(coords.toBackdropFromPixelStack, coords.ROTATED)
+                .build();
+        // Run to scoring on backdrop
+        Action runToScoreCenter = drive.actionBuilder(new Pose2d(coords.toBackdropFromPixelStack, coords.ROTATED))
                 .strafeToLinearHeading(coords.subCenterBackdrop, coords.ROTATED)
                 .build();
-        Action runToScoreLeft = drive.actionBuilder(new Pose2d(coords.pixelStackPos, coords.ROTATED))
-                .strafeToLinearHeading(coords.toBackdropFromPixelStack, coords.ROTATED)
+        Action runToScoreLeft = drive.actionBuilder(new Pose2d(coords.toBackdropFromPixelStack, coords.ROTATED))
                 .strafeToLinearHeading(coords.subLeftBackdrop, coords.ROTATED)
                 .build();
-        Action runToScoreRight = drive.actionBuilder(new Pose2d(coords.pixelStackPos, coords.ROTATED))
-                .strafeToLinearHeading(coords.toBackdropFromPixelStack, coords.ROTATED)
+        Action runToScoreRight = drive.actionBuilder(new Pose2d(coords.toBackdropFromPixelStack, coords.ROTATED))
                 .strafeToLinearHeading(coords.subRightBackdrop, coords.ROTATED)
                 .build();
 
@@ -101,6 +102,7 @@ public class BlueSideAutoSubstation extends LinearOpMode {
                                 runToPixelStack,
                                 functions.intakePixel()
                         ),
+                        runAcrossField,
                         new ParallelAction(
                                 runToScoreLeft,
                                 new SequentialAction(
@@ -122,6 +124,7 @@ public class BlueSideAutoSubstation extends LinearOpMode {
                                 runToPixelStack,
                                 functions.intakePixel()
                         ),
+                        runAcrossField,
                         new ParallelAction(
                                 runToScoreCenter,
                                 new SequentialAction(
@@ -143,6 +146,7 @@ public class BlueSideAutoSubstation extends LinearOpMode {
                                 runToPixelStack,
                                 functions.intakePixel()
                         ),
+                        runAcrossField,
                         new ParallelAction(
                                 runToScoreCenter,
                                 new SequentialAction(
