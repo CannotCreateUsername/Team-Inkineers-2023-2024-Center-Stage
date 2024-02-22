@@ -78,6 +78,7 @@ public class ArmSubsystem3 {
     ElapsedTime timer;
     ElapsedTime dropTimer;
     ElapsedTime hangTimer;
+    ElapsedTime slideTimer;
 
     TriggerReader rtReader;
     TriggerReader ltReader;
@@ -130,6 +131,7 @@ public class ArmSubsystem3 {
         timer = new ElapsedTime();
         dropTimer = new ElapsedTime();
         hangTimer = new ElapsedTime();
+        slideTimer = new ElapsedTime();
     }
 
     public void powerPID(double power) {
@@ -394,14 +396,22 @@ public class ArmSubsystem3 {
     }
 
     public Action readySlides(boolean high) {
-        return telemetryPacket -> {
-            if (high) {
-                currentTarget = 450;
-            } else {
-                currentTarget = 240;
+        return new Action() {
+            boolean set = false;
+            @Override
+            public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+                if (!set) {
+                    slideTimer.reset();
+                    set = true;
+                }
+                if (high) {
+                    currentTarget = 450;
+                } else {
+                    currentTarget = 240;
+                }
+                powerPID(0.4);
+                return !dropped && slideTimer.seconds() < 2;
             }
-            powerPID(0.4);
-            return !dropped;
         };
     }
 

@@ -1,7 +1,9 @@
 package org.firstinspires.ftc.teamcode.drive.opmode.autonomous;
 
 import com.acmerobotics.roadrunner.Action;
+import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -11,6 +13,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.cv.BlueOctopusPipeline;
 import org.firstinspires.ftc.teamcode.cv.ComputerVisionMediator;
+import org.firstinspires.ftc.teamcode.drive.AutoCoordinates;
 import org.firstinspires.ftc.teamcode.drive.subsystems.ArmSubsystem3;
 import org.firstinspires.ftc.teamcode.drive.subsystems.IntakeSubsystem;
 
@@ -23,6 +26,8 @@ public class BlueSideAutoSubstation extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         ElapsedTime timer1 = new ElapsedTime();
 
+        AutoCoordinates coords = new AutoCoordinates(false);
+
         // Initialize the drive
         Pose2d startPose = new Pose2d(0, 0, Math.toRadians(0));
         MecanumDrive drive = new MecanumDrive(hardwareMap, startPose);
@@ -34,21 +39,44 @@ public class BlueSideAutoSubstation extends LinearOpMode {
         functions.init(new IntakeSubsystem(hardwareMap), arm, drive, true);
 
         // Run to the left spike location
-        Action runToLeftProp = drive.actionBuilder(drive.pose)
-                .strafeToConstantHeading(new Vector2d(28, 0))
-                .strafeToConstantHeading(new Vector2d(28, -12))
-                .strafeToConstantHeading(new Vector2d(24, -12))
+        Action runToLeftProp = drive.actionBuilder(startPose)
+                .strafeToLinearHeading(coords.betweenSideProp, coords.STRAIGHT)
+                .strafeToLinearHeading(coords.propLeftPos, coords.STRAIGHT)
+                .strafeToLinearHeading(coords.beforePixelCrash, coords.ROTATED)
                 .build();
         // Run to the center spike location
-        Action runToCenterProp = drive.actionBuilder(drive.pose)
-                .strafeToConstantHeading(new Vector2d(32, 0))
-                .strafeToConstantHeading(new Vector2d(24, 0))
+        Action runToCenterProp = drive.actionBuilder(startPose)
+                .strafeToLinearHeading(coords.propCenterPos, coords.STRAIGHT)
+                .strafeToLinearHeading(coords.backFromCenterProp, coords.STRAIGHT)
+                .strafeToLinearHeading(coords.beforePixelCrash, coords.ROTATED)
                 .build();
         // Run to the right spike location
-        Action runToRightProp = drive.actionBuilder(drive.pose)
-                .strafeToConstantHeading(new Vector2d(28, 0))
-                .strafeToConstantHeading(new Vector2d(28, 12))
-                .strafeToConstantHeading(new Vector2d(24, 12))
+        Action runToRightProp = drive.actionBuilder(startPose)
+                .strafeToLinearHeading(coords.betweenSideProp, coords.STRAIGHT)
+                .strafeToLinearHeading(coords.propRightPos, coords.STRAIGHT)
+                .strafeToLinearHeading(coords.beforePixelCrash, coords.ROTATED)
+                .build();
+        // Run to the pixel (spin intake at same time)
+        Action runToPixelStack = drive.actionBuilder(new Pose2d(coords.beforePixelCrash, coords.ROTATED))
+                .strafeToLinearHeading(coords.pixelStackPos, coords.ROTATED)
+                .strafeToLinearHeading(coords.backIntoPixelPos, coords.ROTATED)
+                .waitSeconds(2)
+                .strafeToLinearHeading(coords.backToIntakePixel, coords.ROTATED)
+                .waitSeconds(1)
+                .strafeToLinearHeading(coords.pixelStackPos, coords.ROTATED)
+                .build();
+        // Run to scoring on backdrop
+        Action runToScoreCenter = drive.actionBuilder(new Pose2d(coords.pixelStackPos, coords.ROTATED))
+                .strafeToLinearHeading(coords.toBackdropFromPixelStack, coords.ROTATED)
+                .strafeToLinearHeading(coords.subCenterBackdrop, coords.ROTATED)
+                .build();
+        Action runToScoreLeft = drive.actionBuilder(new Pose2d(coords.pixelStackPos, coords.ROTATED))
+                .strafeToLinearHeading(coords.toBackdropFromPixelStack, coords.ROTATED)
+                .strafeToLinearHeading(coords.subLeftBackdrop, coords.ROTATED)
+                .build();
+        Action runToScoreRight = drive.actionBuilder(new Pose2d(coords.pixelStackPos, coords.ROTATED))
+                .strafeToLinearHeading(coords.toBackdropFromPixelStack, coords.ROTATED)
+                .strafeToLinearHeading(coords.subRightBackdrop, coords.ROTATED)
                 .build();
 
         CVMediator.init(hardwareMap, drive, octopusPipeline, false, this);
@@ -67,18 +95,68 @@ public class BlueSideAutoSubstation extends LinearOpMode {
         switch (octopusPipeline.getLocation()) {
             case NONE:
             case MIDDLE:
-                Actions.runBlocking(runToCenterProp);
-                CVMediator.turnPID(90);
+                Actions.runBlocking(new SequentialAction(
+                        runToRightProp,
+                        new ParallelAction(
+                                runToPixelStack,
+                                functions.intakePixel()
+                        ),
+                        new ParallelAction(
+                                runToScoreLeft,
+                                new SequentialAction(
+                                        arm.readySlides(true),
+                                        arm.ready4bar()
+                                )
+                        ),
+                        arm.spinOuttake(-0.5, 0.35),
+                        runToScoreCenter,
+                        arm.spinOuttake(-1, 0.5),
+                        arm.reset4Bar(),
+                        arm.resetSlides()
+                ));
                 break;
             case LEFT:
-                Actions.runBlocking(runToLeftProp);
-                CVMediator.turnPID(90);
+                Actions.runBlocking(new SequentialAction(
+                        runToRightProp,
+                        new ParallelAction(
+                                runToPixelStack,
+                                functions.intakePixel()
+                        ),
+                        new ParallelAction(
+                                runToScoreCenter,
+                                new SequentialAction(
+                                        arm.readySlides(true),
+                                        arm.ready4bar()
+                                )
+                        ),
+                        arm.spinOuttake(-0.5, 0.35),
+                        runToScoreLeft,
+                        arm.spinOuttake(-1, 0.5),
+                        arm.reset4Bar(),
+                        arm.resetSlides()
+                ));
                 break;
             case RIGHT:
-                Actions.runBlocking(runToRightProp);
-                CVMediator.turnPID(90);
+                Actions.runBlocking(new SequentialAction(
+                        runToRightProp,
+                        new ParallelAction(
+                                runToPixelStack,
+                                functions.intakePixel()
+                        ),
+                        new ParallelAction(
+                                runToScoreCenter,
+                                new SequentialAction(
+                                        arm.readySlides(true),
+                                        arm.ready4bar()
+                                )
+                        ),
+                        arm.spinOuttake(-0.5, 0.35),
+                        runToScoreRight,
+                        arm.spinOuttake(-1, 0.5),
+                        arm.reset4Bar(),
+                        arm.resetSlides()
+                ));
                 break;
         }
-        functions.intakePixel(drive.pose);
     }
 }

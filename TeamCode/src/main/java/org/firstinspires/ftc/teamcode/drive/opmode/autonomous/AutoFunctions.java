@@ -35,20 +35,14 @@ public class AutoFunctions {
         moveTimer = new ElapsedTime();
     }
 
-    public void intakePixel(Pose2d startPose) {
-        Action moveToStack = drive.actionBuilder(startPose)
-                .strafeToConstantHeading(new Vector2d(24, isOnBlueSide?26:-26))
-                .build();
-
-        Actions.runBlocking(
-                new SequentialAction(
-                        new ParallelAction(
-                                moveToStack,
-                                intake.spinIntake(0.5, 4),
-                                arm.spinOuttake(-0.5, 4)
-                        ),
-                        intake.spinIntake(-0.5, 2)
-                )
+    public Action intakePixel() {
+        return new SequentialAction(
+                intake.spinIntake(-0.5, 3),
+                new ParallelAction(
+                        intake.spinIntake(0.4, 5),
+                        arm.spinOuttake(0.4, 5)
+                ),
+                intake.spinIntake(-0.5, 2)
         );
     }
 
