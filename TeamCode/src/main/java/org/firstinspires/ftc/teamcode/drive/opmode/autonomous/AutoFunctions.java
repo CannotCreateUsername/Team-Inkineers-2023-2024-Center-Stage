@@ -9,6 +9,7 @@ import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.acmerobotics.roadrunner.SequentialAction;
+import com.acmerobotics.roadrunner.SleepAction;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -37,10 +38,11 @@ public class AutoFunctions {
 
     public Action intakePixel() {
         return new SequentialAction(
-                intake.spinIntake(-0.5, 3),
+                intake.spinIntake(-0.2, 2),
+//                new SleepAction(3),
                 new ParallelAction(
-                        intake.spinIntake(0.4, 5),
-                        arm.spinOuttake(0.4, 5)
+                        intake.spinIntake(0.8, 5),
+                        arm.spinOuttake(0.8, 5)
                 ),
                 intake.spinIntake(-0.5, 2)
         );

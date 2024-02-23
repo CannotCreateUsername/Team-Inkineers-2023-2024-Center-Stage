@@ -71,13 +71,29 @@ public class RedSideAutoSubstation extends LinearOpMode {
                 .strafeToLinearHeading(coords.toBackdropFromPixelStack, coords.ROTATED)
                 .build();
         // Run to scoring on backdrop
-        Action runToScoreCenter = drive.actionBuilder(new Pose2d(coords.toBackdropFromPixelStack, coords.ROTATED))
+        Action runToScoreCenter1 = drive.actionBuilder(new Pose2d(coords.toBackdropFromPixelStack, coords.ROTATED))
+                .strafeToLinearHeading(coords.subCenterBackdrop, coords.ROTATED)
+                .waitSeconds(4)
+                .strafeToLinearHeading(coords.betweenSubBackdrop, coords.ROTATED)
+                .build();
+        Action runToScoreLeft1 = drive.actionBuilder(new Pose2d(coords.toBackdropFromPixelStack, coords.ROTATED))
+                .strafeToLinearHeading(coords.subLeftBackdrop, coords.ROTATED)
+                .waitSeconds(4)
+                .strafeToLinearHeading(coords.betweenSubBackdrop, coords.ROTATED)
+                .build();
+        Action runToScoreRight1 = drive.actionBuilder(new Pose2d(coords.toBackdropFromPixelStack, coords.ROTATED))
+                .strafeToLinearHeading(coords.subRightBackdrop, coords.ROTATED)
+                .waitSeconds(4)
+                .strafeToLinearHeading(coords.betweenSubBackdrop, coords.ROTATED)
+                .build();
+        // Second pixel (Yellow)
+        Action runToScoreCenter2 = drive.actionBuilder(new Pose2d(coords.betweenSubBackdrop, coords.ROTATED))
                 .strafeToLinearHeading(coords.subCenterBackdrop, coords.ROTATED)
                 .build();
-        Action runToScoreLeft = drive.actionBuilder(new Pose2d(coords.toBackdropFromPixelStack, coords.ROTATED))
+        Action runToScoreLeft2 = drive.actionBuilder(new Pose2d(coords.betweenSubBackdrop, coords.ROTATED))
                 .strafeToLinearHeading(coords.subLeftBackdrop, coords.ROTATED)
                 .build();
-        Action runToScoreRight = drive.actionBuilder(new Pose2d(coords.toBackdropFromPixelStack, coords.ROTATED))
+        Action runToScoreRight2 = drive.actionBuilder(new Pose2d(coords.betweenSubBackdrop, coords.ROTATED))
                 .strafeToLinearHeading(coords.subRightBackdrop, coords.ROTATED)
                 .build();
 
@@ -95,8 +111,8 @@ public class RedSideAutoSubstation extends LinearOpMode {
         if (isStopRequested()) return;
 
         // Store which path to take
-        Action runToScoreYellow = runToScoreCenter;
-        Action runToScoreWhite = runToScoreLeft;
+        Action runToScoreYellow = runToScoreCenter2;
+        Action runToScoreWhite = runToScoreLeft1;
 
         switch (octopusPipeline.getLocation()) {
             case NONE:
@@ -110,8 +126,8 @@ public class RedSideAutoSubstation extends LinearOpMode {
                 ));
                 break;
             case LEFT:
-                runToScoreYellow = runToScoreLeft;
-                runToScoreWhite = runToScoreCenter;
+                runToScoreYellow = runToScoreLeft2;
+                runToScoreWhite = runToScoreCenter1;
                 Actions.runBlocking(new SequentialAction(
                         runToLeftProp,
                         new ParallelAction(
@@ -121,8 +137,8 @@ public class RedSideAutoSubstation extends LinearOpMode {
                 ));
                 break;
             case RIGHT:
-                runToScoreYellow = runToScoreRight;
-                runToScoreWhite = runToScoreCenter;
+                runToScoreYellow = runToScoreRight2;
+                runToScoreWhite = runToScoreCenter1;
                 Actions.runBlocking(new SequentialAction(
                         runToRightProp,
                         new ParallelAction(
@@ -137,12 +153,15 @@ public class RedSideAutoSubstation extends LinearOpMode {
                 new ParallelAction(
                         runToScoreWhite,
                         new SequentialAction(
-                                arm.readySlides(true),
-                                arm.ready4bar()
+                                arm.readySlides(false),
+                                arm.ready4bar(),
+                                arm.spinOuttake(-0.5, 0.35)
                         )
                 ),
-                arm.spinOuttake(-0.5, 0.35),
-                runToScoreYellow,
+                new ParallelAction(
+                        arm.readySlides(true),
+                        runToScoreYellow
+                ),
                 arm.spinOuttake(-1, 0.5),
                 arm.reset4Bar(),
                 arm.resetSlides()
