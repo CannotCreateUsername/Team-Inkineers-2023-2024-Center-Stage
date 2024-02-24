@@ -25,7 +25,7 @@ public class AutoCoordinates {
 
             // Substation Stuff
             beforePixelCrash = new Vector2d(16, 12); // Rotated
-            pixelStackPos = new Vector2d(45, 16); // Rotated
+            pixelStackPos = new Vector2d(45, 15); // Rotated
             backIntoPixelPos = new Vector2d(45, 18); // Rotated
             backToIntakePixel = new Vector2d(45, 20); // Rotated
 
@@ -68,7 +68,7 @@ public class AutoCoordinates {
 
     // Substation side stuff
     public Vector2d beforePixelCrash = new Vector2d(16, -12); // Rotated
-    public Vector2d pixelStackPos = new Vector2d(45, -16); // Rotated
+    public Vector2d pixelStackPos = new Vector2d(45, -15); // Rotated
     public Vector2d backIntoPixelPos = new Vector2d(45, -18); // Rotated
     public Vector2d backToIntakePixel = new Vector2d(45, -20); // Rotated
 

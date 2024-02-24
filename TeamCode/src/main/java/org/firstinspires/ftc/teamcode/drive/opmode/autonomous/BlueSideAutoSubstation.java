@@ -31,11 +31,12 @@ public class BlueSideAutoSubstation extends LinearOpMode {
         Pose2d startPose = new Pose2d(0, 0, Math.toRadians(0));
         MecanumDrive drive = new MecanumDrive(hardwareMap, startPose);
         ArmSubsystem3 arm = new ArmSubsystem3(hardwareMap);
+        IntakeSubsystem intake = new IntakeSubsystem(hardwareMap);
         ComputerVisionMediator CVMediator = new ComputerVisionMediator();
 
         // Initialize some functions
         AutoFunctions functions = new AutoFunctions();
-        functions.init(new IntakeSubsystem(hardwareMap), arm, drive, true);
+        functions.init(intake, arm, drive, true);
 
         // Run to the left spike location
         Action runToLeftProp = drive.actionBuilder(startPose)
@@ -71,15 +72,17 @@ public class BlueSideAutoSubstation extends LinearOpMode {
         // Run to scoring on backdrop
         Action runToScoreCenter1 = drive.actionBuilder(new Pose2d(coords.toBackdropFromPixelStack, coords.ROTATED))
                 .strafeToLinearHeading(coords.subCenterBackdrop, coords.ROTATED)
+                .waitSeconds(3)
+                .strafeToLinearHeading(coords.betweenSubBackdrop, coords.ROTATED)
                 .build();
         Action runToScoreLeft1 = drive.actionBuilder(new Pose2d(coords.toBackdropFromPixelStack, coords.ROTATED))
                 .strafeToLinearHeading(coords.subLeftBackdrop, coords.ROTATED)
-                .waitSeconds(4)
+                .waitSeconds(3)
                 .strafeToLinearHeading(coords.betweenSubBackdrop, coords.ROTATED)
                 .build();
         Action runToScoreRight1 = drive.actionBuilder(new Pose2d(coords.toBackdropFromPixelStack, coords.ROTATED))
                 .strafeToLinearHeading(coords.subRightBackdrop, coords.ROTATED)
-                .waitSeconds(4)
+                .waitSeconds(3)
                 .strafeToLinearHeading(coords.betweenSubBackdrop, coords.ROTATED)
                 .build();
         // Second pixel (Yellow)
@@ -145,7 +148,10 @@ public class BlueSideAutoSubstation extends LinearOpMode {
                 break;
         }
         Actions.runBlocking(new SequentialAction(
-                runAcrossField,
+                new ParallelAction(
+                        runAcrossField,
+                        intake.spinIntake(-0.8, 3)
+                ),
                 new ParallelAction(
                         runToScoreWhite,
                         new SequentialAction(
@@ -154,8 +160,8 @@ public class BlueSideAutoSubstation extends LinearOpMode {
                                 arm.spinOuttake(-0.5, 0.35)
                         )
                 ),
+                arm.readySlides(true),
                 new ParallelAction(
-                        arm.readySlides(true),
                         runToScoreYellow
                 ),
                 arm.spinOuttake(-1, 0.5),

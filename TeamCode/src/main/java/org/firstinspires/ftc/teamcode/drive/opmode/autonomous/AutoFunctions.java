@@ -38,13 +38,13 @@ public class AutoFunctions {
 
     public Action intakePixel() {
         return new SequentialAction(
-                intake.spinIntake(-0.2, 2),
+                intake.spinIntake(-0.15, 3),
 //                new SleepAction(3),
                 new ParallelAction(
-                        intake.spinIntake(0.8, 5),
-                        arm.spinOuttake(0.8, 5)
+                        intake.spinIntake(0.6, 4),
+                        arm.spinOuttake(0.6, 4)
                 ),
-                intake.spinIntake(-0.5, 2)
+                intake.spinIntake(-0.8, 1)
         );
     }
 

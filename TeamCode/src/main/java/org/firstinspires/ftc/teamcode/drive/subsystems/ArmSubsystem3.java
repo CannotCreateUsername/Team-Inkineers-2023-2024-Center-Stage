@@ -407,9 +407,9 @@ public class ArmSubsystem3 {
                 if (high) {
                     currentTarget = 450;
                 } else {
-                    currentTarget = 240;
+                    currentTarget = 250;
                 }
-                powerPID(0.4);
+                powerPID(0.8);
                 return !dropped && slideTimer.seconds() < 1.5;
             }
         };
