@@ -6,7 +6,6 @@ import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -17,7 +16,7 @@ import org.firstinspires.ftc.teamcode.drive.AutoCoordinates;
 import org.firstinspires.ftc.teamcode.drive.subsystems.ArmSubsystem3;
 import org.firstinspires.ftc.teamcode.drive.subsystems.IntakeSubsystem;
 
-@Disabled
+//@Disabled
 @Autonomous(name = "Red Alliance Backdrop Inside", group = "Backdrop Side")
 public class RedSideAutoBackdrop2 extends LinearOpMode {
 
@@ -63,13 +62,13 @@ public class RedSideAutoBackdrop2 extends LinearOpMode {
 
         // Park in backstage
         Action leftPark = drive.actionBuilder(new Pose2d(coords.afterDropLeft, coords.ROTATED))
-                .strafeToLinearHeading(coords.parkOutsidePos, coords.ROTATED)
+                .strafeToLinearHeading(coords.parkInsidePos, coords.ROTATED)
                 .build();
         Action middlePark = drive.actionBuilder(new Pose2d(coords.afterDropCenter, coords.ROTATED))
-                .strafeToLinearHeading(coords.parkOutsidePos, coords.ROTATED)
+                .strafeToLinearHeading(coords.parkInsidePos, coords.ROTATED)
                 .build();
         Action rightPark = drive.actionBuilder(new Pose2d(coords.afterDropRight, coords.ROTATED))
-                .strafeToLinearHeading(coords.parkOutsidePos, coords.ROTATED)
+                .strafeToLinearHeading(coords.parkInsidePos, coords.ROTATED)
                 .build();
 
         // Initialize all computer vision stuff

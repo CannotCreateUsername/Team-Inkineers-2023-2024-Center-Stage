@@ -20,7 +20,7 @@ public class AutoCoordinates {
             afterDropLeft = new Vector2d(23, -45);
             afterDropRight = new Vector2d(13, -45);
 
-            parkInsidePos = new Vector2d(52, -38); // Rotated
+            parkInsidePos = new Vector2d(40, -38); // Rotated
             parkOutsidePos = new Vector2d(-6, -38); // Rotated
 
             // Substation Stuff
@@ -62,7 +62,7 @@ public class AutoCoordinates {
     public Vector2d afterDropRight = new Vector2d(23, 45); // Rotated
 
     // Parking options for BLUE side
-    public Vector2d parkInsidePos = new Vector2d(52, 38); // Rotated
+    public Vector2d parkInsidePos = new Vector2d(40, 38); // Rotated
     public Vector2d parkOutsidePos = new Vector2d(-6, 38); // Rotated
 
 
