@@ -12,13 +12,13 @@ public class AutoCoordinates {
         if (isRedSide) {
             ROTATED = Math.toRadians(-90);
             
-            backdropCenterPos = new Vector2d(18, -42);
-            backdropLeftPos = new Vector2d(23, -42);
-            backdropRightPos = new Vector2d(13, -42);
+            backdropCenterPos = new Vector2d(18, -43);
+            backdropLeftPos = new Vector2d(23, -43);
+            backdropRightPos = new Vector2d(13, -43);
 
-            afterDropCenter = new Vector2d(18, -44);
-            afterDropLeft = new Vector2d(23, -44);
-            afterDropRight = new Vector2d(13, -44);
+            afterDropCenter = new Vector2d(18, -45);
+            afterDropLeft = new Vector2d(23, -45);
+            afterDropRight = new Vector2d(13, -45);
 
             parkInsidePos = new Vector2d(52, -38); // Rotated
             parkOutsidePos = new Vector2d(-6, -38); // Rotated
@@ -53,13 +53,13 @@ public class AutoCoordinates {
     public Vector2d backFromRightProp = new Vector2d(25, -12); // Scoot back 4 inches from right prop Straight
 
     // Backdrop coordinates for BLUE side (Do I rotate before or after?? Adjust the orientation.)
-    public Vector2d backdropCenterPos = new Vector2d(18, 42); // Rotated
-    public Vector2d backdropLeftPos = new Vector2d(13, 42); // Rotated
-    public Vector2d backdropRightPos = new Vector2d(23, 42); // Rotated
+    public Vector2d backdropCenterPos = new Vector2d(18, 43); // Rotated
+    public Vector2d backdropLeftPos = new Vector2d(13, 43); // Rotated
+    public Vector2d backdropRightPos = new Vector2d(23, 43); // Rotated
 
-    public Vector2d afterDropCenter = new Vector2d(18, 44); // Rotated
-    public Vector2d afterDropLeft = new Vector2d(13, 44); // Rotated
-    public Vector2d afterDropRight = new Vector2d(23, 44); // Rotated
+    public Vector2d afterDropCenter = new Vector2d(18, 45); // Rotated
+    public Vector2d afterDropLeft = new Vector2d(13, 45); // Rotated
+    public Vector2d afterDropRight = new Vector2d(23, 45); // Rotated
 
     // Parking options for BLUE side
     public Vector2d parkInsidePos = new Vector2d(52, 38); // Rotated

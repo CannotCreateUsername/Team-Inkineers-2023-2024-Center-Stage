@@ -159,7 +159,7 @@ public class RedSideAutoSubstation extends LinearOpMode {
                         new SequentialAction(
                                 arm.readySlides(false),
                                 arm.ready4bar(),
-                                arm.spinOuttake(-0.5, 0.35)
+                                arm.spinOuttake(-0.5, 0.4)
                         )
                 ),
                 arm.readySlides(true),
