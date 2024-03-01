@@ -66,10 +66,11 @@ public class AutoFunctions {
                             new Vector2d(0, 0), Math.toRadians(0)
                     ));
                 }
-                if (moveTimer.seconds() > 2.6) {
+                if (moveTimer.seconds() > 2.5) {
                     return false;
+                } else {
+                    return (!arm.touching());
                 }
-                return (!arm.touching());
             }
         };
     }

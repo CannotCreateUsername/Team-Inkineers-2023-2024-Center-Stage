@@ -83,6 +83,7 @@ public class BlueSideAutoBackdrop extends LinearOpMode {
         timer1.reset();
         if (isStopRequested()) return;
 
+        Action runParkPath = middlePark;
         // Stop the pipeline since we no longer need to detect the prop
         CVMediator.visionPortal.setProcessorEnabled(octopusPipeline, false);
 
@@ -90,37 +91,32 @@ public class BlueSideAutoBackdrop extends LinearOpMode {
             case NONE:
             case MIDDLE:
                 Actions.runBlocking(runToCenterProp);
-//                CVMediator.turnPID(90);
-                Actions.runBlocking(new SequentialAction(
-                        new ParallelAction(
-                                functions.touchBackdrop(),
-                                arm.dropYellowPixel(false)
-                        ),
-                        middlePark
-                ));
                 break;
             case LEFT:
+                runParkPath = leftPark;
                 Actions.runBlocking(runToLeftProp);
-//                CVMediator.turnPID(90);
-                Actions.runBlocking(new SequentialAction(
-                        new ParallelAction(
-                                functions.touchBackdrop(),
-                                arm.dropYellowPixel(false)
-                        ),
-                        leftPark
-                ));
                 break;
             case RIGHT:
+                runParkPath = rightPark;
                 Actions.runBlocking(runToRightProp);
-//                CVMediator.turnPID(90);
-                Actions.runBlocking(new SequentialAction(
-                        new ParallelAction(
-                                functions.touchBackdrop(),
-                                arm.dropYellowPixel(false)
-                        ),
-                        rightPark
-                ));
                 break;
         }
+        Actions.runBlocking(new SequentialAction(
+                new ParallelAction(
+                        functions.touchBackdrop(),
+                        new SequentialAction(
+                                new ParallelAction(
+                                        arm.readySlides(false),
+                                        arm.ready4bar()
+                                ),
+                                arm.spinOuttake(-0.5, 1.5)
+                        )
+                ),
+                new ParallelAction(
+                        arm.reset4Bar(),
+                        arm.resetSlides(),
+                        runParkPath
+                )
+        ));
     }
 }

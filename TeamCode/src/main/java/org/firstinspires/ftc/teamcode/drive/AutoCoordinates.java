@@ -22,10 +22,14 @@ public class AutoCoordinates {
 
             parkInsidePos = new Vector2d(40, -38); // Rotated
             parkOutsidePos = new Vector2d(-6, -38); // Rotated
+            parkOutsideTuck = new Vector2d(-6, -58); // Rotated
+
+            crossTrussPos = new Vector2d(2, 48); // Rotated
+
 
             // Substation Stuff
             beforePixelCrash = new Vector2d(16, 12); // Rotated
-            pixelStackPos = new Vector2d(45, 15); // Rotated
+            pixelStackPosFar = new Vector2d(45, 15); // Rotated
             backIntoPixelPos = new Vector2d(45, 18); // Rotated
             backToIntakePixel = new Vector2d(45, 20); // Rotated
 
@@ -38,6 +42,8 @@ public class AutoCoordinates {
             subParkPos = new Vector2d(52,-88); // Rotated
         }
     }
+
+    // Universal for all modes
     // Starting position
     public Pose2d startPos = new Pose2d(new Vector2d(0, 0), Math.toRadians(0));
 
@@ -52,7 +58,9 @@ public class AutoCoordinates {
     public Vector2d backFromLeftProp = new Vector2d(25, 12); // Scoot back 4 inches from left prop Straight
     public Vector2d backFromRightProp = new Vector2d(25, -12); // Scoot back 4 inches from right prop Straight
 
-    // Backdrop coordinates for BLUE side (Do I rotate before or after?? Adjust the orientation.)
+
+    // Backdrop Specific
+    // Backdrop coordinates for BLUE side
     public Vector2d backdropCenterPos = new Vector2d(18, 43); // Rotated
     public Vector2d backdropLeftPos = new Vector2d(13, 43); // Rotated
     public Vector2d backdropRightPos = new Vector2d(23, 43); // Rotated
@@ -64,11 +72,17 @@ public class AutoCoordinates {
     // Parking options for BLUE side
     public Vector2d parkInsidePos = new Vector2d(40, 38); // Rotated
     public Vector2d parkOutsidePos = new Vector2d(-6, 38); // Rotated
+    public Vector2d parkOutsideTuck = new Vector2d(-6, 58); // Rotated
+
+    // Going to pixel stack
+    public Vector2d crossTrussPos = new Vector2d(2, -60); // Rotated
+    public Vector2d pixelStackPosClose = new Vector2d(12, -78); // Rotated
 
 
-    // Substation side stuff
+    // Substation Specific
+    // Substation coordinates for BLUE side
     public Vector2d beforePixelCrash = new Vector2d(16, -12); // Rotated
-    public Vector2d pixelStackPos = new Vector2d(45, -15); // Rotated
+    public Vector2d pixelStackPosFar = new Vector2d(45, -15); // Rotated
     public Vector2d backIntoPixelPos = new Vector2d(45, -18); // Rotated
     public Vector2d backToIntakePixel = new Vector2d(45, -20); // Rotated
 

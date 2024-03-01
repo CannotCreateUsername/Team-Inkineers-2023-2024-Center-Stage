@@ -58,15 +58,15 @@ public class BlueSideAutoSubstation extends LinearOpMode {
                 .build();
         // Run to the pixel (spin intake at same time)
         Action runToPixelStack = drive.actionBuilder(new Pose2d(coords.beforePixelCrash, coords.ROTATED))
-                .strafeToLinearHeading(coords.pixelStackPos, coords.ROTATED)
+                .strafeToLinearHeading(coords.pixelStackPosFar, coords.ROTATED)
                 .strafeToLinearHeading(coords.backIntoPixelPos, coords.ROTATED)
                 .waitSeconds(2)
                 .strafeToLinearHeading(coords.backToIntakePixel, coords.ROTATED)
                 .waitSeconds(1)
-                .strafeToLinearHeading(coords.pixelStackPos, coords.ROTATED)
+                .strafeToLinearHeading(coords.pixelStackPosFar, coords.ROTATED)
                 .build();
 
-        Action runAcrossField = drive.actionBuilder(new Pose2d(coords.pixelStackPos, coords.ROTATED))
+        Action runAcrossField = drive.actionBuilder(new Pose2d(coords.pixelStackPosFar, coords.ROTATED))
                 .strafeToLinearHeading(coords.toBackdropFromPixelStack, coords.ROTATED)
                 .build();
         // Run to scoring on backdrop
