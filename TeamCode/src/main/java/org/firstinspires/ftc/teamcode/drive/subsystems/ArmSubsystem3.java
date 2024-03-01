@@ -8,7 +8,6 @@ import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.SequentialAction;
-import com.acmerobotics.roadrunner.SleepAction;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.arcrobotics.ftclib.gamepad.TriggerReader;
@@ -21,6 +20,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PwmControl;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
+
 
 public class ArmSubsystem3 {
     public enum SlideState {
@@ -77,6 +77,7 @@ public class ArmSubsystem3 {
 
     ElapsedTime timer;
     ElapsedTime dropTimer;
+    ElapsedTime barTimer;
     ElapsedTime hangTimer;
     ElapsedTime slideTimer;
 
@@ -130,6 +131,7 @@ public class ArmSubsystem3 {
 
         timer = new ElapsedTime();
         dropTimer = new ElapsedTime();
+        barTimer = new ElapsedTime();
         hangTimer = new ElapsedTime();
         slideTimer = new ElapsedTime();
     }
@@ -378,7 +380,7 @@ public class ArmSubsystem3 {
 
     public Action spinOuttake(double power, double duration) {
         return new Action() {
-            boolean set = false;
+            private boolean set = false;
             @Override
             public boolean run(@NonNull TelemetryPacket telemetryPacket) {
                 if (!set) {
@@ -397,7 +399,7 @@ public class ArmSubsystem3 {
 
     public Action readySlides(boolean high) {
         return new Action() {
-            boolean set = false;
+            private boolean set = false;
             @Override
             public boolean run(@NonNull TelemetryPacket telemetryPacket) {
                 if (!set) {
@@ -428,54 +430,47 @@ public class ArmSubsystem3 {
 
     public Action ready4bar() {
         return new Action() {
-            boolean set = false;
+            private boolean set = false;
             @Override
             public boolean run(@NonNull TelemetryPacket telemetryPacket) {
                 if (!set) {
-                    dropTimer.reset();
+                    barTimer.reset();
                     set = true;
                 }
                 leftVirtualBar.setPosition(lDROP);
                 rightVirtualBar.setPosition(rDROP);
-                return dropTimer.seconds() < 2;
+                return barTimer.seconds() < 2;
             }
         };
     }
 
     public Action reset4Bar() {
         return new Action() {
-            boolean set = false;
+            private boolean set = false;
             @Override
             public boolean run(@NonNull TelemetryPacket telemetryPacket) {
                 if (!set) {
-                    dropTimer.reset();
+                    barTimer.reset();
                     set = true;
                 }
                 leftVirtualBar.setPosition(lLOAD);
                 rightVirtualBar.setPosition(rLOAD);
-                if (dropTimer.seconds() > 1.9) {
+                if (barTimer.seconds() > 1.9) {
                     dropped = true;
                 }
-                return dropTimer.seconds() < 2;
+                return barTimer.seconds() < 2;
             }
         };
     }
 
     public Action dropYellowPixel(boolean high) {
-        VKp = 0.002;
         return new SequentialAction (
                 new ParallelAction(
                         readySlides(high),
-                        new SequentialAction(
-                                ready4bar(),
-                                new SleepAction(0.5),
-                                spinOuttake(-0.5, 3),
-                                new ParallelAction(
-                                        readySlides(high),
-                                        reset4Bar()
-                                )
-                        )
+                        ready4bar()
                 ),
+                spinOuttake(-0.5, 1.5),
+                reset4Bar(),
                 resetSlides()
         );
     }

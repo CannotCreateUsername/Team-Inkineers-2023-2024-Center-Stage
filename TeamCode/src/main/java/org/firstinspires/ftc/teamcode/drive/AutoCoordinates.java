@@ -20,8 +20,8 @@ public class AutoCoordinates {
             afterDropLeft = new Vector2d(23, -45);
             afterDropRight = new Vector2d(13, -45);
 
-            parkInsidePos = new Vector2d(40, -38); // Rotated
-            parkOutsidePos = new Vector2d(-6, -38); // Rotated
+            parkInsidePos = new Vector2d(40, -40); // Rotated
+            parkOutsidePos = new Vector2d(-6, -40); // Rotated
             parkOutsideTuck = new Vector2d(-6, -58); // Rotated
 
             crossTrussPos = new Vector2d(2, 48); // Rotated
@@ -70,8 +70,8 @@ public class AutoCoordinates {
     public Vector2d afterDropRight = new Vector2d(23, 45); // Rotated
 
     // Parking options for BLUE side
-    public Vector2d parkInsidePos = new Vector2d(40, 38); // Rotated
-    public Vector2d parkOutsidePos = new Vector2d(-6, 38); // Rotated
+    public Vector2d parkInsidePos = new Vector2d(40, 40); // Rotated
+    public Vector2d parkOutsidePos = new Vector2d(-6, 40); // Rotated
     public Vector2d parkOutsideTuck = new Vector2d(-6, 58); // Rotated
 
     // Going to pixel stack
