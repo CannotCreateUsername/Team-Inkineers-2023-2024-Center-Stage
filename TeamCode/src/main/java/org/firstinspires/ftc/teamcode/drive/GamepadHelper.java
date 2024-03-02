@@ -9,7 +9,7 @@ public class GamepadHelper {
         NEUTRAL,
     }
 
-    private final double  minMultiplier = 0.25;
+    private final double  minMultiplier = 0.4;
     /** @noinspection FieldCanBeLocal*/
     private final double  maxMultiplier = 1.00; // Runs at 100% at full ramp
     /** @noinspection FieldCanBeLocal*/
