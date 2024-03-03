@@ -16,7 +16,7 @@ import org.firstinspires.ftc.teamcode.drive.AutoCoordinates;
 import org.firstinspires.ftc.teamcode.drive.subsystems.ArmSubsystem3;
 import org.firstinspires.ftc.teamcode.drive.subsystems.IntakeSubsystem;
 
-@Autonomous(name = "BLUE Substation Park/Middle", group = "Substation Side")
+@Autonomous(name = "BLUE Substation Park/MIDDLE", group = "Substation Side")
 public class BlueSideAutoSubstation extends LinearOpMode {
 
     BlueOctopusPipeline octopusPipeline = new BlueOctopusPipeline();

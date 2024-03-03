@@ -16,7 +16,7 @@ import org.firstinspires.ftc.teamcode.drive.AutoCoordinates;
 import org.firstinspires.ftc.teamcode.drive.subsystems.ArmSubsystem3;
 import org.firstinspires.ftc.teamcode.drive.subsystems.IntakeSubsystem;
 
-@Autonomous(name = "BLUE Backdrop Park/Wall", group = "Backdrop Side")
+@Autonomous(name = "BLUE Backdrop Park/WALL", group = "Backdrop Side")
 public class BlueSideAutoBackdrop extends LinearOpMode {
 
     BlueOctopusPipeline octopusPipeline = new BlueOctopusPipeline();

@@ -17,7 +17,7 @@ import org.firstinspires.ftc.teamcode.drive.subsystems.ArmSubsystem3;
 import org.firstinspires.ftc.teamcode.drive.subsystems.IntakeSubsystem;
 
 //@Disabled
-@Autonomous(name = "BLUE Backdrop Park/Middle", group = "Backdrop Side")
+@Autonomous(name = "BLUE Backdrop Park/MIDDLE", group = "Backdrop Side")
 public class BlueSideAutoBackdrop2 extends LinearOpMode {
 
     BlueOctopusPipeline octopusPipeline = new BlueOctopusPipeline();
