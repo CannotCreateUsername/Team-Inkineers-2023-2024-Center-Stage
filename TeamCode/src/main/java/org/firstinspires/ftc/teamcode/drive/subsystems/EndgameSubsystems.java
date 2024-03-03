@@ -22,7 +22,7 @@ public class EndgameSubsystems {
     private boolean launched = false;
     public void run(GamepadEx gamepad1, GamepadEx gamepad2) {
         if ((gamepad1.wasJustReleased(GamepadKeys.Button.Y) || gamepad2.wasJustReleased(GamepadKeys.Button.Y)) && !launched) {
-            droneLauncher.setPosition(LAUNCHED);
+            launchDrone();
             launched = true;
         } else if ((gamepad1.wasJustReleased(GamepadKeys.Button.Y) || gamepad2.wasJustReleased(GamepadKeys.Button.Y)) && launched) {
             droneLauncher.setPosition(TAKEOFF);
@@ -38,5 +38,10 @@ public class EndgameSubsystems {
         } else {
             return "WEIRD";
         }
+    }
+
+    private void launchDrone() {
+        droneLauncher.setPosition(TAKEOFF-0.1);
+        droneLauncher.setPosition(LAUNCHED);
     }
 }
