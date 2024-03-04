@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.drive.opmode.autonomous;
+package org.firstinspires.ftc.teamcode.drive.opmode.autonomous.substation;
 
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.ParallelAction;
@@ -13,6 +13,7 @@ import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.cv.BlueOctopusPipeline;
 import org.firstinspires.ftc.teamcode.cv.ComputerVisionMediator;
 import org.firstinspires.ftc.teamcode.drive.AutoCoordinates;
+import org.firstinspires.ftc.teamcode.drive.opmode.autonomous.AutoFunctions;
 import org.firstinspires.ftc.teamcode.drive.subsystems.ArmSubsystem3;
 import org.firstinspires.ftc.teamcode.drive.subsystems.IntakeSubsystem;
 
@@ -59,9 +60,9 @@ public class BlueSideAutoSubstation extends LinearOpMode {
         // Run to the pixel (spin intake at same time)
         Action runToPixelStack = drive.actionBuilder(new Pose2d(coords.beforePixelCrash, coords.ROTATED))
                 .strafeToLinearHeading(coords.pixelStackPosFar, coords.ROTATED)
-                .strafeToLinearHeading(coords.backIntoPixelPos, coords.ROTATED)
+                .strafeToLinearHeading(coords.backIntoPixelPosFar, coords.ROTATED)
                 .waitSeconds(2)
-                .strafeToLinearHeading(coords.backToIntakePixel, coords.ROTATED)
+                .strafeToLinearHeading(coords.backToIntakePixelFar, coords.ROTATED)
                 .waitSeconds(1)
                 .strafeToLinearHeading(coords.pixelStackPosFar, coords.ROTATED)
                 .build();
@@ -120,7 +121,7 @@ public class BlueSideAutoSubstation extends LinearOpMode {
                         runToCenterProp,
                         new ParallelAction(
                                 runToPixelStack,
-                                functions.intakePixel()
+                                functions.intakePixelFar()
                         )
                 ));
                 break;
@@ -131,7 +132,7 @@ public class BlueSideAutoSubstation extends LinearOpMode {
                         runToLeftProp,
                         new ParallelAction(
                                 runToPixelStack,
-                                functions.intakePixel()
+                                functions.intakePixelFar()
                         )
                 ));
                 break;
@@ -142,7 +143,7 @@ public class BlueSideAutoSubstation extends LinearOpMode {
                         runToRightProp,
                         new ParallelAction(
                                 runToPixelStack,
-                                functions.intakePixel()
+                                functions.intakePixelFar()
                         )
                 ));
                 break;

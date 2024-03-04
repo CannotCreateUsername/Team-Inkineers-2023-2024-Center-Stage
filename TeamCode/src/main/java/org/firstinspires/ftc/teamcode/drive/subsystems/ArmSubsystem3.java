@@ -8,6 +8,7 @@ import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.SequentialAction;
+import com.acmerobotics.roadrunner.SleepAction;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.arcrobotics.ftclib.gamepad.TriggerReader;
@@ -411,7 +412,26 @@ public class ArmSubsystem3 {
                 } else {
                     currentTarget = 250;
                 }
-                powerPID(0.8);
+                powerPID(0.6);
+                return !dropped && slideTimer.seconds() < 1.5;
+            }
+        };
+    }
+
+    public Action readySlides(int height) {
+        return new Action() {
+            private boolean set = false;
+            @Override
+            public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+                if (!set) {
+                    lowerSlides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                    lowerSlides.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                    slideTimer.reset();
+                    set = true;
+                    dropped = false;
+                }
+                currentTarget = height;
+                powerPID(0.6);
                 return !dropped && slideTimer.seconds() < 1.5;
             }
         };
@@ -470,6 +490,19 @@ public class ArmSubsystem3 {
                         ready4bar()
                 ),
                 spinOuttake(-0.5, 1.5),
+                reset4Bar(),
+                resetSlides()
+        );
+    }
+
+    public Action dropWhitePixel() {
+        return new SequentialAction (
+                new SleepAction(5),
+                new ParallelAction(
+                        readySlides(600),
+                        ready4bar()
+                ),
+                spinOuttake(-0.5, 2),
                 reset4Bar(),
                 resetSlides()
         );

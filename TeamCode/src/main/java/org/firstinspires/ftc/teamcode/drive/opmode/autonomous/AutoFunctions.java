@@ -6,12 +6,9 @@ import androidx.annotation.NonNull;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.ParallelAction;
-import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.acmerobotics.roadrunner.SequentialAction;
-import com.acmerobotics.roadrunner.SleepAction;
 import com.acmerobotics.roadrunner.Vector2d;
-import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.MecanumDrive;
@@ -36,13 +33,23 @@ public class AutoFunctions {
         moveTimer = new ElapsedTime();
     }
 
-    public Action intakePixel() {
+    public Action intakePixelFar() {
         return new SequentialAction(
                 intake.spinIntake(-0.15, 3),
-//                new SleepAction(3),
                 new ParallelAction(
                         intake.spinIntake(0.6, 4),
                         arm.spinOuttake(0.6, 4)
+                ),
+                intake.spinIntake(-0.8, 1)
+        );
+    }
+
+    public Action intakePixelClose() {
+        return new SequentialAction(
+                intake.spinIntake(-0.2, 2),
+                new ParallelAction(
+                        intake.spinIntake(0.8, 3),
+                        arm.spinOuttake(0.8, 3)
                 ),
                 intake.spinIntake(-0.8, 1)
         );

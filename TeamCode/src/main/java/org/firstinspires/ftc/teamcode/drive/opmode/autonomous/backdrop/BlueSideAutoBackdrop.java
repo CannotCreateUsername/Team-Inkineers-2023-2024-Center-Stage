@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.drive.opmode.autonomous;
+package org.firstinspires.ftc.teamcode.drive.opmode.autonomous.backdrop;
 
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.ParallelAction;
@@ -10,33 +10,34 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.MecanumDrive;
+import org.firstinspires.ftc.teamcode.cv.BlueOctopusPipeline;
 import org.firstinspires.ftc.teamcode.cv.ComputerVisionMediator;
-import org.firstinspires.ftc.teamcode.cv.RedOctopusPipeline;
 import org.firstinspires.ftc.teamcode.drive.AutoCoordinates;
+import org.firstinspires.ftc.teamcode.drive.opmode.autonomous.AutoFunctions;
 import org.firstinspires.ftc.teamcode.drive.subsystems.ArmSubsystem3;
 import org.firstinspires.ftc.teamcode.drive.subsystems.IntakeSubsystem;
 
-@Autonomous(name = "RED Backdrop Park/WALL", group = "Backdrop Side")
-public class RedSideAutoBackdrop extends LinearOpMode {
+@Autonomous(name = "BLUE Backdrop Park/WALL", group = "Backdrop Side")
+public class BlueSideAutoBackdrop extends LinearOpMode {
 
-    RedOctopusPipeline octopusPipeline = new RedOctopusPipeline();
+    BlueOctopusPipeline octopusPipeline = new BlueOctopusPipeline();
 
     @Override
     public void runOpMode() throws InterruptedException {
         ElapsedTime timer1 = new ElapsedTime();
 
         // Get the coordinates
-        AutoCoordinates coords = new AutoCoordinates(true);
+        AutoCoordinates coords = new AutoCoordinates(false);
 
         // Initialize the drive
-        Pose2d startPose = new Pose2d(0, 0, Math.toRadians(0));
+        Pose2d startPose = coords.startPos;
         MecanumDrive drive = new MecanumDrive(hardwareMap, startPose);
         ArmSubsystem3 arm = new ArmSubsystem3(hardwareMap);
         ComputerVisionMediator CVMediator = new ComputerVisionMediator();
 
         // Initialize some functions
         AutoFunctions functions = new AutoFunctions();
-        functions.init(new IntakeSubsystem(hardwareMap), arm, drive, false);
+        functions.init(new IntakeSubsystem(hardwareMap), arm, drive, true);
 
         // Run to the left spike location
         Action runToLeftProp = drive.actionBuilder(startPose)

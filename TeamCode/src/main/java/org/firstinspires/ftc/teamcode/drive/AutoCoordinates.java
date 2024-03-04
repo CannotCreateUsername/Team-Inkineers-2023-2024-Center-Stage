@@ -24,14 +24,18 @@ public class AutoCoordinates {
             parkOutsidePos = new Vector2d(-6, -40); // Rotated
             parkOutsideTuck = new Vector2d(-6, -58); // Rotated
 
-            crossTrussPos = new Vector2d(2, 48); // Rotated
+            crossTrussPos = new Vector2d(2, 44); // Rotated
+            pixelStackPosClose = new Vector2d(24, 62); // Rotated
+            backIntoPixelPosClose = new Vector2d(24, 65); // Rotated
+            backToIntakePixelClose = new Vector2d(24, 67); // Rotated
+            cringerBackdropCenterPos = new Vector2d(18, -49); // Rotated
 
 
             // Substation Stuff
             beforePixelCrash = new Vector2d(16, 12); // Rotated
             pixelStackPosFar = new Vector2d(45, 15); // Rotated
-            backIntoPixelPos = new Vector2d(45, 18); // Rotated
-            backToIntakePixel = new Vector2d(45, 20); // Rotated
+            backIntoPixelPosFar = new Vector2d(45, 18); // Rotated
+            backToIntakePixelFar = new Vector2d(45, 20); // Rotated
 
             toBackdropFromPixelStack = new Vector2d(45, -84); // Rotated
             betweenSubBackdrop = new Vector2d(15, -84); // Rotated
@@ -75,16 +79,20 @@ public class AutoCoordinates {
     public Vector2d parkOutsideTuck = new Vector2d(-6, 58); // Rotated
 
     // Going to pixel stack
-    public Vector2d crossTrussPos = new Vector2d(2, -60); // Rotated
-    public Vector2d pixelStackPosClose = new Vector2d(12, -78); // Rotated
+    public Vector2d rotatedStartPos = new Vector2d(-6, 0); // Rotated
+    public Vector2d crossTrussPos = new Vector2d(2, -44); // Rotated
+    public Vector2d pixelStackPosClose = new Vector2d(24, -62); // Rotated
+    public Vector2d backIntoPixelPosClose = new Vector2d(24, -65); // Rotated
+    public Vector2d backToIntakePixelClose = new Vector2d(24, -67); // Rotated
+    public Vector2d cringerBackdropCenterPos = new Vector2d(18, 49); // Rotated
 
 
     // Substation Specific
     // Substation coordinates for BLUE side
     public Vector2d beforePixelCrash = new Vector2d(16, -12); // Rotated
     public Vector2d pixelStackPosFar = new Vector2d(45, -15); // Rotated
-    public Vector2d backIntoPixelPos = new Vector2d(45, -18); // Rotated
-    public Vector2d backToIntakePixel = new Vector2d(45, -20); // Rotated
+    public Vector2d backIntoPixelPosFar = new Vector2d(45, -18); // Rotated
+    public Vector2d backToIntakePixelFar = new Vector2d(45, -20); // Rotated
 
     public Vector2d toBackdropFromPixelStack = new Vector2d(45, 84); // Rotated
     public Vector2d betweenSubBackdrop = new Vector2d(15, 84); // Rotated

@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.drive.opmode.autonomous;
+package org.firstinspires.ftc.teamcode.drive.opmode.autonomous.backdrop;
 
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.ParallelAction;
@@ -10,34 +10,34 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.MecanumDrive;
-import org.firstinspires.ftc.teamcode.cv.BlueOctopusPipeline;
 import org.firstinspires.ftc.teamcode.cv.ComputerVisionMediator;
+import org.firstinspires.ftc.teamcode.cv.RedOctopusPipeline;
 import org.firstinspires.ftc.teamcode.drive.AutoCoordinates;
+import org.firstinspires.ftc.teamcode.drive.opmode.autonomous.AutoFunctions;
 import org.firstinspires.ftc.teamcode.drive.subsystems.ArmSubsystem3;
 import org.firstinspires.ftc.teamcode.drive.subsystems.IntakeSubsystem;
 
-//@Disabled
-@Autonomous(name = "BLUE Backdrop Park/MIDDLE", group = "Backdrop Side")
-public class BlueSideAutoBackdrop2 extends LinearOpMode {
+@Autonomous(name = "RED Backdrop Park/WALL", group = "Backdrop Side")
+public class RedSideAutoBackdrop extends LinearOpMode {
 
-    BlueOctopusPipeline octopusPipeline = new BlueOctopusPipeline();
+    RedOctopusPipeline octopusPipeline = new RedOctopusPipeline();
 
     @Override
     public void runOpMode() throws InterruptedException {
         ElapsedTime timer1 = new ElapsedTime();
 
         // Get the coordinates
-        AutoCoordinates coords = new AutoCoordinates(false);
+        AutoCoordinates coords = new AutoCoordinates(true);
 
         // Initialize the drive
-        Pose2d startPose = coords.startPos;
+        Pose2d startPose = new Pose2d(0, 0, Math.toRadians(0));
         MecanumDrive drive = new MecanumDrive(hardwareMap, startPose);
         ArmSubsystem3 arm = new ArmSubsystem3(hardwareMap);
         ComputerVisionMediator CVMediator = new ComputerVisionMediator();
 
         // Initialize some functions
         AutoFunctions functions = new AutoFunctions();
-        functions.init(new IntakeSubsystem(hardwareMap), arm, drive, true);
+        functions.init(new IntakeSubsystem(hardwareMap), arm, drive, false);
 
         // Run to the left spike location
         Action runToLeftProp = drive.actionBuilder(startPose)
@@ -62,13 +62,13 @@ public class BlueSideAutoBackdrop2 extends LinearOpMode {
 
         // Park in backstage
         Action leftPark = drive.actionBuilder(new Pose2d(coords.afterDropLeft, coords.ROTATED))
-                .strafeToConstantHeading(coords.parkInsidePos)
+                .strafeToConstantHeading(coords.parkOutsidePos)
                 .build();
         Action middlePark = drive.actionBuilder(new Pose2d(coords.afterDropCenter, coords.ROTATED))
-                .strafeToConstantHeading(coords.parkInsidePos)
+                .strafeToConstantHeading(coords.parkOutsidePos)
                 .build();
         Action rightPark = drive.actionBuilder(new Pose2d(coords.afterDropRight, coords.ROTATED))
-                .strafeToConstantHeading(coords.parkInsidePos)
+                .strafeToConstantHeading(coords.parkOutsidePos)
                 .build();
 
         // Initialize all computer vision stuff
@@ -105,9 +105,19 @@ public class BlueSideAutoBackdrop2 extends LinearOpMode {
         Actions.runBlocking(new SequentialAction(
                 new ParallelAction(
                         functions.touchBackdrop(),
-                        arm.dropYellowPixel(false)
+                        new SequentialAction(
+                                new ParallelAction(
+                                        arm.readySlides(false),
+                                        arm.ready4bar()
+                                ),
+                                arm.spinOuttake(-0.5, 1.5)
+                        )
                 ),
-                runParkPath
+                new ParallelAction(
+                        arm.reset4Bar(),
+                        arm.resetSlides(),
+                        runParkPath
+                )
         ));
     }
 }
