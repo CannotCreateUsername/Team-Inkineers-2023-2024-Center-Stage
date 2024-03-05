@@ -4,6 +4,7 @@ import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.SequentialAction;
+import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -60,17 +61,6 @@ public class BlueSideAutoBackdrop extends LinearOpMode {
                 .strafeToLinearHeading(coords.backdropRightPos, coords.ROTATED)
                 .build();
 
-        // Park in backstage
-        Action leftPark = drive.actionBuilder(new Pose2d(coords.afterDropLeft, coords.ROTATED))
-                .strafeToConstantHeading(coords.parkOutsidePos)
-                .build();
-        Action middlePark = drive.actionBuilder(new Pose2d(coords.afterDropCenter, coords.ROTATED))
-                .strafeToConstantHeading(coords.parkOutsidePos)
-                .build();
-        Action rightPark = drive.actionBuilder(new Pose2d(coords.afterDropRight, coords.ROTATED))
-                .strafeToConstantHeading(coords.parkOutsidePos)
-                .build();
-
         // Initialize all computer vision stuff
         CVMediator.init(hardwareMap, drive, octopusPipeline, false, this);
 
@@ -83,10 +73,10 @@ public class BlueSideAutoBackdrop extends LinearOpMode {
         waitForStart();
         timer1.reset();
         if (isStopRequested()) return;
-
-        Action runParkPath = middlePark;
+        // OPMODE STARTS HERE
         // Stop the pipeline since we no longer need to detect the prop
         CVMediator.visionPortal.setProcessorEnabled(octopusPipeline, false);
+        Vector2d beginParkPos = coords.afterDropCenter;
 
         switch (octopusPipeline.getLocation()) {
             case NONE:
@@ -94,29 +84,29 @@ public class BlueSideAutoBackdrop extends LinearOpMode {
                 Actions.runBlocking(runToCenterProp);
                 break;
             case LEFT:
-                runParkPath = leftPark;
+                beginParkPos = coords.afterDropLeft;
                 Actions.runBlocking(runToLeftProp);
                 break;
             case RIGHT:
-                runParkPath = rightPark;
+                beginParkPos = coords.afterDropRight;
                 Actions.runBlocking(runToRightProp);
                 break;
         }
+        // Build parking path for each position from backdrop
+        Action runToPark = drive.actionBuilder(new Pose2d(beginParkPos, coords.ROTATED))
+                .strafeToConstantHeading(coords.parkOutsidePos)
+                .build();
+
+        // Finish scoring
         Actions.runBlocking(new SequentialAction(
                 new ParallelAction(
                         functions.touchBackdrop(),
-                        new SequentialAction(
-                                new ParallelAction(
-                                        arm.readySlides(false),
-                                        arm.ready4bar()
-                                ),
-                                arm.spinOuttake(-0.5, 1.5)
-                        )
+                        arm.dropYellowPixel(false)
                 ),
                 new ParallelAction(
                         arm.reset4Bar(),
                         arm.resetSlides(),
-                        runParkPath
+                        runToPark
                 )
         ));
     }

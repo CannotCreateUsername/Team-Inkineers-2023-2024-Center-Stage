@@ -92,14 +92,7 @@ public class RedSideAutoBackdrop3 extends LinearOpMode {
                 .strafeToConstantHeading(coords.cringerBackdropCenterPos)
                 .build();
 
-        // Park in backstage
-        Action leftPark = drive.actionBuilder(new Pose2d(coords.afterDropLeft, coords.ROTATED))
-                .strafeToConstantHeading(coords.parkOutsidePos)
-                .build();
         Action middlePark = drive.actionBuilder(new Pose2d(coords.afterDropCenter, coords.ROTATED))
-                .strafeToConstantHeading(coords.parkOutsidePos)
-                .build();
-        Action rightPark = drive.actionBuilder(new Pose2d(coords.afterDropRight, coords.ROTATED))
                 .strafeToConstantHeading(coords.parkOutsidePos)
                 .build();
 

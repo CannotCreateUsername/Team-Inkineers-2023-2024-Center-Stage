@@ -110,6 +110,8 @@ public class RedSideAutoSubstation extends LinearOpMode {
         waitForStart();
         timer1.reset();
         if (isStopRequested()) return;
+        // OPMODE STARTS HERE
+        CVMediator.visionPortal.setProcessorEnabled(octopusPipeline, false);
 
         // Store which path to take
         Action runToScoreYellow = runToScoreCenter2;
