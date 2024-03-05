@@ -35,7 +35,7 @@ public class AutoFunctions {
 
     public Action intakePixelFar() {
         return new SequentialAction(
-                intake.spinIntake(-0.2, 3),
+                intake.spinIntake(-0.2, 2.5),
                 new ParallelAction(
                         intake.spinIntake(0.6, 3),
                         arm.spinOuttake(0.6, 3)
@@ -46,12 +46,11 @@ public class AutoFunctions {
 
     public Action intakePixelClose() {
         return new SequentialAction(
-                intake.spinIntake(-0.2, 2),
+                intake.spinIntake(-0.2, 0.5),
                 new ParallelAction(
                         intake.spinIntake(0.8, 3),
                         arm.spinOuttake(0.8, 3)
-                ),
-                intake.spinIntake(-0.8, 0.5)
+                )
         );
     }
 

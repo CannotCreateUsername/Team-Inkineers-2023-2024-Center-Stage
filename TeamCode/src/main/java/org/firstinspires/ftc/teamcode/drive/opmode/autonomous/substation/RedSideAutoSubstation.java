@@ -63,7 +63,6 @@ public class RedSideAutoSubstation extends LinearOpMode {
         Action runToPixelStack = drive.actionBuilder(new Pose2d(coords.beforePixelCrash, coords.ROTATED))
                 .strafeToLinearHeading(coords.pixelStackPosFar, coords.ROTATED)
                 .strafeToLinearHeading(coords.backIntoPixelPosFar, coords.ROTATED)
-                .waitSeconds(0.5)
                 .strafeToLinearHeading(coords.backToIntakePixelFar, coords.ROTATED)
                 .strafeToLinearHeading(coords.pixelStackPosFar, coords.ROTATED)
                 .strafeToLinearHeading(coords.backToIntakePixelFar, coords.ROTATED)
