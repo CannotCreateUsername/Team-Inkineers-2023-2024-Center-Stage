@@ -37,13 +37,13 @@ public class AutoCoordinates {
             backIntoPixelPosFar = new Vector2d(45, 18); // Rotated
             backToIntakePixelFar = new Vector2d(45, 20); // Rotated
 
-            toBackdropFromPixelStack = new Vector2d(45, -84); // Rotated
-            betweenSubBackdrop = new Vector2d(15, -84); // Rotated
+            toBackdropFromPixelStack = new Vector2d(43, -84); // Rotated
+            betweenSubBackdrop = new Vector2d(15, -94); // Rotated
             subLeftBackdrop = new Vector2d(20, -97); // Rotated
-            subCenterBackdrop = new Vector2d(15, -97); // Rotated
-            subRightBackdrop = new Vector2d(6, -97); // Rotated
+            subCenterBackdrop = new Vector2d(14, -97); // Rotated
+            subRightBackdrop = new Vector2d(8, -97); // Rotated
 
-            subParkPos = new Vector2d(52,-88); // Rotated
+            subParkPos = new Vector2d(37,-90); // Rotated
         }
     }
 
@@ -94,12 +94,12 @@ public class AutoCoordinates {
     public Vector2d backIntoPixelPosFar = new Vector2d(45, -18); // Rotated
     public Vector2d backToIntakePixelFar = new Vector2d(45, -20); // Rotated
 
-    public Vector2d toBackdropFromPixelStack = new Vector2d(45, 84); // Rotated
-    public Vector2d betweenSubBackdrop = new Vector2d(15, 84); // Rotated
+    public Vector2d toBackdropFromPixelStack = new Vector2d(43, 84); // Rotated
+    public Vector2d betweenSubBackdrop = new Vector2d(15, 94); // Rotated
 
-    public Vector2d subLeftBackdrop = new Vector2d(6, 97); // Rotated
-    public Vector2d subCenterBackdrop = new Vector2d(15, 97); // Rotated
+    public Vector2d subLeftBackdrop = new Vector2d(8, 97); // Rotated
+    public Vector2d subCenterBackdrop = new Vector2d(14, 97); // Rotated
     public Vector2d subRightBackdrop = new Vector2d(20, 97); // Rotated
 
-    public Vector2d subParkPos = new Vector2d(52,88); // Rotated
+    public Vector2d subParkPos = new Vector2d(37,90); // Rotated
 }

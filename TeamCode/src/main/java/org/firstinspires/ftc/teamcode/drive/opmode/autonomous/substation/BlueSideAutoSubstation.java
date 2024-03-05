@@ -4,6 +4,8 @@ import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.SequentialAction;
+import com.acmerobotics.roadrunner.SleepAction;
+import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -61,40 +63,15 @@ public class BlueSideAutoSubstation extends LinearOpMode {
         Action runToPixelStack = drive.actionBuilder(new Pose2d(coords.beforePixelCrash, coords.ROTATED))
                 .strafeToLinearHeading(coords.pixelStackPosFar, coords.ROTATED)
                 .strafeToLinearHeading(coords.backIntoPixelPosFar, coords.ROTATED)
-                .waitSeconds(2)
+                .waitSeconds(0.5)
                 .strafeToLinearHeading(coords.backToIntakePixelFar, coords.ROTATED)
-                .waitSeconds(1)
+                .strafeToLinearHeading(coords.pixelStackPosFar, coords.ROTATED)
+                .strafeToLinearHeading(coords.backToIntakePixelFar, coords.ROTATED)
                 .strafeToLinearHeading(coords.pixelStackPosFar, coords.ROTATED)
                 .build();
 
         Action runAcrossField = drive.actionBuilder(new Pose2d(coords.pixelStackPosFar, coords.ROTATED))
                 .strafeToLinearHeading(coords.toBackdropFromPixelStack, coords.ROTATED)
-                .build();
-        // Run to scoring on backdrop
-        Action runToScoreCenter1 = drive.actionBuilder(new Pose2d(coords.toBackdropFromPixelStack, coords.ROTATED))
-                .strafeToLinearHeading(coords.subCenterBackdrop, coords.ROTATED)
-                .waitSeconds(3)
-                .strafeToLinearHeading(coords.betweenSubBackdrop, coords.ROTATED)
-                .build();
-        Action runToScoreLeft1 = drive.actionBuilder(new Pose2d(coords.toBackdropFromPixelStack, coords.ROTATED))
-                .strafeToLinearHeading(coords.subLeftBackdrop, coords.ROTATED)
-                .waitSeconds(3)
-                .strafeToLinearHeading(coords.betweenSubBackdrop, coords.ROTATED)
-                .build();
-        Action runToScoreRight1 = drive.actionBuilder(new Pose2d(coords.toBackdropFromPixelStack, coords.ROTATED))
-                .strafeToLinearHeading(coords.subRightBackdrop, coords.ROTATED)
-                .waitSeconds(3)
-                .strafeToLinearHeading(coords.betweenSubBackdrop, coords.ROTATED)
-                .build();
-        // Second pixel (Yellow)
-        Action runToScoreCenter2 = drive.actionBuilder(new Pose2d(coords.betweenSubBackdrop, coords.ROTATED))
-                .strafeToLinearHeading(coords.subCenterBackdrop, coords.ROTATED)
-                .build();
-        Action runToScoreLeft2 = drive.actionBuilder(new Pose2d(coords.betweenSubBackdrop, coords.ROTATED))
-                .strafeToLinearHeading(coords.subLeftBackdrop, coords.ROTATED)
-                .build();
-        Action runToScoreRight2 = drive.actionBuilder(new Pose2d(coords.betweenSubBackdrop, coords.ROTATED))
-                .strafeToLinearHeading(coords.subRightBackdrop, coords.ROTATED)
                 .build();
 
         CVMediator.init(hardwareMap, drive, octopusPipeline, false, this);
@@ -111,9 +88,9 @@ public class BlueSideAutoSubstation extends LinearOpMode {
         // OPMODE STARTS HERE
         CVMediator.visionPortal.setProcessorEnabled(octopusPipeline, false);
 
-        // Store which path to take
-        Action runToScoreYellow = runToScoreCenter2;
-        Action runToScoreWhite = runToScoreRight1;
+        // Store which path to take (Default Middle)
+        Vector2d dropWhitePos = coords.subLeftBackdrop;
+        Vector2d dropYellowPos = coords.subCenterBackdrop;
 
         switch (octopusPipeline.getLocation()) {
             case NONE:
@@ -127,8 +104,8 @@ public class BlueSideAutoSubstation extends LinearOpMode {
                 ));
                 break;
             case LEFT:
-                runToScoreYellow = runToScoreLeft2;
-                runToScoreWhite = runToScoreCenter1;
+                dropWhitePos = coords.subCenterBackdrop;
+                dropYellowPos = coords.subLeftBackdrop;
                 Actions.runBlocking(new SequentialAction(
                         runToLeftProp,
                         new ParallelAction(
@@ -138,8 +115,8 @@ public class BlueSideAutoSubstation extends LinearOpMode {
                 ));
                 break;
             case RIGHT:
-                runToScoreYellow = runToScoreRight2;
-                runToScoreWhite = runToScoreCenter1;
+                dropWhitePos = coords.subCenterBackdrop;
+                dropYellowPos = coords.subRightBackdrop;
                 Actions.runBlocking(new SequentialAction(
                         runToRightProp,
                         new ParallelAction(
@@ -149,26 +126,40 @@ public class BlueSideAutoSubstation extends LinearOpMode {
                 ));
                 break;
         }
+
+        Action runToScoreWhite = drive.actionBuilder(new Pose2d(coords.toBackdropFromPixelStack, coords.ROTATED))
+                .strafeToLinearHeading(dropWhitePos, coords.ROTATED)
+                .build();
+        Action runToScoreYellow = drive.actionBuilder(new Pose2d(dropWhitePos, coords.ROTATED))
+                .strafeToLinearHeading(dropYellowPos, coords.ROTATED)
+                .build();
+        Action park = drive.actionBuilder(new Pose2d(dropYellowPos, coords.ROTATED))
+                .strafeToLinearHeading(coords.subParkPos, coords.ROTATED)
+                .build();
+
         Actions.runBlocking(new SequentialAction(
                 new ParallelAction(
                         runAcrossField,
-                        intake.spinIntake(-0.8, 3)
+                        intake.spinIntake(-0.8, 3),
+                        new SequentialAction(
+                                new SleepAction(2),
+                                arm.readySlides(true)
+                        )
                 ),
                 new ParallelAction(
                         runToScoreWhite,
-                        new SequentialAction(
-                                arm.readySlides(false),
-                                arm.ready4bar(),
-                                arm.spinOuttake(-0.5, 0.4)
-                        )
+                        arm.ready4bar()
                 ),
-                arm.readySlides(true),
+                arm.spinOuttake(-0.5, 0.4),
+                new SequentialAction(
+                        runToScoreYellow,
+                        arm.spinOuttake(-1, 0.5)
+                ),
                 new ParallelAction(
-                        runToScoreYellow
-                ),
-                arm.spinOuttake(-1, 0.5),
-                arm.reset4Bar(),
-                arm.resetSlides()
+                        arm.reset4Bar(),
+                        arm.resetSlides(),
+                        park
+                )
         ));
     }
 }
