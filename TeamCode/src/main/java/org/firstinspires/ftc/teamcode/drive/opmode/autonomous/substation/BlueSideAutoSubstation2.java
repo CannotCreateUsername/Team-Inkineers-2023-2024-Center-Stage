@@ -19,8 +19,8 @@ import org.firstinspires.ftc.teamcode.drive.opmode.autonomous.AutoFunctions;
 import org.firstinspires.ftc.teamcode.drive.subsystems.ArmSubsystem3;
 import org.firstinspires.ftc.teamcode.drive.subsystems.IntakeSubsystem;
 
-@Autonomous(name = "BLUE Substation FAST", group = "Substation Side")
-public class BlueSideAutoSubstation extends LinearOpMode {
+@Autonomous(name = "BLUE Substation DELAYED", group = "Substation Side")
+public class BlueSideAutoSubstation2 extends LinearOpMode {
 
     BlueOctopusPipeline octopusPipeline = new BlueOctopusPipeline();
 
@@ -130,6 +130,7 @@ public class BlueSideAutoSubstation extends LinearOpMode {
                 .strafeToLinearHeading(dropWhitePos, coords.ROTATED)
                 .build();
         Action runToScoreYellow = drive.actionBuilder(new Pose2d(dropWhitePos, coords.ROTATED))
+                .strafeToLinearHeading(coords.betweenSubBackdrop, coords.ROTATED)
                 .strafeToLinearHeading(dropYellowPos, coords.ROTATED)
                 .build();
         Action park = drive.actionBuilder(new Pose2d(dropYellowPos, coords.ROTATED))
@@ -142,18 +143,23 @@ public class BlueSideAutoSubstation extends LinearOpMode {
                         intake.spinIntake(-0.8, 3),
                         new SequentialAction(
                                 new SleepAction(2),
-                                arm.readySlides(true)
+                                arm.readySlides(false)
                         )
                 ),
+                new SleepAction(6),
                 new ParallelAction(
                         runToScoreWhite,
                         arm.ready4bar()
                 ),
                 arm.spinOuttake(-0.5, 0.4),
-                new SequentialAction(
+                new ParallelAction(
                         runToScoreYellow,
-                        arm.spinOuttake(-1, 0.5)
+                        new SequentialAction(
+                                new SleepAction(1),
+                                arm.readySlides(true)
+                        )
                 ),
+                arm.spinOuttake(-1, 0.5),
                 new ParallelAction(
                         arm.reset4Bar(),
                         arm.resetSlides(),

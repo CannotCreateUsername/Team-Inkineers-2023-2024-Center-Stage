@@ -19,7 +19,7 @@ import org.firstinspires.ftc.teamcode.drive.opmode.autonomous.AutoFunctions;
 import org.firstinspires.ftc.teamcode.drive.subsystems.ArmSubsystem3;
 import org.firstinspires.ftc.teamcode.drive.subsystems.IntakeSubsystem;
 
-@Autonomous(name = "RED Substation Park/MIDDLE", group = "Substation Side")
+@Autonomous(name = "RED Substation FAST", group = "Substation Side")
 public class RedSideAutoSubstation extends LinearOpMode {
 
     RedOctopusPipeline octopusPipeline = new RedOctopusPipeline();

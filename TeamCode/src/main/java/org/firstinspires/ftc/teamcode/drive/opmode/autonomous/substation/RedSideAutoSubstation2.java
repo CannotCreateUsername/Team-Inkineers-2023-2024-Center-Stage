@@ -12,23 +12,23 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.MecanumDrive;
-import org.firstinspires.ftc.teamcode.cv.BlueOctopusPipeline;
 import org.firstinspires.ftc.teamcode.cv.ComputerVisionMediator;
+import org.firstinspires.ftc.teamcode.cv.RedOctopusPipeline;
 import org.firstinspires.ftc.teamcode.drive.AutoCoordinates;
 import org.firstinspires.ftc.teamcode.drive.opmode.autonomous.AutoFunctions;
 import org.firstinspires.ftc.teamcode.drive.subsystems.ArmSubsystem3;
 import org.firstinspires.ftc.teamcode.drive.subsystems.IntakeSubsystem;
 
-@Autonomous(name = "BLUE Substation FAST", group = "Substation Side")
-public class BlueSideAutoSubstation extends LinearOpMode {
+@Autonomous(name = "RED Substation DELAYED", group = "Substation Side")
+public class RedSideAutoSubstation2 extends LinearOpMode {
 
-    BlueOctopusPipeline octopusPipeline = new BlueOctopusPipeline();
+    RedOctopusPipeline octopusPipeline = new RedOctopusPipeline();
 
     @Override
     public void runOpMode() throws InterruptedException {
         ElapsedTime timer1 = new ElapsedTime();
 
-        AutoCoordinates coords = new AutoCoordinates(false);
+        AutoCoordinates coords = new AutoCoordinates(true);
 
         // Initialize the drive
         Pose2d startPose = new Pose2d(0, 0, Math.toRadians(0));
@@ -39,7 +39,7 @@ public class BlueSideAutoSubstation extends LinearOpMode {
 
         // Initialize some functions
         AutoFunctions functions = new AutoFunctions();
-        functions.init(intake, arm, drive, true);
+        functions.init(intake, arm, drive, false);
 
         // Run to the left spike location
         Action runToLeftProp = drive.actionBuilder(startPose)
@@ -130,6 +130,7 @@ public class BlueSideAutoSubstation extends LinearOpMode {
                 .strafeToLinearHeading(dropWhitePos, coords.ROTATED)
                 .build();
         Action runToScoreYellow = drive.actionBuilder(new Pose2d(dropWhitePos, coords.ROTATED))
+                .strafeToLinearHeading(coords.betweenSubBackdrop, coords.ROTATED)
                 .strafeToLinearHeading(dropYellowPos, coords.ROTATED)
                 .build();
         Action park = drive.actionBuilder(new Pose2d(dropYellowPos, coords.ROTATED))
@@ -145,15 +146,20 @@ public class BlueSideAutoSubstation extends LinearOpMode {
                                 arm.readySlides(true)
                         )
                 ),
+                new SleepAction(6),
                 new ParallelAction(
                         runToScoreWhite,
                         arm.ready4bar()
                 ),
                 arm.spinOuttake(-0.5, 0.4),
-                new SequentialAction(
+                new ParallelAction(
                         runToScoreYellow,
-                        arm.spinOuttake(-1, 0.5)
+                        new SequentialAction(
+                                new SleepAction(1),
+                                arm.readySlides(true)
+                        )
                 ),
+                arm.spinOuttake(-1, 0.5),
                 new ParallelAction(
                         arm.reset4Bar(),
                         arm.resetSlides(),
