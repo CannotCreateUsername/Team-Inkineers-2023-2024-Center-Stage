@@ -13,7 +13,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.cv.BlueOctopusPipeline;
 import org.firstinspires.ftc.teamcode.cv.ComputerVisionMediator;
-import org.firstinspires.ftc.teamcode.drive.AutoCoordinates;
+import org.firstinspires.ftc.teamcode.drive.opmode.autonomous.AutoCoordinates;
 import org.firstinspires.ftc.teamcode.drive.opmode.autonomous.AutoFunctions;
 import org.firstinspires.ftc.teamcode.drive.subsystems.ArmSubsystem3;
 import org.firstinspires.ftc.teamcode.drive.subsystems.IntakeSubsystem;
