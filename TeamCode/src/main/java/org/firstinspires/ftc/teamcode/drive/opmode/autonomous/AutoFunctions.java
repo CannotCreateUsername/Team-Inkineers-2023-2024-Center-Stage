@@ -48,8 +48,8 @@ public class AutoFunctions {
         return new SequentialAction(
                 intake.spinIntake(-0.2, 0.5),
                 new ParallelAction(
-                        intake.spinIntake(0.8, 3),
-                        arm.spinOuttake(0.8, 3)
+                        intake.spinIntake(0.8, 4),
+                        arm.spinOuttake(0.8, 4)
                 )
         );
     }

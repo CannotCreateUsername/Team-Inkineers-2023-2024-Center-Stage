@@ -8,10 +8,13 @@ public class AutoCoordinates {
     public double ROTATED = Math.toRadians(90);
     public double STRAIGHT = Math.toRadians(0);
 
-    public AutoCoordinates(boolean isRedSide) {
+    public AutoCoordinates(boolean isRedSide, boolean isFarSide) {
         if (isRedSide) {
             ROTATED = Math.toRadians(-90);
-            
+
+            if (isFarSide) {
+                propLeftPos = new Vector2d(32, 12);
+            }
             backdropCenterPos = new Vector2d(18, -50);
             backdropLeftPos = new Vector2d(23, -50);
             backdropRightPos = new Vector2d(13, -50);
@@ -44,6 +47,10 @@ public class AutoCoordinates {
             subRightBackdrop = new Vector2d(8, -97); // Rotated
 
             subParkPos = new Vector2d(37,-90); // Rotated
+        } else {
+            if (isFarSide) {
+                propRightPos = new Vector2d(32, -12); // Straight
+            }
         }
     }
 
@@ -79,7 +86,7 @@ public class AutoCoordinates {
     public Vector2d parkOutsideTuck = new Vector2d(-6, 58); // Rotated
 
     // Going to pixel stack
-    public Vector2d rotatedStartPos = new Vector2d(-2, 0); // Rotated
+    public Vector2d rotatedStartPos = new Vector2d(-4, 0); // Rotated
     public Vector2d crossTrussPos = new Vector2d(0, -44); // Rotated
     public Vector2d pixelStackPosClose = new Vector2d(24, -62); // Rotated
     public Vector2d backIntoPixelPosClose = new Vector2d(24, -65); // Rotated
@@ -99,7 +106,7 @@ public class AutoCoordinates {
 
     public Vector2d subLeftBackdrop = new Vector2d(8, 97); // Rotated
     public Vector2d subCenterBackdrop = new Vector2d(14, 97); // Rotated
-    public Vector2d subRightBackdrop = new Vector2d(20, 97); // Rotated
+    public Vector2d subRightBackdrop = new Vector2d(21, 97); // Rotated
 
     public Vector2d subParkPos = new Vector2d(37,90); // Rotated
 }

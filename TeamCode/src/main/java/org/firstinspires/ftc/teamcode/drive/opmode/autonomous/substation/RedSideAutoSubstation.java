@@ -28,7 +28,7 @@ public class RedSideAutoSubstation extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         ElapsedTime timer1 = new ElapsedTime();
 
-        AutoCoordinates coords = new AutoCoordinates(true);
+        AutoCoordinates coords = new AutoCoordinates(true, true);
 
         // Initialize the drive
         Pose2d startPose = new Pose2d(0, 0, Math.toRadians(0));

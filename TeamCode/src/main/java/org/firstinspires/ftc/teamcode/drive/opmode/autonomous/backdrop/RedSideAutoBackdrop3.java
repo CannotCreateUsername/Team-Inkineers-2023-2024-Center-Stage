@@ -28,7 +28,7 @@ public class RedSideAutoBackdrop3 extends LinearOpMode {
         ElapsedTime timer1 = new ElapsedTime();
 
         // Get the coordinates
-        AutoCoordinates coords = new AutoCoordinates(true);
+        AutoCoordinates coords = new AutoCoordinates(true, false);
 
         // Initialize the drive
         Pose2d startPose = new Pose2d(0, 0, Math.toRadians(0));
@@ -116,11 +116,12 @@ public class RedSideAutoBackdrop3 extends LinearOpMode {
                 Actions.runBlocking(new ParallelAction(
                         runToCenterProp,
                         new SequentialAction(
-                                new SleepAction(4),
+                                new SleepAction(3),
                                 new ParallelAction(
                                         arm.readySlides(false),
                                         arm.ready4bar()
-                                )
+                                ),
+                                arm.spinOuttake(-0.5, 1.5)
                         )
                 ));
                 break;
@@ -133,7 +134,8 @@ public class RedSideAutoBackdrop3 extends LinearOpMode {
                                 new ParallelAction(
                                         arm.readySlides(false),
                                         arm.ready4bar()
-                                )
+                                ),
+                                arm.spinOuttake(-0.5, 1.5)
                         )
                 ));
                 break;
@@ -146,13 +148,13 @@ public class RedSideAutoBackdrop3 extends LinearOpMode {
                                 new ParallelAction(
                                         arm.readySlides(false),
                                         arm.ready4bar()
-                                )
+                                ),
+                                arm.spinOuttake(-0.5, 1.5)
                         )
                 ));
                 break;
         }
         Actions.runBlocking(new SequentialAction(
-                arm.spinOuttake(-0.5, 1.5),
                 new ParallelAction(
                         arm.reset4Bar(),
                         arm.resetSlides(),

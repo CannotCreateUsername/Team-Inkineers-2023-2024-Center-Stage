@@ -28,7 +28,7 @@ public class BlueSideAutoSubstation2 extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         ElapsedTime timer1 = new ElapsedTime();
 
-        AutoCoordinates coords = new AutoCoordinates(false);
+        AutoCoordinates coords = new AutoCoordinates(false, true);
 
         // Initialize the drive
         Pose2d startPose = new Pose2d(0, 0, Math.toRadians(0));
@@ -88,7 +88,7 @@ public class BlueSideAutoSubstation2 extends LinearOpMode {
         CVMediator.visionPortal.setProcessorEnabled(octopusPipeline, false);
 
         // Store which path to take (Default Middle)
-        Vector2d dropWhitePos = coords.subLeftBackdrop;
+        Vector2d dropWhitePos = coords.subRightBackdrop;
         Vector2d dropYellowPos = coords.subCenterBackdrop;
 
         switch (octopusPipeline.getLocation()) {

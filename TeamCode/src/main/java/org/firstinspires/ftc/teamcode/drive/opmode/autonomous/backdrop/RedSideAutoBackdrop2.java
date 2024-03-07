@@ -28,7 +28,7 @@ public class RedSideAutoBackdrop2 extends LinearOpMode {
         ElapsedTime timer1 = new ElapsedTime();
 
         // Get the coordinates
-        AutoCoordinates coords = new AutoCoordinates(true);
+        AutoCoordinates coords = new AutoCoordinates(true, false);
 
         // Initialize the drive
         Pose2d startPose = new Pose2d(0, 0, Math.toRadians(0));
