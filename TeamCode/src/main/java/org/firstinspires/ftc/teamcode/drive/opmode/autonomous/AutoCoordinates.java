@@ -32,7 +32,7 @@ public class AutoCoordinates {
             backIntoPixelPosClose = new Vector2d(24, 65); // Rotated
             backToIntakePixelClose = new Vector2d(24, 67); // Rotated
             cringerBackdropCenterPos = new Vector2d(18, -49); // Rotated
-
+            cringerBackdropPosNotCenter = new Vector2d(13, -49); // Rotated
 
             // Substation Stuff
             beforePixelCrash = new Vector2d(16, 12); // Rotated
@@ -92,6 +92,7 @@ public class AutoCoordinates {
     public Vector2d backIntoPixelPosClose = new Vector2d(24, -65); // Rotated
     public Vector2d backToIntakePixelClose = new Vector2d(24, -67); // Rotated
     public Vector2d cringerBackdropCenterPos = new Vector2d(18, 49); // Rotated
+    public Vector2d cringerBackdropPosNotCenter = new Vector2d(13, 49); // Rotated
 
 
     // Substation Specific

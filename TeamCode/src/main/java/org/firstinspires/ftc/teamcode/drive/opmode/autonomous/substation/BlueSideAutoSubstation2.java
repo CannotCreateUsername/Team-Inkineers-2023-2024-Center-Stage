@@ -159,7 +159,7 @@ public class BlueSideAutoSubstation2 extends LinearOpMode {
                                 arm.readySlides(true)
                         )
                 ),
-                arm.spinOuttake(-1, 0.5),
+                arm.spinOuttake(-1, 0.6),
                 new ParallelAction(
                         arm.reset4Bar(),
                         arm.resetSlides(),

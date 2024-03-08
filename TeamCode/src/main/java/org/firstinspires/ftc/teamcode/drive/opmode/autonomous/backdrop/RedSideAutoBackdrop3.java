@@ -5,6 +5,7 @@ import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.SleepAction;
+import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -87,11 +88,6 @@ public class RedSideAutoBackdrop3 extends LinearOpMode {
                 .strafeToLinearHeading(coords.pixelStackPosClose, coords.ROTATED)
                 .strafeToLinearHeading(coords.backToIntakePixelClose, coords.ROTATED)
                 .build();
-        Action whiteToBackdrop = drive.actionBuilder(new Pose2d(coords.backIntoPixelPosClose, coords.ROTATED))
-                .strafeToConstantHeading(coords.crossTrussPos)
-                .strafeToConstantHeading(coords.rotatedStartPos)
-                .strafeToConstantHeading(coords.cringerBackdropCenterPos)
-                .build();
 
         // Initialize all computer vision stuff
         CVMediator.init(hardwareMap, drive, octopusPipeline, false, this);
@@ -107,12 +103,15 @@ public class RedSideAutoBackdrop3 extends LinearOpMode {
         if (isStopRequested()) return;
 
         Action runParkPath = middleToPixel;
+        Vector2d whiteDropoffPos = coords.cringerBackdropCenterPos;
+
         // Stop the pipeline since we no longer need to detect the prop
         CVMediator.visionPortal.setProcessorEnabled(octopusPipeline, false);
 
         switch (octopusPipeline.getLocation()) {
             case NONE:
             case MIDDLE:
+                whiteDropoffPos = coords.cringerBackdropPosNotCenter;
                 Actions.runBlocking(new ParallelAction(
                         runToCenterProp,
                         new SequentialAction(
@@ -154,6 +153,11 @@ public class RedSideAutoBackdrop3 extends LinearOpMode {
                 ));
                 break;
         }
+        Action whiteToBackdrop = drive.actionBuilder(new Pose2d(coords.backIntoPixelPosClose, coords.ROTATED))
+                .strafeToConstantHeading(coords.crossTrussPos)
+                .strafeToConstantHeading(coords.rotatedStartPos)
+                .strafeToConstantHeading(whiteDropoffPos)
+                .build();
         Actions.runBlocking(new SequentialAction(
                 new ParallelAction(
                         arm.reset4Bar(),
