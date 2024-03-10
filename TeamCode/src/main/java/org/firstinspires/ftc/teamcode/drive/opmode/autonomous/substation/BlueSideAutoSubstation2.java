@@ -151,7 +151,7 @@ public class BlueSideAutoSubstation2 extends LinearOpMode {
                         runToScoreWhite,
                         arm.ready4bar()
                 ),
-                arm.spinOuttake(-0.5, 0.4),
+                arm.spinOuttake(-0.5, 0.5),
                 new ParallelAction(
                         runToScoreYellow,
                         new SequentialAction(
