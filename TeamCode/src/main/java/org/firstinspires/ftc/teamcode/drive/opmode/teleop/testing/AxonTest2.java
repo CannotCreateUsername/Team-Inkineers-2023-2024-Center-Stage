@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.drive.opmode.teleop.testing;
 
+import com.arcrobotics.ftclib.gamepad.GamepadEx;
+import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.AnalogInput;
@@ -13,12 +15,12 @@ public class AxonTest2 extends LinearOpMode {
     AnalogInput encoder = null;
 
     final double max_servo_position = 360;
-    final double rotation_threshold = 3;
+    final double rotation_threshold = 1;
 
-    double absPos = 0;
+    static double absPos = 0;
     double position = 0;
 
-    double targetPos = 90;
+    double targetPos = 0;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -27,12 +29,17 @@ public class AxonTest2 extends LinearOpMode {
 
         axon.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        axon.setPower(0.01);
-        position = encoder.getVoltage() / 3.3 * max_servo_position;
-        telemetry.addData("Encoder Position", position);
-        telemetry.addData("Target Position", targetPos);
-        telemetry.addData("Absolute Position", absPos);
-        telemetry.update();
+        GamepadEx gamepadEx = new GamepadEx(gamepad1);
+
+        absPos = 0;
+        while (opModeInInit()) {
+            axon.setPower(0.01);
+            position = encoder.getVoltage() / 3.3 * max_servo_position;
+            telemetry.addData("Encoder Position", position);
+            telemetry.addData("Target Position", targetPos);
+            telemetry.addData("Absolute Position", absPos);
+            telemetry.update();
+        }
 
         waitForStart();
         while (opModeIsActive()) {
@@ -44,7 +51,18 @@ public class AxonTest2 extends LinearOpMode {
                 targetPos = 90;
             } else if (gamepad1.y) {
                 targetPos = 180;
+            } else if (gamepad1.x) {
+                targetPos = 360;
+            } else if (gamepad1.dpad_up) {
+                targetPos = 480;
             }
+
+            if (gamepadEx.wasJustPressed(GamepadKeys.Button.RIGHT_BUMPER)) {
+                targetPos += 10;
+            } else if (gamepadEx.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER)) {
+                targetPos -= 10;
+            }
+
             double error = targetPos - absPos;
             servoPID(error);
 
@@ -91,8 +109,8 @@ public class AxonTest2 extends LinearOpMode {
 
     public void servoPID(double error) {
         double kP = 0.005;
-        double kD = 0.04;
-        double ERR_THRESHOLD = 2;
+        double kD = 0.08;
+        double ERR_THRESHOLD = 1;
         if (Math.abs(error) > ERR_THRESHOLD) {
             // Ensure the servo rotates in the correct direction based on the error sign
             axon.setPower(error > 0 ? Math.abs(error) * kP + kD : -Math.abs(error) * kP);

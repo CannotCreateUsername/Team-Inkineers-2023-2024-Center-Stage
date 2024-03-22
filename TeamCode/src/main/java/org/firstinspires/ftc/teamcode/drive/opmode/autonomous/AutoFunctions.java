@@ -12,20 +12,20 @@ import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.MecanumDrive;
-import org.firstinspires.ftc.teamcode.drive.subsystems.ArmSubsystem3;
+import org.firstinspires.ftc.teamcode.drive.subsystems.ArmSubsystem4;
 import org.firstinspires.ftc.teamcode.drive.subsystems.IntakeSubsystem;
 
 import javax.annotation.Nullable;
 
 public class AutoFunctions {
-    private ArmSubsystem3 arm;
+    private ArmSubsystem4 arm;
     private IntakeSubsystem intake;
     private MecanumDrive drive;
     private boolean isOnBlueSide;
     ElapsedTime moveTimer;
 
 
-    public void init(@Nullable IntakeSubsystem intakeSubsystem, ArmSubsystem3 armSubsystem, MecanumDrive mecanumDrive, boolean blueSide) {
+    public void init(@Nullable IntakeSubsystem intakeSubsystem, ArmSubsystem4 armSubsystem, MecanumDrive mecanumDrive, boolean blueSide) {
         intake = intakeSubsystem;
         arm = armSubsystem;
         drive = mecanumDrive;

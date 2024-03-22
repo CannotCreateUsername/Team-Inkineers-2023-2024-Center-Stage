@@ -7,7 +7,7 @@ import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.drive.subsystems.ArmSubsystem3;
+import org.firstinspires.ftc.teamcode.drive.subsystems.ArmSubsystem4;
 import org.firstinspires.ftc.teamcode.drive.subsystems.EndgameSubsystems;
 import org.firstinspires.ftc.teamcode.drive.subsystems.IntakeSubsystem;
 
@@ -19,7 +19,7 @@ public class ArmTest extends LinearOpMode {
         GamepadEx gamepadEx1 = new GamepadEx(gamepad1);
         GamepadEx gamepadEx2 = new GamepadEx(gamepad2);
 
-        ArmSubsystem3 armSubsystem = new ArmSubsystem3(hardwareMap);
+        ArmSubsystem4 armSubsystem = new ArmSubsystem4(hardwareMap);
         IntakeSubsystem intakeSubsystem = new IntakeSubsystem(hardwareMap);
         EndgameSubsystems endgameSubsystems = new EndgameSubsystems(hardwareMap);
 
@@ -46,7 +46,7 @@ public class ArmTest extends LinearOpMode {
             telemetry.addData("Slide State", armSubsystem.getLiftState());
             telemetry.addData("Slide Position", armSubsystem.getSlidePosition());
             telemetry.addData("Current Target", armSubsystem.getCurrentTarget());
-            telemetry.addData("V4B Position", armSubsystem.getV4bPosition());
+//            telemetry.addData("V4B Position", armSubsystem.getV4bPosition());
             telemetry.addData("Arm Timer", armSubsystem.getArmTimer());
             telemetry.addData("Outtake State", armSubsystem.getOuttakeState());
             telemetry.addData("Intake State", intakeSubsystem.getIntakeState());
