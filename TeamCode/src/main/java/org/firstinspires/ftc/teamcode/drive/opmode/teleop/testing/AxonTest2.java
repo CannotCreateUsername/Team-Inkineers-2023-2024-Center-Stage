@@ -48,13 +48,15 @@ public class AxonTest2 extends LinearOpMode {
             if (gamepad1.a) {
                 targetPos = 0;
             } else if (gamepad1.b) {
-                targetPos = 90;
+                targetPos = -90;
             } else if (gamepad1.y) {
-                targetPos = 180;
-            } else if (gamepad1.x) {
                 targetPos = 360;
+            } else if (gamepad1.x) {
+                targetPos = 90;
             } else if (gamepad1.dpad_up) {
                 targetPos = 480;
+            } else if (gamepad1.dpad_down) {
+                targetPos = -480;
             }
 
             if (gamepadEx.wasJustPressed(GamepadKeys.Button.RIGHT_BUMPER)) {
@@ -109,7 +111,7 @@ public class AxonTest2 extends LinearOpMode {
 
     public void servoPID(double error) {
         double kP = 0.005;
-        double kD = 0.08;
+        double kD = 0.08; //0.08
         double ERR_THRESHOLD = 1;
         if (Math.abs(error) > ERR_THRESHOLD) {
             // Ensure the servo rotates in the correct direction based on the error sign

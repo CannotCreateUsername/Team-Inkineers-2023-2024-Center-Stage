@@ -18,8 +18,6 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.PwmControl;
-import com.qualcomm.robotcore.hardware.ServoImplEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 
@@ -42,10 +40,10 @@ public class ArmSubsystem4 {
     // ViperSlide PID constants
     private double VKp = 0.0015; // !! if you change higher the slides go crazy !!
 
+    V4BSubsystem v4B;
+
     private final DcMotor upperSlides;
     private final DcMotor lowerSlides;
-    private final CRServo rightVirtualBar;
-    private final CRServo leftVirtualBar;
     private final CRServo outtake;
     private final RevTouchSensor limitSwitch;
     private final RevTouchSensor boxSwitch;
@@ -89,11 +87,11 @@ public class ArmSubsystem4 {
     private final DigitalChannel redLED;
 
     public ArmSubsystem4(HardwareMap hardwareMap) {
+        // Initialize the virtual four bar
+        v4B = new V4BSubsystem(hardwareMap);
         // Map actuator variables to actual hardware
         upperSlides = hardwareMap.get(DcMotor.class, "top_slide");
         lowerSlides = hardwareMap.get(DcMotor.class, "bottom_slide");
-        rightVirtualBar = hardwareMap.get(CRServo.class, "bar_right");
-        leftVirtualBar = hardwareMap.get(CRServo.class, "bar_left");
         outtake = hardwareMap.get(CRServo.class, "outtake");
         limitSwitch = hardwareMap.get(RevTouchSensor.class, "limit_switch");
         boxSwitch = hardwareMap.get(RevTouchSensor.class, "box_switch");
@@ -140,8 +138,11 @@ public class ArmSubsystem4 {
         }
     }
 
-    boolean a;
+    boolean leftBumperDown;
 
+
+
+    // Viper Slide Loop
     public void runArm(GamepadEx gamepad1, GamepadEx gamepad2) {
         int positionIncrement = 50;
         switch (slideState) {
@@ -172,8 +173,7 @@ public class ArmSubsystem4 {
                 } else if (gamepad1.isDown(GamepadKeys.Button.LEFT_BUMPER)) {
                     slideState = SlideState.MANUAL;
                 } else if (gamepad1.wasJustReleased(GamepadKeys.Button.LEFT_BUMPER) || gamepad1.wasJustReleased(GamepadKeys.Button.X)) {
-//                    rightVirtualBar.setPosition(rLOAD);
-//                    leftVirtualBar.setPosition(lLOAD);
+                    v4B.retract();
                     slideState = SlideState.REST;
                     timer.reset();
                 }
@@ -186,8 +186,7 @@ public class ArmSubsystem4 {
                 } else if (gamepad1.isDown(GamepadKeys.Button.LEFT_BUMPER)) {
                     slideState = SlideState.MANUAL;
                 } else if (gamepad1.wasJustReleased(GamepadKeys.Button.X)) {
-//                    rightVirtualBar.setPosition(rLOAD);
-//                    leftVirtualBar.setPosition(lLOAD);
+                    v4B.retract();
                     slideState = SlideState.REST;
                     timer.reset();
                 }
@@ -204,8 +203,7 @@ public class ArmSubsystem4 {
                     hanging = true;
                     slideState = SlideState.HANG;
                 } else if (gamepad1.wasJustReleased(GamepadKeys.Button.X)) {
-//                    rightVirtualBar.setPosition(rLOAD);
-//                    leftVirtualBar.setPosition(lLOAD);
+                    v4B.retract();
                     slideState = SlideState.REST;
                     timer.reset();
                 }
@@ -219,8 +217,7 @@ public class ArmSubsystem4 {
                     hanging = true;
                     slideState = SlideState.HANG;
                 } else if (gamepad1.wasJustReleased(GamepadKeys.Button.X)) {
-//                    rightVirtualBar.setPosition(rLOAD);
-//                    leftVirtualBar.setPosition(lLOAD);
+                    v4B.retract();
                     slideState = SlideState.REST;
                     timer.reset();
                 }
@@ -235,8 +232,7 @@ public class ArmSubsystem4 {
                     hanging = true;
                     slideState = SlideState.HANG;
                 } else if (gamepad1.wasJustReleased(GamepadKeys.Button.X)) {
-//                    rightVirtualBar.setPosition(rLOAD);
-//                    leftVirtualBar.setPosition(lLOAD);
+                    v4B.retract();
                     slideState = SlideState.REST;
                     timer.reset();
                 }
@@ -276,12 +272,10 @@ public class ArmSubsystem4 {
         // Code to run the virtual four bar. Don't move in REST state
         if (slideState != SlideState.REST) {
             if (gamepad1.wasJustPressed(GamepadKeys.Button.A) && !drop) {
-//                rightVirtualBar.setPosition(rDROP);
-//                leftVirtualBar.setPosition(lDROP);
+                v4B.extend();
                 drop = true;
             } else if (gamepad1.wasJustPressed(GamepadKeys.Button.A) && drop) {
-//                rightVirtualBar.setPosition(rLOAD);
-//                leftVirtualBar.setPosition(lLOAD);
+                v4B.retract();
                 drop = false;
             }
         }
@@ -310,10 +304,10 @@ public class ArmSubsystem4 {
             return firstLvl;
         }
     }
-
     // Decrease driving speed for more control when the slides are lifted
     public double getPowerMultiplier() { return liftMultiplier; }
 
+    // Outtake Loop
     public void runOuttake(GamepadEx gamepad1) {
         rtReader = new TriggerReader(gamepad1, GamepadKeys.Trigger.RIGHT_TRIGGER);
         ltReader = new TriggerReader(gamepad1, GamepadKeys.Trigger.LEFT_TRIGGER);
@@ -355,7 +349,7 @@ public class ArmSubsystem4 {
     }
 
     // Telemetry
-    public boolean leftBumperDown() { return a; }
+    public boolean leftBumperDown() { return leftBumperDown; }
     public String getLiftState() { return slideState.name(); }
     public int getSlidePosition() { return lowerSlides.getCurrentPosition(); }
     public int getCurrentTarget() { return currentTarget; }
