@@ -13,6 +13,7 @@ import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.arcrobotics.ftclib.gamepad.TriggerReader;
 import com.qualcomm.hardware.rev.RevTouchSensor;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -47,11 +48,6 @@ public class ArmSubsystem4 {
     private final CRServo outtake;
     private final RevTouchSensor limitSwitch;
     private final RevTouchSensor boxSwitch;
-
-    public final double rLOAD = 1;
-    public final double rDROP = 1-0.25;
-    public final double lLOAD = 0;
-    public final double lDROP = 0.25;
 
     public double intakePower = 0.5;
     public double hangingMultiplier = 0.8;
@@ -141,9 +137,13 @@ public class ArmSubsystem4 {
     boolean leftBumperDown;
 
 
+    public void initV4B(LinearOpMode opMode) {
+        v4B.init(opMode);
+    }
 
     // Viper Slide Loop
     public void runArm(GamepadEx gamepad1, GamepadEx gamepad2) {
+        v4B.updatePosAll(); // Update Virtual Axon Servo Position for PID control
         int positionIncrement = 50;
         switch (slideState) {
             case REST:
@@ -279,7 +279,8 @@ public class ArmSubsystem4 {
                 drop = false;
             }
         }
-
+        // Set power to the virtual four bar using PID
+        v4B.servoPID();
         // Disable PID when hanging
         if (!hanging) {
             powerPID(0.6);

@@ -24,8 +24,8 @@ public class AxonTest2 extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        axon = hardwareMap.get(CRServo.class, "axon");
-        encoder = hardwareMap.get(AnalogInput.class, "axon_encoder");
+        axon = hardwareMap.get(CRServo.class, "bar_left");
+        encoder = hardwareMap.get(AnalogInput.class, "left_axon_encoder");
 
         axon.setDirection(DcMotorSimple.Direction.REVERSE);
 
@@ -41,6 +41,7 @@ public class AxonTest2 extends LinearOpMode {
             telemetry.update();
         }
 
+        // Positive target for CLOCKWISE, Negative for COUNTERCLOCKWISE
         waitForStart();
         while (opModeIsActive()) {
             updatePos();
@@ -67,6 +68,7 @@ public class AxonTest2 extends LinearOpMode {
 
             double error = targetPos - absPos;
             servoPID(error);
+            gamepadEx.readButtons();
 
             // Output values for troubleshooting
             telemetry.addData("Encoder Position", position);

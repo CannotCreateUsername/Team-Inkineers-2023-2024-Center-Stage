@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.drive.subsystems;
 
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -10,18 +11,21 @@ public class V4BSubsystem {
     private final CRServo rightVirtualBar;
     private final CRServo leftVirtualBar;
     private final AnalogInput rightEncoder;
-    private AnalogInput leftEncoder;
+    private final AnalogInput leftEncoder;
 
     // VIRTUAL FOUR BAR LOOP STUFF
     final double max_servo_position = 360;
     final double rotation_threshold = 1;
 
-    static double right_absolute_position = 0;
-//    static double left_absolute_position = 0;
+    double right_absolute_position;
+    double left_absolute_position;
     double right_position = 0;
-//    double left_position = 0;
+    double left_position = 0;
 
     double targetPos = 0;
+    private double leftTargetPos = 0;
+    double rightError = 0;
+    double leftError = 0;
 
     // Constructor
     public V4BSubsystem(HardwareMap hardwareMap) {
@@ -33,22 +37,39 @@ public class V4BSubsystem {
         // Reverse V4B servos
         rightVirtualBar.setDirection(DcMotorSimple.Direction.REVERSE);
         leftVirtualBar.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        right_absolute_position = 0;
+        left_absolute_position = 0;
+    }
+
+    public void init(LinearOpMode opMode) {
+        rightVirtualBar.setPower(0.01);
+        leftVirtualBar.setPower(0.01);
+        right_position = rightEncoder.getVoltage() / 3.3 * max_servo_position;
+        left_position = leftEncoder.getVoltage() / 3.3 * max_servo_position;
+        opMode.telemetry.addData("Target Position", getTargetPos());
+        opMode.telemetry.addData("RIGHT Absolute Position", getRightAbsolutePosition());
+        opMode.telemetry.addData("LEFT Absolute Position", getLeftAbsolutePosition());
+        opMode.telemetry.addData("Right Axon Error", getRightError());
+        opMode.telemetry.addData("Left Axon Error", getLeftError());
     }
 
     public void extend() {
         targetPos = 480;
+        leftTargetPos = -targetPos;
     }
     public void retract() {
         targetPos = 0;
+        leftTargetPos = 0;
     }
 
     public void servoPID() {
-        double rightError = targetPos - right_absolute_position;
-        double leftError = targetPos + right_absolute_position; // Add the right absolute position since left rotates in the opposite direction
+        rightError = targetPos - right_absolute_position;
+        leftError = leftTargetPos - left_absolute_position;
         double kP = 0.005;
         double kD = 0.08;
         double ERR_THRESHOLD = 1;
-        if (Math.abs(rightError) > ERR_THRESHOLD) {
+        if (Math.abs(rightError) > ERR_THRESHOLD || Math.abs(leftError) > ERR_THRESHOLD) {
             // Ensure the servo rotates in the correct direction based on the error sign
             rightVirtualBar.setPower(rightError > 0 ? Math.abs(rightError) * kP + kD : -Math.abs(rightError) * kP);
             leftVirtualBar.setPower(leftError > 0 ? Math.abs(leftError) * kP + kD : -Math.abs(leftError) * kP);
@@ -58,8 +79,22 @@ public class V4BSubsystem {
         }
     }
 
+    // TELEMETRY
+    public double getRightAbsolutePosition() { return right_absolute_position; }
+//    public double getRightPosition() { return right_position; }
+    public double getLeftAbsolutePosition() { return left_absolute_position; }
+//    public double getLeftPosition() { return left_position; }
+    public double getRightError() { return rightError; }
+    public double getLeftError() { return leftError; }
+    public double getTargetPos() { return targetPos; }
+
+    public void updatePosAll() {
+        updatePosRight();
+        updatePosLeft();
+    }
+
     // for RIGHT servo
-    private void updatePosRight() {
+    public void updatePosRight() {
         // get the voltage of our analog line
         // divide by 3.3 (the max voltage) to get a value between 0 and 1
         // multiply by 360 to convert it to 0 to 360 degrees
@@ -90,34 +125,34 @@ public class V4BSubsystem {
         }
     }
     // for LEFT servo
-//    private void updatePosLeft() {
-//        // get the voltage of our analog line
-//        // divide by 3.3 (the max voltage) to get a value between 0 and 1
-//        // multiply by 360 to convert it to 0 to 360 degrees
-//        double currentPos = leftEncoder.getVoltage() / 3.3 * max_servo_position;
-//        double previousPos = left_position;
-//
-//        // Calculate clockwise (CW) and counterclockwise (CCW) distances
-//        double CWDistance = (currentPos - previousPos + 360) % 360;
-//        double CCWDistance = (previousPos - currentPos + 360) % 360;
-//
-//        left_position = currentPos;
-//
-//        // Update absolute position
-//        if (Math.abs(CWDistance - CCWDistance) < rotation_threshold) {
-//            // If the difference between CW and CCW distances is small, handle transition across 360 degrees
-//            if (currentPos < previousPos) {
-//                left_absolute_position += CWDistance;
-//            } else {
-//                left_absolute_position -= CCWDistance;
-//            }
-//        } else {
-//            // Choose the direction with the smaller distance
-//            if (CWDistance < CCWDistance) {
-//                left_position += CWDistance;
-//            } else {
-//                left_absolute_position -= CCWDistance;
-//            }
-//        }
-//    }
+    public void updatePosLeft() {
+        // get the voltage of our analog line
+        // divide by 3.3 (the max voltage) to get a value between 0 and 1
+        // multiply by 360 to convert it to 0 to 360 degrees
+        double currentPos = leftEncoder.getVoltage() / 3.3 * max_servo_position;
+        double previousPos = left_position;
+
+        // Calculate clockwise (CW) and counterclockwise (CCW) distances
+        double CWDistance = (currentPos - previousPos + 360) % 360;
+        double CCWDistance = (previousPos - currentPos + 360) % 360;
+
+        left_position = currentPos;
+
+        // Update absolute position
+        if (Math.abs(CWDistance - CCWDistance) < rotation_threshold) {
+            // If the difference between CW and CCW distances is small, handle transition across 360 degrees
+            if (currentPos < previousPos) {
+                left_absolute_position += CWDistance;
+            } else {
+                left_absolute_position -= CCWDistance;
+            }
+        } else {
+            // Choose the direction with the smaller distance
+            if (CWDistance < CCWDistance) {
+                left_absolute_position += CWDistance;
+            } else {
+                left_absolute_position -= CCWDistance;
+            }
+        }
+    }
 }

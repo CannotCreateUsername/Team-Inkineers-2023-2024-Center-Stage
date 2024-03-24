@@ -16,7 +16,7 @@ import org.firstinspires.ftc.teamcode.drive.subsystems.IntakeSubsystem;
 @TeleOp(name = "Blue Drive", group = "Linear Opmode")
 public class BlueSideDrive extends LinearOpMode {
     enum TurnState {
-        STRAIGHT,
+//        STRAIGHT,
         ROTATED
     }
     TurnState turnState;
@@ -52,6 +52,12 @@ public class BlueSideDrive extends LinearOpMode {
         leftStickY.init();
         GamepadHelper rightStickX = new GamepadHelper();
         rightStickX.init();
+
+        // Weird setup stuff for virtual four bar
+        while (opModeInInit()) {
+            arm.initV4B(this);
+            telemetry.update();
+        }
 
         waitForStart();
         while (opModeIsActive()) {
