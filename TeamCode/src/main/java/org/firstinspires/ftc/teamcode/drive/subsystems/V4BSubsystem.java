@@ -22,10 +22,10 @@ public class V4BSubsystem {
     double right_position = 0;
     double left_position = 0;
 
-    double targetPos = 0;
+    private double targetPos = 0;
     private double leftTargetPos = 0;
-    double rightError = 0;
-    double leftError = 0;
+    private double rightError = 0;
+    private double leftError = 0;
 
     // Constructor
     public V4BSubsystem(HardwareMap hardwareMap) {
@@ -54,25 +54,29 @@ public class V4BSubsystem {
         opMode.telemetry.addData("Left Axon Error", getLeftError());
     }
 
+    // Positive target for CLOCKWISE, Negative for COUNTERCLOCKWISE
     public void extend() {
         targetPos = 480;
-        leftTargetPos = -targetPos;
     }
     public void retract() {
         targetPos = 0;
-        leftTargetPos = 0;
+    }
+    public void setTarget(double target) {
+        targetPos = target;
     }
 
     public void servoPID() {
+        leftTargetPos = -targetPos;
         rightError = targetPos - right_absolute_position;
         leftError = leftTargetPos - left_absolute_position;
         double kP = 0.005;
-        double kD = 0.08;
+        double kD_R = 0.08; //0.08
+        double kD_L = 0.08;
         double ERR_THRESHOLD = 1;
         if (Math.abs(rightError) > ERR_THRESHOLD || Math.abs(leftError) > ERR_THRESHOLD) {
             // Ensure the servo rotates in the correct direction based on the error sign
-            rightVirtualBar.setPower(rightError > 0 ? Math.abs(rightError) * kP + kD : -Math.abs(rightError) * kP);
-            leftVirtualBar.setPower(leftError > 0 ? Math.abs(leftError) * kP + kD : -Math.abs(leftError) * kP);
+            rightVirtualBar.setPower(rightError > 0 ? Math.abs(rightError) * kP + kD_R : -Math.abs(rightError) * kP);
+            leftVirtualBar.setPower(leftError > 0 ? Math.abs(leftError) * kP : -Math.abs(leftError) * kP);
         } else {
             rightVirtualBar.setPower(0); // Stop the servo if the error is within the threshold
             leftVirtualBar.setPower(0);
