@@ -441,8 +441,9 @@ public class ArmSubsystem4 {
                     barTimer.reset();
                     set = true;
                 }
-//                leftVirtualBar.setPosition(lDROP);
-//                rightVirtualBar.setPosition(rDROP);
+                v4B.updatePosAll();
+                v4B.extend(); // Extend
+                v4B.servoPID();
                 return barTimer.seconds() < 2;
             }
         };
@@ -457,8 +458,9 @@ public class ArmSubsystem4 {
                     barTimer.reset();
                     set = true;
                 }
-//                leftVirtualBar.setPosition(lLOAD);
-//                rightVirtualBar.setPosition(rLOAD);
+                v4B.updatePosAll();
+                v4B.retract(); // Extend
+                v4B.servoPID();
                 if (barTimer.seconds() > 1.9) {
                     dropped = true;
                 }
