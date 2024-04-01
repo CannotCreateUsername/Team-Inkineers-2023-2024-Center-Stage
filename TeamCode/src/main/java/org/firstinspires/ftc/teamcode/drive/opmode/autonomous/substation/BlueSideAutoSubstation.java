@@ -145,6 +145,7 @@ public class BlueSideAutoSubstation extends LinearOpMode {
                                 arm.readySlides(true)
                         )
                 ),
+                // Insert wait function here
                 new ParallelAction(
                         runToScoreWhite,
                         arm.ready4bar()

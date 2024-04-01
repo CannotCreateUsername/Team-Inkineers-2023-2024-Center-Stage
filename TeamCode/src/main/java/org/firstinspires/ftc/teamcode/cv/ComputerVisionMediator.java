@@ -3,6 +3,10 @@ package org.firstinspires.ftc.teamcode.cv;
 import android.annotation.SuppressLint;
 import android.util.Size;
 
+import androidx.annotation.NonNull;
+
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
@@ -39,6 +43,20 @@ public class ComputerVisionMediator {
 
     private LinearOpMode opMode;
 
+    public void initLight(HardwareMap hardwareMap) {
+
+        // Create the vision portal by using a builder.
+        builder = new VisionPortal.Builder();
+        // Set the webcam that the vision portal will use.
+        builder.setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"));
+        // Choose a camera resolution. Not all cameras support all resolutions.
+        builder.setCameraResolution(new Size(640, 480));
+
+        initAprilTagCV();
+
+        visionPortal = builder.build();
+    }
+
     // Initialization for red
     public void init(HardwareMap hardwareMap, @Nullable MecanumDrive mecanumDrive, RedOctopusPipeline octopusPipeline, boolean useAprilTag, LinearOpMode linearOpMode) {
         opMode = linearOpMode;
@@ -63,9 +81,9 @@ public class ComputerVisionMediator {
 
         if (useAprilTag) {
             initAprilTagCV();
-        } else {
-            initCV(octopusPipeline);
         }
+        initCV(octopusPipeline);
+
 
         visionPortal = builder.build();
     }
@@ -94,9 +112,9 @@ public class ComputerVisionMediator {
 
         if (useAprilTag) {
             initAprilTagCV();
-        } else {
-            initCV(octopusPipeline);
         }
+        initCV(octopusPipeline);
+
 
         visionPortal = builder.build();
     }
@@ -179,6 +197,31 @@ public class ComputerVisionMediator {
 
         // Set and enable the processor.
         builder.addProcessor(aprilTag);
+    }
+
+
+    public Action waitForClear() {
+        return new Action() {
+            private boolean blocked = false;
+            private boolean previousState = false;
+            @Override
+            public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+                List<AprilTagDetection> currentDetections = aprilTag.getDetections();
+                if (currentDetections.size() < 2 && !blocked) {
+                    blocked = true;
+                }
+                if (previousState == blocked && !blocked) {
+                    opMode.telemetry.addLine("Go");
+                    opMode.telemetry.update();
+                    return false;
+                } else {
+                    opMode.telemetry.addLine("Blocked");
+                    opMode.telemetry.update();
+                }
+                previousState = blocked;
+                return true;
+            }
+        };
     }
 
 
