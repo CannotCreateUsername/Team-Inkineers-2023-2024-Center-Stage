@@ -1,8 +1,8 @@
 package org.firstinspires.ftc.teamcode.cv;
 
+import android.annotation.SuppressLint;
 import android.util.Size;
 
-import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
@@ -24,10 +24,6 @@ import java.util.List;
 
 import static org.firstinspires.ftc.teamcode.drive.constants.PIDConstants.IMUKp;
 import static org.firstinspires.ftc.teamcode.drive.constants.PIDConstants.IMUKd;
-import static org.firstinspires.ftc.teamcode.drive.constants.PIDConstants.XKd;
-import static org.firstinspires.ftc.teamcode.drive.constants.PIDConstants.XKp;
-import static org.firstinspires.ftc.teamcode.drive.constants.PIDConstants.YKd;
-import static org.firstinspires.ftc.teamcode.drive.constants.PIDConstants.YKp;
 
 import javax.annotation.Nullable;
 
@@ -109,13 +105,12 @@ public class ComputerVisionMediator {
     public void turnPID(double degrees) {
         ElapsedTime timer = new ElapsedTime();
         double power;
-        double error = 1;
+        double error;
 
         // the turn direction should always be consistent with the input parameter.
         double turnDirection = degrees > 0 ? -1:1;
         imu.resetYaw();
         timer.reset();
-        double YAW_ERROR_THRESH = 0.1;
         while (timer.seconds() < 3 && opMode.opModeIsActive()) {
             // calculate the error , regardless of the target or current turn angle
             error = Math.abs(imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES)) - Math.abs(degrees);
@@ -139,14 +134,6 @@ public class ComputerVisionMediator {
 
     public double getYawAngle() {
         return imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
-    }
-
-    // VERY COOL ACTIONS
-    public Action turn90(boolean reverse) {
-        return telemetryPacket -> {
-            turnPID(reverse ? -90:90);
-            return false;
-        };
     }
 
     private void initCV(BlueOctopusPipeline blueOctopusPipeline) {
@@ -198,6 +185,7 @@ public class ComputerVisionMediator {
     /**
      * Add telemetry about AprilTag detections.
      */
+    @SuppressLint("DefaultLocale")
     public void telemetryAprilTag(LinearOpMode opMode) {
 
         List<AprilTagDetection> currentDetections = aprilTag.getDetections();
