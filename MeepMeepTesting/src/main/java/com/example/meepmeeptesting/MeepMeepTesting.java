@@ -164,8 +164,8 @@ public class MeepMeepTesting {
                 .setBackgroundAlpha(0.95f)
                 .addEntity(closeBotBlueRight)
                 .addEntity(farBotBlueRight)
-                .addEntity(closeBotRedRight)
-                .addEntity(farBotRedRight)
+//                .addEntity(closeBotRedRight)
+//                .addEntity(farBotRedRight)
                 .start();
     }
 }

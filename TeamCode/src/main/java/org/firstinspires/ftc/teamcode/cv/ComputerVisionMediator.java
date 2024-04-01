@@ -53,20 +53,25 @@ public class ComputerVisionMediator {
         imu = hardwareMap.get(IMU.class, "imu");
 
         IMU.Parameters myIMUparameters;
-
         myIMUparameters = new IMU.Parameters(
                 new RevHubOrientationOnRobot(
                         RevHubOrientationOnRobot.LogoFacingDirection.LEFT,
                         RevHubOrientationOnRobot.UsbFacingDirection.UP
                 )
         );
-
         imu.initialize(myIMUparameters);
+
+        // Create the vision portal by using a builder.
+        builder = new VisionPortal.Builder();
+        // Set the webcam that the vision portal will use.
+        builder.setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"));
+        // Choose a camera resolution. Not all cameras support all resolutions.
+        builder.setCameraResolution(new Size(640, 480));
 
         if (useAprilTag) {
             initAprilTagCV();
         } else {
-            initCV(hardwareMap, octopusPipeline);
+            initCV(octopusPipeline);
         }
 
         visionPortal = builder.build();
@@ -79,111 +84,30 @@ public class ComputerVisionMediator {
         imu = hardwareMap.get(IMU.class, "imu");
 
         IMU.Parameters myIMUparameters;
-
         myIMUparameters = new IMU.Parameters(
                 new RevHubOrientationOnRobot(
                         RevHubOrientationOnRobot.LogoFacingDirection.LEFT,
                         RevHubOrientationOnRobot.UsbFacingDirection.UP
                 )
         );
-
         imu.initialize(myIMUparameters);
+
+        // Create the vision portal by using a builder.
+        builder = new VisionPortal.Builder();
+        // Set the webcam that the vision portal will use.
+        builder.setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"));
+        // Choose a camera resolution. Not all cameras support all resolutions.
+        builder.setCameraResolution(new Size(640, 480));
 
         if (useAprilTag) {
             initAprilTagCV();
         } else {
-            initCV(hardwareMap, octopusPipeline);
+            initCV(octopusPipeline);
         }
 
         visionPortal = builder.build();
     }
 
-    // Align heading with april tag
-    public class TurnAlign implements Action {
-        /** @noinspection FieldCanBeLocal*/
-        private boolean initialized = false;
-
-        List<AprilTagDetection> currentDetections = aprilTag.getDetections();
-        ElapsedTime timer = new ElapsedTime();
-
-        @Override
-        public boolean run(@NonNull TelemetryPacket telemetryPacket) {
-            if (!initialized) {
-                visionPortal.setProcessorEnabled(aprilTag, true);
-                imu.resetYaw();
-                timer.reset();
-                initialized = true;
-            }
-
-            for (AprilTagDetection detection : currentDetections) {
-                double hError = detection.ftcPose.yaw;
-                if (detection.id == 1 || detection.id == 4) {
-                    turnPID(hError);
-                }
-            }
-
-            if (timer.seconds() > 1.9) {
-                drive.setDrivePowers(new PoseVelocity2d(new Vector2d(0, 0), 0));
-            }
-            return timer.seconds() < 2;
-        }
-    }
-
-    public class DistanceAlign implements Action {
-        private boolean initialized = false;
-
-        List<AprilTagDetection> currentDetections;
-        private boolean finished = false;
-
-        ElapsedTime timer = new ElapsedTime();
-        double xPower;
-        double yPower;
-        double xError = 5;
-        double yError = 5;
-
-        double x_ERROR_THRESH = 0.5;
-        double y_ERROR_THRESH = 5;
-
-        @Override
-        public boolean run(@NonNull TelemetryPacket telemetryPacket) {
-            if (!initialized) {
-                visionPortal.setProcessorEnabled(aprilTag, true);
-                timer.reset();
-                initialized = true;
-            }
-            currentDetections = aprilTag.getDetections();
-
-            for (AprilTagDetection detection : currentDetections) {
-                if (detection.id == 3 || detection.id == 6) {
-                    while ((Math.abs(xError) > x_ERROR_THRESH || Math.abs(yError) > y_ERROR_THRESH && timer.seconds() < 2) && opMode.opModeIsActive()) {
-                        // calculate the error, regardless of the target
-                        currentDetections = aprilTag.getDetections();
-                        xError = detection.ftcPose.x;
-                        yError = detection.ftcPose.y;
-                        xPower = (xError * XKp) + XKd;
-                        yPower = (yError * YKp) + YKd;
-
-                        // note: power positive means turn right,
-                        drive.setDrivePowers(
-                                new PoseVelocity2d(
-                                        new Vector2d(yPower, xPower),
-                                        0
-                                )
-                        );
-                    }
-                    drive.setDrivePowers(
-                            new PoseVelocity2d(
-                                    new Vector2d(0, 0),
-                                    0
-                            )
-                    );
-                    finished = true;
-                }
-            }
-
-            return finished;
-        }
-    }
 
     public void turnPID(double degrees) {
         ElapsedTime timer = new ElapsedTime();
@@ -227,7 +151,52 @@ public class ComputerVisionMediator {
             return false;
         };
     }
-    public Action distanceAlign() { return new DistanceAlign(); }
+
+    private void initCV(BlueOctopusPipeline blueOctopusPipeline) {
+        // Set and enable the processor.
+        builder.addProcessor(blueOctopusPipeline);
+    }
+
+    private void initCV(RedOctopusPipeline redOctopusPipeline) {
+        // Set and enable the processor.
+        builder.addProcessor(redOctopusPipeline);
+    }
+
+    /**
+     * Initialize the AprilTag processor.
+     */
+    private void initAprilTagCV() {
+
+        // Create the AprilTag processor.
+        aprilTag = new AprilTagProcessor.Builder()
+                .setDrawAxes(true)
+                .setDrawCubeProjection(false)
+                .setDrawTagOutline(true)
+                .setTagFamily(AprilTagProcessor.TagFamily.TAG_36h11)
+                .setTagLibrary(AprilTagGameDatabase.getCenterStageTagLibrary())
+                .setOutputUnits(DistanceUnit.INCH, AngleUnit.DEGREES)
+
+                // == CAMERA CALIBRATION ==
+                // If you do not manually specify calibration parameters, the SDK will attempt
+                // to load a predefined calibration for your camera.
+                .setLensIntrinsics(603.245, 603.245, 301.575, 233.437)
+
+                // ... these parameters are fx, fy, cx, cy.
+                .build();
+
+        // Adjust Image Decimation to trade-off detection-range for detection-rate.
+        // eg: Some typical detection data using a Logitech C920 WebCam
+        // Decimation = 1 ..  Detect 2" Tag from 10 feet away at 10 Frames per second
+        // Decimation = 2 ..  Detect 2" Tag from 6  feet away at 22 Frames per second
+        // Decimation = 3 ..  Detect 2" Tag from 4  feet away at 30 Frames Per Second (default)
+        // Decimation = 3 ..  Detect 5" Tag from 10 feet away at 30 Frames Per Second (default)
+        // Note: Decimation can be changed on-the-fly to adapt during a match.
+        aprilTag.setDecimation(3);
+
+        // Set and enable the processor.
+        builder.addProcessor(aprilTag);
+    }
+
 
     /**
      * Add telemetry about AprilTag detections.
@@ -256,90 +225,4 @@ public class ComputerVisionMediator {
         opMode.telemetry.addLine("RBE = Range, Bearing & Elevation");
 
     }   // end method telemetryAprilTag()
-
-
-    private void initCV(HardwareMap hardwareMap, BlueOctopusPipeline octopusPipeline) {
-        // Create the vision portal by using a builder.
-        builder = new VisionPortal.Builder();
-
-        builder.setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"));
-
-        // Choose a camera resolution. Not all cameras support all resolutions.
-        builder.setCameraResolution(new Size(640, 480));
-
-        // Enable the RC preview (LiveView).  Set "false" to omit camera monitoring.
-        //builder.enableCameraMonitoring(true);
-
-        // Set the stream format; MJPEG uses less bandwidth than default YUY2.
-        //builder.setStreamFormat(VisionPortal.StreamFormat.YUY2);
-
-        // Choose whether or not LiveView stops if no processors are enabled.
-        // If set "true", monitor shows solid orange screen if no processors enabled.
-        // If set "false", monitor shows camera view without annotations.
-        // builder.setAutoStopLiveView(true);
-
-        // Set and enable the processor.
-        builder.addProcessor(octopusPipeline);
-
-        // Disable or re-enable the aprilTag processor at any time.
-        // visionPortal.setProcessorEnabled(aprilTag, true);
-    }
-
-    private void initCV(HardwareMap hardwareMap, RedOctopusPipeline octopusPipeline) {
-        // Create the vision portal by using a builder.
-        builder = new VisionPortal.Builder();
-
-        builder.setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"));
-
-        // Choose a camera resolution. Not all cameras support all resolutions.
-        builder.setCameraResolution(new Size(640, 480));
-
-        // Enable the RC preview (LiveView).  Set "false" to omit camera monitoring.
-        //builder.enableCameraMonitoring(true);
-
-        // Set the stream format; MJPEG uses less bandwidth than default YUY2.
-        //builder.setStreamFormat(VisionPortal.StreamFormat.YUY2);
-
-        // Choose whether or not LiveView stops if no processors are enabled.
-        // If set "true", monitor shows solid orange screen if no processors enabled.
-        // If set "false", monitor shows camera view without annotations.
-        // builder.setAutoStopLiveView(true);
-
-        // Set and enable the processor.
-        builder.addProcessor(octopusPipeline);
-
-        // Disable or re-enable the aprilTag processor at any time.
-        // visionPortal.setProcessorEnabled(aprilTag, true);
-    }
-
-    /**
-     * Initialize the AprilTag processor.
-     */
-    private void initAprilTagCV() {
-
-        // Create the AprilTag processor.
-        // == CAMERA CALIBRATION ==
-        // If you do not manually specify calibration parameters, the SDK will attempt
-        // to load a predefined calibration for your camera.
-        // ... these parameters are fx, fy, cx, cy.
-        aprilTag = new AprilTagProcessor.Builder()
-                .setDrawAxes(true)
-                .setDrawCubeProjection(false)
-                .setDrawTagOutline(true)
-                .setTagFamily(AprilTagProcessor.TagFamily.TAG_36h11)
-                .setTagLibrary(AprilTagGameDatabase.getCenterStageTagLibrary())
-                .setOutputUnits(DistanceUnit.INCH, AngleUnit.DEGREES)
-
-                // == CAMERA CALIBRATION ==
-                // If you do not manually specify calibration parameters, the SDK will attempt
-                // to load a predefined calibration for your camera.
-                .setLensIntrinsics(603.245, 603.245, 301.575, 233.437)
-
-                // ... these parameters are fx, fy, cx, cy.
-
-                .build();
-
-        // Set and enable the processor.
-        builder.addProcessor(aprilTag);
-    }
 }
