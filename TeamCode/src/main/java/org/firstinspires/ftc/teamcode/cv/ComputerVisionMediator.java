@@ -43,7 +43,8 @@ public class ComputerVisionMediator {
 
     private LinearOpMode opMode;
 
-    public void initLight(HardwareMap hardwareMap) {
+    public void initLight(HardwareMap hardwareMap, LinearOpMode linearOpMode) {
+        opMode = linearOpMode;
 
         // Create the vision portal by using a builder.
         builder = new VisionPortal.Builder();
@@ -203,23 +204,29 @@ public class ComputerVisionMediator {
     public Action waitForClear() {
         return new Action() {
             private boolean blocked = false;
-            private boolean previousState = false;
+            private boolean wasBlocked = false;
             @Override
             public boolean run(@NonNull TelemetryPacket telemetryPacket) {
                 List<AprilTagDetection> currentDetections = aprilTag.getDetections();
                 if (currentDetections.size() < 2 && !blocked) {
                     blocked = true;
+                } else if (currentDetections.size() > 1) {
+                    blocked = false;
                 }
-                if (previousState == blocked && !blocked) {
-                    opMode.telemetry.addLine("Go");
+                boolean cleared = false;
+                if (wasBlocked && !blocked) {
+                    opMode.telemetry.addLine("Unblocked");
                     opMode.telemetry.update();
-                    return false;
+                    cleared = true;
+                } else if (!wasBlocked && !blocked){
+                    opMode.telemetry.addLine("Waiting");
+                    opMode.telemetry.update();
                 } else {
                     opMode.telemetry.addLine("Blocked");
                     opMode.telemetry.update();
                 }
-                previousState = blocked;
-                return true;
+                wasBlocked = blocked;
+                return !cleared;
             }
         };
     }

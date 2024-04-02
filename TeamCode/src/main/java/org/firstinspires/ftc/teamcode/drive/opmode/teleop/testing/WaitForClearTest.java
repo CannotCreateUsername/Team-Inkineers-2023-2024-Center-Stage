@@ -11,12 +11,17 @@ public class WaitForClearTest extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         ComputerVisionMediator CV = new ComputerVisionMediator();
-        CV.initLight(hardwareMap);
+        CV.initLight(hardwareMap, this);
+
+
+        telemetry.addLine("LIKE AND SUBSCRIBE");
+        telemetry.update();
         waitForStart();
 
         while (opModeIsActive()) {
             if (gamepad1.a) {
                 Actions.runBlocking(CV.waitForClear());
+                telemetry.addLine("Action Completed");
             }
         }
     }
