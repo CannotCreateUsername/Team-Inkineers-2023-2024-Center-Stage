@@ -219,9 +219,9 @@ public class ComputerVisionMediator {
                     set = true;
                 }
                 List<AprilTagDetection> currentDetections = aprilTag.getDetections();
-                if (currentDetections.size() < 2 && !blocked) {
+                if (currentDetections.size() < 3 && !blocked) {
                     blocked = true;
-                } else if (currentDetections.size() > 1) {
+                } else if (currentDetections.size() > 2) {
                     blocked = false;
                 }
                 boolean cleared = false;
