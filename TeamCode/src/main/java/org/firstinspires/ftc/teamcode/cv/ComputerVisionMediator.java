@@ -200,13 +200,22 @@ public class ComputerVisionMediator {
         builder.addProcessor(aprilTag);
     }
 
+    public void disableAprilTag() {
+        visionPortal.setProcessorEnabled(aprilTag, false);
+    }
+
 
     public Action waitForClear() {
         return new Action() {
+            private boolean set = false;
             private boolean blocked = false;
             private boolean wasBlocked = false;
             @Override
             public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+                if (!set) {
+                    visionPortal.setProcessorEnabled(aprilTag, true);
+                    set = true;
+                }
                 List<AprilTagDetection> currentDetections = aprilTag.getDetections();
                 if (currentDetections.size() < 2 && !blocked) {
                     blocked = true;

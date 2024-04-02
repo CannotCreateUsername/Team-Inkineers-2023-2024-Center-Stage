@@ -16,6 +16,7 @@ public class WaitForClearTest extends LinearOpMode {
 
         telemetry.addLine("LIKE AND SUBSCRIBE");
         telemetry.update();
+        CV.disableAprilTag();
         waitForStart();
 
         while (opModeIsActive()) {
