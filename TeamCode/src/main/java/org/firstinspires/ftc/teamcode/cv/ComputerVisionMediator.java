@@ -173,7 +173,7 @@ public class ComputerVisionMediator {
         // Create the AprilTag processor.
         aprilTag = new AprilTagProcessor.Builder()
                 .setDrawAxes(true)
-                .setDrawCubeProjection(false)
+                .setDrawCubeProjection(true)
                 .setDrawTagOutline(true)
                 .setTagFamily(AprilTagProcessor.TagFamily.TAG_36h11)
                 .setTagLibrary(AprilTagGameDatabase.getCenterStageTagLibrary())
