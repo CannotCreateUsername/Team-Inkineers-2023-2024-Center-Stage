@@ -214,6 +214,7 @@ public class ComputerVisionMediator {
                     blocked = false;
                 }
                 boolean cleared = false;
+                opMode.telemetry.addData("Current # of Detections", currentDetections.size());
                 if (wasBlocked && !blocked) {
                     opMode.telemetry.addLine("Unblocked");
                     opMode.telemetry.update();

@@ -22,6 +22,7 @@ public class WaitForClearTest extends LinearOpMode {
             if (gamepad1.a) {
                 Actions.runBlocking(CV.waitForClear());
                 telemetry.addLine("Action Completed");
+                telemetry.update();
             }
         }
     }
