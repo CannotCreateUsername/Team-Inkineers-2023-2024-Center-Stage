@@ -194,7 +194,7 @@ public class ComputerVisionMediator {
         // Decimation = 3 ..  Detect 2" Tag from 4  feet away at 30 Frames Per Second (default)
         // Decimation = 3 ..  Detect 5" Tag from 10 feet away at 30 Frames Per Second (default)
         // Note: Decimation can be changed on-the-fly to adapt during a match.
-        aprilTag.setDecimation(3);
+        aprilTag.setDecimation(2);
 
         // Set and enable the processor.
         builder.addProcessor(aprilTag);
