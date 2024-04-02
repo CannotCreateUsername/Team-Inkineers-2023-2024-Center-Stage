@@ -86,6 +86,7 @@ public class RedSideAutoSubstation2 extends LinearOpMode {
         if (isStopRequested()) return;
         // OPMODE STARTS HERE
         CVMediator.visionPortal.setProcessorEnabled(octopusPipeline, false);
+        CVMediator.disableAprilTag();
 
         // Store which path to take (Default Middle)
         Vector2d dropWhitePos = coords.subLeftBackdrop;

@@ -107,6 +107,7 @@ public class BlueSideAutoBackdrop3 extends LinearOpMode {
 
         // Stop the pipeline since we no longer need to detect the prop
         CVMediator.visionPortal.setProcessorEnabled(octopusPipeline, false);
+        CVMediator.disableAprilTag();
 
         switch (octopusPipeline.getLocation()) {
             case NONE:

@@ -76,6 +76,7 @@ public class BlueSideAutoBackdrop2 extends LinearOpMode {
         // OPMODE STARTS HERE
         // Stop the pipeline since we no longer need to detect the prop
         CVMediator.visionPortal.setProcessorEnabled(octopusPipeline, false);
+        CVMediator.disableAprilTag();
         Vector2d beginParkPos = coords.afterDropCenter;
 
         switch (octopusPipeline.getLocation()) {
