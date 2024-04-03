@@ -70,7 +70,7 @@ public class BlueSideAutoSubstation2 extends LinearOpMode {
                 .build();
 
         Action runAcrossField = drive.actionBuilder(new Pose2d(coords.pixelStackPosFar, coords.ROTATED))
-                .strafeToLinearHeading(coords.toBackdropFromPixelStack, coords.ROTATED)
+                .splineTo(coords.toBackdropFromPixelStack, coords.ROTATED_AF)
                 .build();
 
         CVMediator.init(hardwareMap, drive, octopusPipeline, false, this);
