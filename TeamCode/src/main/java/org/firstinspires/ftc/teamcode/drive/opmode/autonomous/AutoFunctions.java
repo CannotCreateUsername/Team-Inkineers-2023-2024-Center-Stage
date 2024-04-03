@@ -12,6 +12,7 @@ import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.MecanumDrive;
+import org.firstinspires.ftc.teamcode.drive.subsystems.ArmSubsystem3;
 import org.firstinspires.ftc.teamcode.drive.subsystems.ArmSubsystem4;
 import org.firstinspires.ftc.teamcode.drive.subsystems.IntakeSubsystem;
 
@@ -19,17 +20,25 @@ import javax.annotation.Nullable;
 
 public class AutoFunctions {
     private ArmSubsystem4 arm;
+    private ArmSubsystem3 arm2;
     private IntakeSubsystem intake;
     private MecanumDrive drive;
-    private boolean isOnBlueSide;
     ElapsedTime moveTimer;
 
 
-    public void init(@Nullable IntakeSubsystem intakeSubsystem, ArmSubsystem4 armSubsystem, MecanumDrive mecanumDrive, boolean blueSide) {
+    public void init(@Nullable IntakeSubsystem intakeSubsystem, ArmSubsystem4 armSubsystem, MecanumDrive mecanumDrive) {
         intake = intakeSubsystem;
         arm = armSubsystem;
+        arm2 = null;
         drive = mecanumDrive;
-        isOnBlueSide = blueSide;
+        moveTimer = new ElapsedTime();
+    }
+
+    public void init(@Nullable IntakeSubsystem intakeSubsystem, ArmSubsystem3 armSubsystem, MecanumDrive mecanumDrive) {
+        intake = intakeSubsystem;
+        arm2 = armSubsystem;
+        arm = null;
+        drive = mecanumDrive;
         moveTimer = new ElapsedTime();
     }
 
@@ -38,7 +47,7 @@ public class AutoFunctions {
                 intake.spinIntake(-0.2, 2.5),
                 new ParallelAction(
                         intake.spinIntake(0.6, 3),
-                        arm.spinOuttake(0.6, 3)
+                        arm == null ? arm2.spinOuttake(0.6, 3) : arm.spinOuttake(0.6, 3)
                 ),
                 intake.spinIntake(-0.8, 0.5)
         );
@@ -49,7 +58,7 @@ public class AutoFunctions {
                 intake.spinIntake(-0.2, 0.5),
                 new ParallelAction(
                         intake.spinIntake(0.8, 4),
-                        arm.spinOuttake(0.8, 4)
+                        arm == null ? arm2.spinOuttake(0.8, 4) : arm.spinOuttake(0.8, 4)
                 )
         );
     }

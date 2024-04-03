@@ -40,7 +40,7 @@ public class BlueSideAutoBackdrop3 extends LinearOpMode {
 
         // Initialize some functions
         AutoFunctions functions = new AutoFunctions();
-        functions.init(new IntakeSubsystem(hardwareMap), arm, drive, true);
+        functions.init(new IntakeSubsystem(hardwareMap), arm, drive);
 
         // Run to the left spike location
         Action runToLeftProp = drive.actionBuilder(startPose)

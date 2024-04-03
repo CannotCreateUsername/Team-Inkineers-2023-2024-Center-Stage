@@ -6,11 +6,15 @@ import com.acmerobotics.roadrunner.Vector2d;
 
 public class AutoCoordinates {
     public double ROTATED = Math.toRadians(90);
+    public double ROTATED_AF = Math.toRadians(135);
+    public double ROTATED_AC = Math.toRadians(45);
     public double STRAIGHT = Math.toRadians(0);
 
     public AutoCoordinates(boolean isRedSide, boolean isFarSide) {
         if (isRedSide) {
             ROTATED = Math.toRadians(-90);
+            ROTATED_AF = Math.toRadians(-135);
+            ROTATED_AC = Math.toRadians(-45);
 
             if (isFarSide) {
                 propLeftPos = new Vector2d(32, 12);

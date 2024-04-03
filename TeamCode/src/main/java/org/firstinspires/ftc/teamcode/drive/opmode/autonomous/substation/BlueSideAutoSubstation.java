@@ -39,7 +39,7 @@ public class BlueSideAutoSubstation extends LinearOpMode {
 
         // Initialize some functions
         AutoFunctions functions = new AutoFunctions();
-        functions.init(intake, arm, drive, true);
+        functions.init(intake, arm, drive);
 
         // Run to the left spike location
         Action runToLeftProp = drive.actionBuilder(startPose)
