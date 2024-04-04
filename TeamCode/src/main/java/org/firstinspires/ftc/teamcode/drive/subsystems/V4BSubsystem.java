@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.drive.subsystems;
 
+import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.CRServo;
@@ -56,13 +57,21 @@ public class V4BSubsystem {
 
     // Positive target for CLOCKWISE, Negative for COUNTERCLOCKWISE
     public void extend() {
-        targetPos = 480;
+        targetPos = -360;
     }
     public void retract() {
         targetPos = 0;
     }
     public void setTarget(double target) {
         targetPos = target;
+    }
+    public void resetToRest() {
+        rightVirtualBar.setPower(-0.4);
+        leftVirtualBar.setPower(0.4);
+        right_absolute_position = 0;
+//        right_position = 0;
+        left_absolute_position = 0;
+//        left_position = 0;
     }
 
     public void servoPID() {
