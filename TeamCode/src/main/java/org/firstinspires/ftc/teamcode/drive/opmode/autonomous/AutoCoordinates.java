@@ -44,7 +44,8 @@ public class AutoCoordinates {
             backIntoPixelPosFar = new Vector2d(45, 18); // Rotated
             backToIntakePixelFar = new Vector2d(45, 20); // Rotated
 
-            toBackdropFromPixelStack = new Vector2d(32, -78); // Rotated
+            toBackdropFromPixelStack = new Vector2d(42, -84); // Rotated
+            toBackdropFromPixelStackSpline = new Vector2d(32, -78); // Rotated
             betweenSubBackdrop = new Vector2d(15, -94); // Rotated
             subLeftBackdrop = new Vector2d(20, -97); // Rotated
             subCenterBackdrop = new Vector2d(14, -97); // Rotated
@@ -106,7 +107,8 @@ public class AutoCoordinates {
     public Vector2d backIntoPixelPosFar = new Vector2d(45, -18); // Rotated
     public Vector2d backToIntakePixelFar = new Vector2d(45, -20); // Rotated
 
-    public Vector2d toBackdropFromPixelStack = new Vector2d(32, 78); // Rotated
+    public Vector2d toBackdropFromPixelStack = new Vector2d(42, 84); // Rotated
+    public Vector2d toBackdropFromPixelStackSpline = new Vector2d(32, 78); // Rotated
     public Vector2d betweenSubBackdrop = new Vector2d(15, 94); // Rotated
 
     public Vector2d subLeftBackdrop = new Vector2d(8, 97); // Rotated
