@@ -81,7 +81,7 @@ public class V4BSubsystem {
         double kP = 0.005;
         double kD_R = 0.08; //0.08
         double kD_L = 0.08;
-        double ERR_THRESHOLD = 1;
+        double ERR_THRESHOLD = 10;
         if (Math.abs(rightError) > ERR_THRESHOLD || Math.abs(leftError) > ERR_THRESHOLD) {
             // Ensure the servo rotates in the correct direction based on the error sign
             rightVirtualBar.setPower(rightError > 0 ? Math.abs(rightError) * kP + kD_R : -Math.abs(rightError) * kP);

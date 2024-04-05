@@ -17,9 +17,10 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
+
+import javax.annotation.Nullable;
 
 
 public class ArmSubsystem4 {
@@ -79,10 +80,14 @@ public class ArmSubsystem4 {
     TriggerReader rtReader;
     TriggerReader ltReader;
 
-    private final DigitalChannel greenLED;
-    private final DigitalChannel redLED;
+    LinearOpMode opMode;
 
     public ArmSubsystem4(HardwareMap hardwareMap) {
+        this(hardwareMap, null);
+    }
+
+    public ArmSubsystem4(HardwareMap hardwareMap, @Nullable LinearOpMode linearOpMode) {
+        opMode = linearOpMode;
         // Initialize the virtual four bar
         v4B = new V4BSubsystem(hardwareMap);
         // Map actuator variables to actual hardware
@@ -91,11 +96,6 @@ public class ArmSubsystem4 {
         outtake = hardwareMap.get(CRServo.class, "outtake");
         limitSwitch = hardwareMap.get(RevTouchSensor.class, "limit_switch");
         boxSwitch = hardwareMap.get(RevTouchSensor.class, "box_switch");
-        greenLED = hardwareMap.get(DigitalChannel.class, "green");
-        redLED = hardwareMap.get(DigitalChannel.class, "red");
-
-        greenLED.setMode(DigitalChannel.Mode.OUTPUT);
-        redLED.setMode(DigitalChannel.Mode.OUTPUT);
 
         // Motor behavior setup
         upperSlides.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -280,7 +280,11 @@ public class ArmSubsystem4 {
             }
         }
         // Set power to the virtual four bar using PID
-        v4B.servoPID();
+        if (gamepad1.isDown(GamepadKeys.Button.BACK)) {
+            v4B.resetToRest();
+        } else {
+            v4B.servoPID();
+        }
         // Disable PID when hanging
         if (!hanging) {
             powerPID(0.6);
@@ -336,16 +340,6 @@ public class ArmSubsystem4 {
                     outtake.setPower(0);
                 }
                 break;
-        }
-        if (limitSwitch.isPressed()) {
-            greenLED.setMode(DigitalChannel.Mode.OUTPUT);
-            redLED.setMode(DigitalChannel.Mode.INPUT);
-        } else if (drop) {
-            greenLED.setMode(DigitalChannel.Mode.INPUT);
-            redLED.setMode(DigitalChannel.Mode.OUTPUT);
-        } else {
-            greenLED.setMode(DigitalChannel.Mode.OUTPUT);
-            redLED.setMode(DigitalChannel.Mode.OUTPUT);
         }
     }
 
@@ -461,12 +455,24 @@ public class ArmSubsystem4 {
                 v4B.updatePosAll();
                 v4B.retract(); // Extend
                 v4B.servoPID();
+                if (opMode != null) {
+                    opMode.telemetry.addData("Bar Timer:", barTimer.seconds());
+                    opMode.telemetry.addData("Slide Reset Completed", limitSwitch.isPressed());
+                    opMode.telemetry.update();
+                }
                 if (barTimer.seconds() > 1.9) {
                     dropped = true;
                 }
                 return barTimer.seconds() < 2;
             }
         };
+    }
+
+    public Action resetToRest() {
+        return new ParallelAction(
+                reset4Bar(),
+                resetSlides()
+        );
     }
 
     public Action dropYellowPixel(boolean high) {

@@ -23,6 +23,11 @@ public class ArmTest extends LinearOpMode {
         IntakeSubsystem intakeSubsystem = new IntakeSubsystem(hardwareMap);
         EndgameSubsystems endgameSubsystems = new EndgameSubsystems(hardwareMap);
 
+        while (opModeInInit()) {
+            armSubsystem.initV4B(this);
+            telemetry.addLine("Take the Stage");
+            telemetry.update();
+        }
         waitForStart();
         while (opModeIsActive()) {
             if (gamepadEx2.wasJustPressed(GamepadKeys.Button.X)) {

@@ -26,12 +26,16 @@ public class DualAxonTest extends LinearOpMode {
         while (opModeIsActive()) {
             v4B.updatePosAll();
 
-            if (gamepadEx.wasJustPressed(GamepadKeys.Button.X)) {
-                v4B.extend();
-            } else if (gamepadEx.wasJustPressed(GamepadKeys.Button.A)) {
-                v4B.retract();
-            } else if (gamepadEx.wasJustPressed(GamepadKeys.Button.B)) {
-                v4B.setTarget(-90);
+            if (gamepadEx.isDown(GamepadKeys.Button.BACK)) {
+                v4B.resetToRest();
+            } else {
+                if (gamepadEx.wasJustPressed(GamepadKeys.Button.X)) {
+                    v4B.extend();
+                } else if (gamepadEx.wasJustPressed(GamepadKeys.Button.A)) {
+                    v4B.retract();
+                } else if (gamepadEx.wasJustPressed(GamepadKeys.Button.B)) {
+                    v4B.setTarget(-90);
+                }
             }
             gamepadEx.readButtons();
 
