@@ -103,7 +103,7 @@ public class ArmSubsystem4 {
         upperSlides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         upperSlides.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        lowerSlides.setDirection(DcMotorSimple.Direction.REVERSE);
+//        lowerSlides.setDirection(DcMotorSimple.Direction.REVERSE);
         lowerSlides.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         lowerSlides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         lowerSlides.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -122,7 +122,7 @@ public class ArmSubsystem4 {
     }
 
     public void powerPID(double power) {
-        double posErr = currentTarget - lowerSlides.getCurrentPosition(); // measure error in terms of distance between current position and target
+        double posErr = currentTarget - upperSlides.getCurrentPosition(); // measure error in terms of distance between current position and target
         if (Math.abs(posErr) > 5) {
             // our threshold is within
             // 15 encoder ticks of our target.
@@ -224,7 +224,7 @@ public class ArmSubsystem4 {
                 break;
             case MANUAL:
                 if (gamepad1.isDown(GamepadKeys.Button.LEFT_BUMPER) && currentTarget > 100) {
-                    currentTarget = lowerSlides.getCurrentPosition() - positionIncrement;
+                    currentTarget = upperSlides.getCurrentPosition() - positionIncrement;
                 } else if (gamepad1.wasJustReleased(GamepadKeys.Button.RIGHT_BUMPER)) {
                     currentTarget = nextLvl();
                 } else if (gamepad1.isDown(GamepadKeys.Button.DPAD_UP)) {
@@ -259,7 +259,7 @@ public class ArmSubsystem4 {
                 if (hangRelease) {
                     lowerSlides.setPower(-hangingMultiplier);
                     upperSlides.setPower(-hangingMultiplier);
-                    if (hangTimer.seconds() > 1 && lowerSlides.getPower() < 0) {
+                    if (hangTimer.seconds() > 1 && upperSlides.getPower() < 0) {
                         hangingMultiplier -= 0.05;
                         hangTimer.reset();
                     }
@@ -292,7 +292,7 @@ public class ArmSubsystem4 {
     }
 
     int nextLvl() {
-        double percentage = (double)lowerSlides.getCurrentPosition()/SLIDE_LIMIT;
+        double percentage = (double)upperSlides.getCurrentPosition()/SLIDE_LIMIT;
         if (percentage < 0.25) {
             slideState = SlideState.FIRST;
             return firstLvl;
@@ -346,12 +346,12 @@ public class ArmSubsystem4 {
     // Telemetry
     public boolean leftBumperDown() { return leftBumperDown; }
     public String getLiftState() { return slideState.name(); }
-    public int getSlidePosition() { return lowerSlides.getCurrentPosition(); }
+    public int getSlidePosition() { return upperSlides.getCurrentPosition(); }
     public int getCurrentTarget() { return currentTarget; }
     public double getArmTimer() { return timer.seconds(); }
     public String getOuttakeState() { return outtakeState.name(); }
     public double getSlide1Power() { return upperSlides.getPower(); }
-    public double getSlide2Power() { return lowerSlides.getPower(); }
+    public double getSlide2Power() { return upperSlides.getPower(); }
 
     // Autonomous Functions
     public boolean touching() { return boxSwitch.isPressed(); }
