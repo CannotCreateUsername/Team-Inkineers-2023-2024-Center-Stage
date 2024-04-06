@@ -17,9 +17,10 @@ import org.firstinspires.ftc.teamcode.cv.RedOctopusPipeline;
 import org.firstinspires.ftc.teamcode.drive.opmode.autonomous.AutoCoordinates;
 import org.firstinspires.ftc.teamcode.drive.opmode.autonomous.AutoFunctions;
 import org.firstinspires.ftc.teamcode.drive.subsystems.ArmSubsystem3;
+import org.firstinspires.ftc.teamcode.drive.subsystems.ArmSubsystem4;
 import org.firstinspires.ftc.teamcode.drive.subsystems.IntakeSubsystem;
 
-@Autonomous(name = "RED Substation WAIT", group = "Substation Side")
+@Autonomous(name = "RED Substation ADVANCED", group = "Substation Side")
 public class RedSideAutoSubstation3 extends LinearOpMode {
 
     RedOctopusPipeline octopusPipeline = new RedOctopusPipeline();
@@ -33,7 +34,7 @@ public class RedSideAutoSubstation3 extends LinearOpMode {
         // Initialize the drive
         Pose2d startPose = new Pose2d(0, 0, Math.toRadians(0));
         MecanumDrive drive = new MecanumDrive(hardwareMap, startPose);
-        ArmSubsystem3 arm = new ArmSubsystem3(hardwareMap);
+        ArmSubsystem4 arm = new ArmSubsystem4(hardwareMap, this);
         IntakeSubsystem intake = new IntakeSubsystem(hardwareMap);
         ComputerVisionMediator CVMediator = new ComputerVisionMediator();
 
@@ -43,8 +44,8 @@ public class RedSideAutoSubstation3 extends LinearOpMode {
 
         // Run to the left spike location
         Action runToLeftProp = drive.actionBuilder(startPose)
-                .strafeToLinearHeading(coords.betweenSideProp, coords.STRAIGHT)
-                .strafeToLinearHeading(coords.propLeftPos, coords.STRAIGHT)
+                .splineTo(coords.propLeftPos, coords.LEFT_PROP)
+                .splineTo(coords.backFromCenterProp, coords.STRAIGHT)
                 .strafeToLinearHeading(coords.beforePixelCrash, coords.ROTATED)
                 .build();
         // Run to the center spike location
@@ -55,9 +56,8 @@ public class RedSideAutoSubstation3 extends LinearOpMode {
                 .build();
         // Run to the right spike location
         Action runToRightProp = drive.actionBuilder(startPose)
-                .strafeToLinearHeading(coords.betweenSideProp, coords.STRAIGHT)
-                .strafeToLinearHeading(coords.propRightPos, coords.STRAIGHT)
-                .strafeToLinearHeading(coords.beforePixelCrash, coords.ROTATED)
+                .strafeToLinearHeading(coords.propRightPos, coords.RIGHT_PROP)
+                .splineTo(coords.backFromCenterProp, coords.STRAIGHT)
                 .build();
         // Run to the pixel (spin intake at same time)
         Action runToPixelStack = drive.actionBuilder(new Pose2d(coords.beforePixelCrash, coords.ROTATED))
@@ -70,13 +70,14 @@ public class RedSideAutoSubstation3 extends LinearOpMode {
                 .build();
 
         Action runAcrossField = drive.actionBuilder(new Pose2d(coords.pixelStackPosFar, coords.ROTATED))
-                .splineTo(coords.toBackdropFromPixelStack, coords.ROTATED_AF)
+                .splineTo(coords.toBackdropFromPixelStackSpline, coords.ROTATED_AF)
                 .build();
 
         CVMediator.init(hardwareMap, drive, octopusPipeline, true, this);
 
         // Display Telemetry
         while (!isStopRequested() && !opModeIsActive()) {
+            arm.initV4B(this);
             telemetry.addData("Detection", octopusPipeline.getLocation());
             telemetry.update();
         }
@@ -127,18 +128,22 @@ public class RedSideAutoSubstation3 extends LinearOpMode {
                 break;
         }
 
-        Action runToScoreWhite = drive.actionBuilder(new Pose2d(coords.toBackdropFromPixelStack, coords.ROTATED))
+        Action runToScoreWhite = drive.actionBuilder(new Pose2d(coords.toBackdropFromPixelStackSpline, coords.ROTATED_AF))
                 .strafeToLinearHeading(dropWhitePos, coords.ROTATED)
                 .build();
         Action runToScoreYellow = drive.actionBuilder(new Pose2d(dropWhitePos, coords.ROTATED))
                 .strafeToLinearHeading(coords.betweenSubBackdrop, coords.ROTATED)
                 .strafeToLinearHeading(dropYellowPos, coords.ROTATED)
                 .build();
-        Action park = drive.actionBuilder(new Pose2d(dropYellowPos, coords.ROTATED))
+        Action runBackToPixelStack = drive.actionBuilder(new Pose2d(dropYellowPos, coords.ROTATED))
+                .splineTo(coords.pixelStackPosFar, coords.ROTATED)
+                .splineTo(coords.toBackdropFromPixelStack, coords.ROTATED_AF)
+                .build();
+        Action park = drive.actionBuilder(new Pose2d(dropWhitePos, coords.ROTATED))
                 .strafeToLinearHeading(coords.subParkPos, coords.ROTATED)
                 .build();
 
-        Actions.runBlocking(new SequentialAction(
+        Actions.runBlocking(new SequentialAction( // Drive and score the white and yellow pixel
                 new ParallelAction(
                         runAcrossField,
                         intake.spinIntake(-0.8, 3),
@@ -147,23 +152,31 @@ public class RedSideAutoSubstation3 extends LinearOpMode {
                                 arm.readySlides(true)
                         )
                 ),
-                CVMediator.waitForClear(), // Wait for alliance to get out of the way
                 new ParallelAction(
                         runToScoreWhite,
                         arm.ready4bar()
                 ),
-                arm.spinOuttake(-0.5, 0.5),
-                new ParallelAction(
-                        runToScoreYellow,
+                new SequentialAction(
+                        arm.spinOuttake(-0.5, 0.5),
                         new SequentialAction(
-                                new SleepAction(1),
-                                arm.readySlides(true)
-                        )
-                ),
-                arm.spinOuttake(-1, 0.6),
+                                runToScoreYellow,
+                                arm.spinOuttake(-1, 0.6)
+                        ),
+                        arm.resetToRest()
+                )
+        ));
+        Actions.runBlocking(new SequentialAction( // Get and score +2 White Pixels
                 new ParallelAction(
-                        arm.reset4Bar(),
-                        arm.resetSlides(),
+                        runBackToPixelStack,
+                        intake.spinIntake(0.8, 6)
+                ),
+                new ParallelAction(
+                        runToScoreWhite,
+                        arm.ready4bar()
+                ),
+                arm.spinOuttake(-0.5, 1.5),
+                new ParallelAction(
+                        arm.resetToRest(),
                         park
                 )
         ));

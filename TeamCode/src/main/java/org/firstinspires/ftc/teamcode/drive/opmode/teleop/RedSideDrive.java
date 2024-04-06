@@ -8,7 +8,6 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.MecanumDrive;
-import org.firstinspires.ftc.teamcode.drive.subsystems.ArmSubsystem3;
 import org.firstinspires.ftc.teamcode.drive.subsystems.ArmSubsystem4;
 import org.firstinspires.ftc.teamcode.drive.subsystems.EndgameSubsystems;
 import org.firstinspires.ftc.teamcode.drive.GamepadHelper;
@@ -41,7 +40,7 @@ public class RedSideDrive extends LinearOpMode {
         IntakeSubsystem intake = new IntakeSubsystem(hardwareMap);
 
         // Initialize arm code
-        ArmSubsystem3 arm = new ArmSubsystem3(hardwareMap);
+        ArmSubsystem4 arm = new ArmSubsystem4(hardwareMap);
 
         //Initialize drone launcher and hanging code
         EndgameSubsystems endgame = new EndgameSubsystems(hardwareMap);
@@ -56,7 +55,7 @@ public class RedSideDrive extends LinearOpMode {
 
         // Weird setup stuff for virtual four bar
         while (opModeInInit()) {
-//            arm.initV4B(this);
+            arm.initV4B(this);
             telemetry.addLine("Take the Stage");
             telemetry.update();
         }

@@ -19,7 +19,7 @@ import org.firstinspires.ftc.teamcode.drive.opmode.autonomous.AutoFunctions;
 import org.firstinspires.ftc.teamcode.drive.subsystems.ArmSubsystem4;
 import org.firstinspires.ftc.teamcode.drive.subsystems.IntakeSubsystem;
 
-@Autonomous(name = "RED Substation WAIT FAST", group = "Substation Side")
+@Autonomous(name = "RED Substation WAIT", group = "Substation Side")
 public class RedSideAutoSubstation4 extends LinearOpMode {
 
     RedOctopusPipeline octopusPipeline = new RedOctopusPipeline();
@@ -33,7 +33,7 @@ public class RedSideAutoSubstation4 extends LinearOpMode {
         // Initialize the drive
         Pose2d startPose = new Pose2d(0, 0, Math.toRadians(0));
         MecanumDrive drive = new MecanumDrive(hardwareMap, startPose);
-        ArmSubsystem4 arm = new ArmSubsystem4(hardwareMap);
+        ArmSubsystem4 arm = new ArmSubsystem4(hardwareMap, this);
         IntakeSubsystem intake = new IntakeSubsystem(hardwareMap);
         ComputerVisionMediator CVMediator = new ComputerVisionMediator();
 
@@ -70,13 +70,14 @@ public class RedSideAutoSubstation4 extends LinearOpMode {
                 .build();
 
         Action runAcrossField = drive.actionBuilder(new Pose2d(coords.pixelStackPosFar, coords.ROTATED))
-                .splineTo(coords.toBackdropFromPixelStack, coords.ROTATED_AF)
+                .splineTo(coords.toBackdropFromPixelStackSpline, coords.ROTATED_AF)
                 .build();
 
-        CVMediator.init(hardwareMap, drive, octopusPipeline, false, this);
+        CVMediator.init(hardwareMap, drive, octopusPipeline, true, this);
 
         // Display Telemetry
         while (!isStopRequested() && !opModeIsActive()) {
+            arm.initV4B(this);
             telemetry.addData("Detection", octopusPipeline.getLocation());
             telemetry.update();
         }
@@ -127,7 +128,7 @@ public class RedSideAutoSubstation4 extends LinearOpMode {
                 break;
         }
 
-        Action runToScoreWhite = drive.actionBuilder(new Pose2d(coords.toBackdropFromPixelStack, coords.ROTATED))
+        Action runToScoreWhite = drive.actionBuilder(new Pose2d(coords.toBackdropFromPixelStackSpline, coords.ROTATED_AF))
                 .strafeToLinearHeading(dropWhitePos, coords.ROTATED)
                 .build();
         Action runToScoreYellow = drive.actionBuilder(new Pose2d(dropWhitePos, coords.ROTATED))

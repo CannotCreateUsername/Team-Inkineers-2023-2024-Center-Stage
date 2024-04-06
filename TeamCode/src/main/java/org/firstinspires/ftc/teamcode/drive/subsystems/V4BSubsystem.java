@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.drive.subsystems;
 
-import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.CRServo;
@@ -24,7 +23,6 @@ public class V4BSubsystem {
     double left_position = 0;
 
     private double targetPos = 0;
-    private double leftTargetPos = 0;
     private double rightError = 0;
     private double leftError = 0;
 
@@ -55,13 +53,14 @@ public class V4BSubsystem {
         opMode.telemetry.addData("Left Axon Error", getLeftError());
     }
 
-    // Positive target for CLOCKWISE, Negative for COUNTERCLOCKWISE
+    // Positive target for CLOCKWISE, Negative for COUNTERCLOCKWISE, target in DEGREES
     public void extend() {
         targetPos = -360;
     }
     public void retract() {
         targetPos = 0;
     }
+    public void hang() { targetPos = -200; }
     public void setTarget(double target) {
         targetPos = target;
     }
@@ -75,7 +74,7 @@ public class V4BSubsystem {
     }
 
     public void servoPID() {
-        leftTargetPos = -targetPos;
+        double leftTargetPos = -targetPos;
         rightError = targetPos - right_absolute_position;
         leftError = leftTargetPos - left_absolute_position;
         double kP = 0.005;

@@ -16,7 +16,7 @@ import org.firstinspires.ftc.teamcode.cv.ComputerVisionMediator;
 import org.firstinspires.ftc.teamcode.cv.RedOctopusPipeline;
 import org.firstinspires.ftc.teamcode.drive.opmode.autonomous.AutoCoordinates;
 import org.firstinspires.ftc.teamcode.drive.opmode.autonomous.AutoFunctions;
-import org.firstinspires.ftc.teamcode.drive.subsystems.ArmSubsystem3;
+import org.firstinspires.ftc.teamcode.drive.subsystems.ArmSubsystem4;
 import org.firstinspires.ftc.teamcode.drive.subsystems.IntakeSubsystem;
 
 @Autonomous(name = "RED Substation FAST", group = "Substation Side")
@@ -33,7 +33,7 @@ public class RedSideAutoSubstation extends LinearOpMode {
         // Initialize the drive
         Pose2d startPose = new Pose2d(0, 0, Math.toRadians(0));
         MecanumDrive drive = new MecanumDrive(hardwareMap, startPose);
-        ArmSubsystem3 arm = new ArmSubsystem3(hardwareMap);
+        ArmSubsystem4 arm = new ArmSubsystem4(hardwareMap);
         IntakeSubsystem intake = new IntakeSubsystem(hardwareMap);
         ComputerVisionMediator CVMediator = new ComputerVisionMediator();
 
@@ -70,13 +70,14 @@ public class RedSideAutoSubstation extends LinearOpMode {
                 .build();
 
         Action runAcrossField = drive.actionBuilder(new Pose2d(coords.pixelStackPosFar, coords.ROTATED))
-                .splineTo(coords.toBackdropFromPixelStack, coords.ROTATED_AF)
+                .splineTo(coords.toBackdropFromPixelStack, coords.ROTATED)
                 .build();
 
         CVMediator.init(hardwareMap, drive, octopusPipeline, false, this);
 
         // Display Telemetry
         while (!isStopRequested() && !opModeIsActive()) {
+            arm.initV4B(this);
             telemetry.addData("Detection", octopusPipeline.getLocation());
             telemetry.update();
         }

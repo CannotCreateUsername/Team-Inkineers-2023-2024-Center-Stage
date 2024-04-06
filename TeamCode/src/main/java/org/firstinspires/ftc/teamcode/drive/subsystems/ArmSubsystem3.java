@@ -13,6 +13,7 @@ import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.arcrobotics.ftclib.gamepad.TriggerReader;
 import com.qualcomm.hardware.rev.RevTouchSensor;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -88,6 +89,8 @@ public class ArmSubsystem3 {
     private final DigitalChannel greenLED;
     private final DigitalChannel redLED;
 
+    LinearOpMode opMode;
+
     public ArmSubsystem3(HardwareMap hardwareMap) {
         // Map actuator variables to actual hardware
         upperSlides = hardwareMap.get(DcMotor.class, "top_slide");
@@ -135,6 +138,10 @@ public class ArmSubsystem3 {
         barTimer = new ElapsedTime();
         hangTimer = new ElapsedTime();
         slideTimer = new ElapsedTime();
+    }
+
+    public void setOpMode(LinearOpMode linearOpMode) {
+        opMode = linearOpMode;
     }
 
     public void powerPID(double power) {
@@ -475,12 +482,24 @@ public class ArmSubsystem3 {
                 }
                 leftVirtualBar.setPosition(lLOAD);
                 rightVirtualBar.setPosition(rLOAD);
+                if (opMode != null) {
+                    opMode.telemetry.addData("Bar Timer:", barTimer.seconds());
+                    opMode.telemetry.addData("Slide Reset Completed", limitSwitch.isPressed());
+                    opMode.telemetry.update();
+                }
                 if (barTimer.seconds() > 1.9) {
                     dropped = true;
                 }
                 return barTimer.seconds() < 2;
             }
         };
+    }
+
+    public Action resetToRest() {
+        return new ParallelAction(
+                reset4Bar(),
+                resetSlides()
+        );
     }
 
     public Action dropYellowPixel(boolean high) {
