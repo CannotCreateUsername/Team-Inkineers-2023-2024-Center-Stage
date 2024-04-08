@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.drive.subsystems;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.CRServo;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class V4BSubsystem {
@@ -23,6 +22,7 @@ public class V4BSubsystem {
     double left_position = 0;
 
     private double targetPos = 0;
+    double leftTargetPos = 0;
     private double rightError = 0;
     private double leftError = 0;
 
@@ -32,10 +32,6 @@ public class V4BSubsystem {
         leftVirtualBar = hardwareMap.get(CRServo.class, "bar_left");
         rightEncoder = hardwareMap.get(AnalogInput.class, "right_axon_encoder");
         leftEncoder = hardwareMap.get(AnalogInput.class, "left_axon_encoder");
-
-        // Reverse V4B servos
-        rightVirtualBar.setDirection(DcMotorSimple.Direction.REVERSE);
-        leftVirtualBar.setDirection(DcMotorSimple.Direction.REVERSE);
 
         right_absolute_position = 0;
         left_absolute_position = 0;
@@ -53,14 +49,14 @@ public class V4BSubsystem {
         opMode.telemetry.addData("Left Axon Error", getLeftError());
     }
 
-    // Positive target for CLOCKWISE, Negative for COUNTERCLOCKWISE, target in DEGREES
+    // Positive target for COUNTERCLOCKWISE, Negative for CLOCKWISE, target in DEGREES
     public void extend() {
-        targetPos = -360;
+        targetPos = 280;
     }
     public void retract() {
         targetPos = 0;
     }
-    public void hang() { targetPos = -200; }
+    public void hang() { targetPos = 200; }
     public void setTarget(double target) {
         targetPos = target;
     }
@@ -68,23 +64,26 @@ public class V4BSubsystem {
         rightVirtualBar.setPower(-0.4);
         leftVirtualBar.setPower(0.4);
         right_absolute_position = 0;
-//        right_position = 0;
+        right_position = 0;
         left_absolute_position = 0;
-//        left_position = 0;
+        left_position = 0;
+        rightError = 0;
+        leftError = 0;
+        targetPos = 0;
+        leftTargetPos = 0;
     }
 
     public void servoPID() {
-        double leftTargetPos = -targetPos;
+        leftTargetPos = -targetPos;
         rightError = targetPos - right_absolute_position;
         leftError = leftTargetPos - left_absolute_position;
-        double kP = 0.005;
-        double kD_R = 0.08; //0.08
-        double kD_L = 0.08;
+        double kP_R = 0.008;
+        double kP_L = 0.007;
         double ERR_THRESHOLD = 10;
         if (Math.abs(rightError) > ERR_THRESHOLD || Math.abs(leftError) > ERR_THRESHOLD) {
             // Ensure the servo rotates in the correct direction based on the error sign
-            rightVirtualBar.setPower(rightError > 0 ? Math.abs(rightError) * kP + kD_R : -Math.abs(rightError) * kP);
-            leftVirtualBar.setPower(leftError > 0 ? Math.abs(leftError) * kP : -Math.abs(leftError) * kP);
+            rightVirtualBar.setPower(rightError > 0 ? Math.abs(rightError) * kP_R : -Math.abs(rightError) * kP_R);
+            leftVirtualBar.setPower(leftError > 0 ? Math.abs(leftError) * kP_L : -Math.abs(leftError) * kP_L);
         } else {
             rightVirtualBar.setPower(0); // Stop the servo if the error is within the threshold
             leftVirtualBar.setPower(0);

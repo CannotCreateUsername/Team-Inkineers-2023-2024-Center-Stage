@@ -212,10 +212,12 @@ public class ComputerVisionMediator {
             private boolean set = false;
             private boolean blocked = false;
             private boolean wasBlocked = false;
+            private final ElapsedTime clearTimer = new ElapsedTime();
             @Override
             public boolean run(@NonNull TelemetryPacket telemetryPacket) {
                 if (!set) {
                     visionPortal.setProcessorEnabled(aprilTag, true);
+                    clearTimer.reset();
                     set = true;
                 }
                 List<AprilTagDetection> currentDetections = aprilTag.getDetections();
@@ -226,6 +228,7 @@ public class ComputerVisionMediator {
                 }
                 boolean cleared = false;
                 opMode.telemetry.addData("Current # of Detections", currentDetections.size());
+                opMode.telemetry.addData("Wait Timer", clearTimer.seconds());
                 if (wasBlocked && !blocked) {
                     opMode.telemetry.addLine("Unblocked");
                     opMode.telemetry.update();
@@ -238,7 +241,7 @@ public class ComputerVisionMediator {
                     opMode.telemetry.update();
                 }
                 wasBlocked = blocked;
-                return !cleared;
+                return !cleared && clearTimer.seconds() < 6;
             }
         };
     }

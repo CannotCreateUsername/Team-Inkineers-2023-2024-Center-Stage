@@ -160,7 +160,7 @@ public class ArmSubsystem4 {
                     currentTarget = 1800;
                     slideState = SlideState.HANG;
                 }
-                if (timer.seconds() > 1) {
+                if (timer.seconds() > 0.5) {
                     currentTarget = 0;
                 }
                 break;
@@ -352,6 +352,8 @@ public class ArmSubsystem4 {
     public String getOuttakeState() { return outtakeState.name(); }
     public double getSlide1Power() { return upperSlides.getPower(); }
     public double getSlide2Power() { return upperSlides.getPower(); }
+    public double getV4BErrorRight() { return v4B.getRightError(); }
+    public double getV4BErrorLeft() { return v4B.getLeftError(); }
 
     // Autonomous Functions
     public boolean touching() { return boxSwitch.isPressed(); }

@@ -34,7 +34,7 @@ public class DualAxonTest extends LinearOpMode {
                 } else if (gamepadEx.wasJustPressed(GamepadKeys.Button.A)) {
                     v4B.retract();
                 } else if (gamepadEx.wasJustPressed(GamepadKeys.Button.B)) {
-                    v4B.setTarget(-90);
+                    v4B.hang();
                 }
             }
             gamepadEx.readButtons();
@@ -47,6 +47,7 @@ public class DualAxonTest extends LinearOpMode {
             telemetry.addData("LEFT Absolute Position", v4B.getLeftAbsolutePosition());
             telemetry.addData("Right Axon Error", v4B.getRightError());
             telemetry.addData("Left Axon Error", v4B.getLeftError());
+            telemetry.addLine("X: Extend, A: Retract, B: Hang");
             telemetry.update();
         }
 

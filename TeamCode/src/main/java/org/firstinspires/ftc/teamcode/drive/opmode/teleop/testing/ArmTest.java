@@ -62,6 +62,8 @@ public class ArmTest extends LinearOpMode {
             telemetry.addData("Intake Power", armSubsystem.intakePower);
             telemetry.addData("Hanging Power", armSubsystem.hangingMultiplier);
             telemetry.addData("Box Switch Pressed?", armSubsystem.touching());
+            telemetry.addData("Right Axon Error", armSubsystem.getV4BErrorRight());
+            telemetry.addData("Left Axon Error", armSubsystem.getV4BErrorLeft());
             telemetry.update();
         }
     }

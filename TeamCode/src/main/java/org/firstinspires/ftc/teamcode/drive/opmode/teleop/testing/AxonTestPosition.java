@@ -1,10 +1,12 @@
 package org.firstinspires.ftc.teamcode.drive.opmode.teleop.testing;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Servo;
 
-@TeleOp(name = "Axon Position Test", group = "Linear Opmode")
+@Disabled
+@TeleOp(name = "Axon Position Mode Test", group = "Linear Opmode")
 public class AxonTestPosition extends LinearOpMode {
     final double rLoad = 0;
     final double lLoad = 0;
