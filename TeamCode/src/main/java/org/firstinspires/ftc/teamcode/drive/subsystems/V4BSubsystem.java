@@ -58,7 +58,8 @@ public class V4BSubsystem {
     public void retract() {
         targetPos = 0;
     }
-    public void hang() { targetPos = 200; }
+    public void hang() { targetPos = 220; }
+    public void hangRest() { targetPos = 180; }
     public void setTarget(double target) {
         targetPos = target;
     }

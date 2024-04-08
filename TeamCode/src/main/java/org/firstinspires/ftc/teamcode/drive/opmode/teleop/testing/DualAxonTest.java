@@ -2,11 +2,13 @@ package org.firstinspires.ftc.teamcode.drive.opmode.teleop.testing;
 
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.drive.subsystems.V4BSubsystem;
 
+@Disabled
 @TeleOp(name = "Dual Axon Test", group = "Linear Opmode")
 public class DualAxonTest extends LinearOpMode {
 

@@ -156,6 +156,7 @@ public class ArmSubsystem4 {
                 }
                 if (gamepad1.wasJustReleased(GamepadKeys.Button.RIGHT_BUMPER)) {
                     slideState = SlideState.FIRST;
+                    v4B.hang();
                 } else if (gamepad1.wasJustReleased(GamepadKeys.Button.DPAD_UP)) {
                     currentTarget = 1800;
                     slideState = SlideState.HANG;
@@ -259,6 +260,7 @@ public class ArmSubsystem4 {
                 if (hangRelease) {
                     lowerSlides.setPower(-hangingMultiplier);
                     upperSlides.setPower(-hangingMultiplier);
+                    v4B.hangRest();
                     if (hangTimer.seconds() > 1 && upperSlides.getPower() < 0) {
                         hangingMultiplier -= 0.05;
                         hangTimer.reset();
@@ -270,15 +272,15 @@ public class ArmSubsystem4 {
                 break;
         }
         // Code to run the virtual four bar. Don't move in REST state
-        if (slideState != SlideState.REST) {
+        if (slideState != SlideState.REST && slideState != SlideState.HANG) {
             if (gamepad1.wasJustPressed(GamepadKeys.Button.A) && !drop) {
                 v4B.extend();
                 drop = true;
             } else if (gamepad1.wasJustPressed(GamepadKeys.Button.A) && drop) {
                 v4B.retract();
                 drop = false;
-            } else if (gamepad1.wasJustReleased(GamepadKeys.Button.B)) {
-                v4B.hang();
+            } else if (gamepad1.wasJustPressed(GamepadKeys.Button.B)) {
+                v4B.retract();
             }
         }
         // Set power to the virtual four bar using PID
