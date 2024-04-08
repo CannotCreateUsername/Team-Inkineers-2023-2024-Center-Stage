@@ -33,7 +33,7 @@ public class BlueSideAutoBackdrop2 extends LinearOpMode {
         // Initialize the drive
         Pose2d startPose = coords.startPos;
         MecanumDrive drive = new MecanumDrive(hardwareMap, startPose);
-        ArmSubsystem4 arm = new ArmSubsystem4(hardwareMap);
+        ArmSubsystem4 arm = new ArmSubsystem4(hardwareMap, true);
         ComputerVisionMediator CVMediator = new ComputerVisionMediator();
 
         // Initialize some functions

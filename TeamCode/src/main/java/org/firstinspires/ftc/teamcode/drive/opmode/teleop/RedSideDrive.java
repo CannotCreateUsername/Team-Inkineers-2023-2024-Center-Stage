@@ -40,7 +40,7 @@ public class RedSideDrive extends LinearOpMode {
         IntakeSubsystem intake = new IntakeSubsystem(hardwareMap);
 
         // Initialize arm code
-        ArmSubsystem4 arm = new ArmSubsystem4(hardwareMap);
+        ArmSubsystem4 arm = new ArmSubsystem4(hardwareMap, false);
 
         //Initialize drone launcher and hanging code
         EndgameSubsystems endgame = new EndgameSubsystems(hardwareMap);

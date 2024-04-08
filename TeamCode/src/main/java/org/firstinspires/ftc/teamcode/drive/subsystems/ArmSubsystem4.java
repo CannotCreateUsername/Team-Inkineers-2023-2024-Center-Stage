@@ -82,14 +82,14 @@ public class ArmSubsystem4 {
 
     LinearOpMode opMode;
 
-    public ArmSubsystem4(HardwareMap hardwareMap) {
-        this(hardwareMap, null);
+    public ArmSubsystem4(HardwareMap hardwareMap, boolean auto) {
+        this(hardwareMap, auto,null);
     }
 
-    public ArmSubsystem4(HardwareMap hardwareMap, @Nullable LinearOpMode linearOpMode) {
+    public ArmSubsystem4(HardwareMap hardwareMap, boolean auto, @Nullable LinearOpMode linearOpMode) {
         opMode = linearOpMode;
         // Initialize the virtual four bar
-        v4B = new V4BSubsystem(hardwareMap);
+        v4B = new V4BSubsystem(hardwareMap, auto);
         // Map actuator variables to actual hardware
         upperSlides = hardwareMap.get(DcMotor.class, "top_slide");
         lowerSlides = hardwareMap.get(DcMotor.class, "bottom_slide");
@@ -277,6 +277,8 @@ public class ArmSubsystem4 {
             } else if (gamepad1.wasJustPressed(GamepadKeys.Button.A) && drop) {
                 v4B.retract();
                 drop = false;
+            } else if (gamepad1.wasJustReleased(GamepadKeys.Button.B)) {
+                v4B.hang();
             }
         }
         // Set power to the virtual four bar using PID

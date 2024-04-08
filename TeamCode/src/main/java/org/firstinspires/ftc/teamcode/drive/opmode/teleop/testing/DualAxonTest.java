@@ -14,7 +14,7 @@ public class DualAxonTest extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        v4B = new V4BSubsystem(hardwareMap);
+        v4B = new V4BSubsystem(hardwareMap, true);
         GamepadEx gamepadEx = new GamepadEx(gamepad1);
         while (opModeInInit()) {
             v4B.init(this);

@@ -19,7 +19,7 @@ public class ArmTest extends LinearOpMode {
         GamepadEx gamepadEx1 = new GamepadEx(gamepad1);
         GamepadEx gamepadEx2 = new GamepadEx(gamepad2);
 
-        ArmSubsystem4 armSubsystem = new ArmSubsystem4(hardwareMap);
+        ArmSubsystem4 armSubsystem = new ArmSubsystem4(hardwareMap, true);
         IntakeSubsystem intakeSubsystem = new IntakeSubsystem(hardwareMap);
         EndgameSubsystems endgameSubsystems = new EndgameSubsystems(hardwareMap);
 

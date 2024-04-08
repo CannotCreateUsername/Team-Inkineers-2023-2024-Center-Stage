@@ -40,7 +40,7 @@ public class HangTestOld extends LinearOpMode {
                 selected = true;
             } else if (gamepad1.y) {
                 hardcode = false;
-                arm = new ArmSubsystem4(hardwareMap);
+                arm = new ArmSubsystem4(hardwareMap, true);
                 selected = true;
             }
 

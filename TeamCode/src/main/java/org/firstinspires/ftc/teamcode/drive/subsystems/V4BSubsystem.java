@@ -27,7 +27,8 @@ public class V4BSubsystem {
     private double leftError = 0;
 
     // Constructor
-    public V4BSubsystem(HardwareMap hardwareMap) {
+    public V4BSubsystem(HardwareMap hardwareMap, boolean auto) {
+        // Auto is useless boolean now but I'm too lazy to get rid of it
         rightVirtualBar = hardwareMap.get(CRServo.class, "bar_right");
         leftVirtualBar = hardwareMap.get(CRServo.class, "bar_left");
         rightEncoder = hardwareMap.get(AnalogInput.class, "right_axon_encoder");
@@ -35,6 +36,7 @@ public class V4BSubsystem {
 
         right_absolute_position = 0;
         left_absolute_position = 0;
+
     }
 
     public void init(LinearOpMode opMode) {
