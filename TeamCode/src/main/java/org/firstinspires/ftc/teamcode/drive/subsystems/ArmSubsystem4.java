@@ -175,6 +175,7 @@ public class ArmSubsystem4 {
                     slideState = SlideState.MANUAL;
                 } else if (gamepad1.wasJustReleased(GamepadKeys.Button.LEFT_BUMPER) || gamepad1.wasJustReleased(GamepadKeys.Button.X)) {
                     v4B.retract();
+                    drop = false;
                     slideState = SlideState.REST;
                     timer.reset();
                 }
@@ -188,6 +189,7 @@ public class ArmSubsystem4 {
                     slideState = SlideState.MANUAL;
                 } else if (gamepad1.wasJustReleased(GamepadKeys.Button.X)) {
                     v4B.retract();
+                    drop = false;
                     slideState = SlideState.REST;
                     timer.reset();
                 }
@@ -205,6 +207,7 @@ public class ArmSubsystem4 {
                     slideState = SlideState.HANG;
                 } else if (gamepad1.wasJustReleased(GamepadKeys.Button.X)) {
                     v4B.retract();
+                    drop = false;
                     slideState = SlideState.REST;
                     timer.reset();
                 }
@@ -219,6 +222,7 @@ public class ArmSubsystem4 {
                     slideState = SlideState.HANG;
                 } else if (gamepad1.wasJustReleased(GamepadKeys.Button.X)) {
                     v4B.retract();
+                    drop = false;
                     slideState = SlideState.REST;
                     timer.reset();
                 }
@@ -234,6 +238,7 @@ public class ArmSubsystem4 {
                     slideState = SlideState.HANG;
                 } else if (gamepad1.wasJustReleased(GamepadKeys.Button.X)) {
                     v4B.retract();
+                    drop = false;
                     slideState = SlideState.REST;
                     timer.reset();
                 }
@@ -279,8 +284,6 @@ public class ArmSubsystem4 {
             } else if (gamepad1.wasJustPressed(GamepadKeys.Button.A) && drop) {
                 v4B.retract();
                 drop = false;
-            } else if (gamepad1.wasJustPressed(GamepadKeys.Button.B)) {
-                v4B.retract();
             }
         }
         // Set power to the virtual four bar using PID

@@ -81,7 +81,7 @@ public class V4BSubsystem {
         rightError = targetPos - right_absolute_position;
         leftError = leftTargetPos - left_absolute_position;
         double kP_R = 0.008;
-        double kP_L = 0.007;
+        double kP_L = 0.008;
         double ERR_THRESHOLD = 10;
         if (Math.abs(rightError) > ERR_THRESHOLD || Math.abs(leftError) > ERR_THRESHOLD) {
             // Ensure the servo rotates in the correct direction based on the error sign
