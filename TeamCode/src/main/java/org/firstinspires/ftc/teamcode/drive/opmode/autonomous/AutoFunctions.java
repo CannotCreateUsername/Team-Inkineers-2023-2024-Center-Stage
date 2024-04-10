@@ -12,15 +12,15 @@ import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.MecanumDrive;
-import org.firstinspires.ftc.teamcode.drive.subsystems.ArmSubsystem3;
 import org.firstinspires.ftc.teamcode.drive.subsystems.ArmSubsystem4;
+import org.firstinspires.ftc.teamcode.drive.subsystems.ArmSubsystem5;
 import org.firstinspires.ftc.teamcode.drive.subsystems.IntakeSubsystem;
 
 import javax.annotation.Nullable;
 
 public class AutoFunctions {
     private ArmSubsystem4 arm;
-    private ArmSubsystem3 arm2;
+    private ArmSubsystem5 arm2;
     private IntakeSubsystem intake;
     private MecanumDrive drive;
     ElapsedTime moveTimer;
@@ -34,7 +34,7 @@ public class AutoFunctions {
         moveTimer = new ElapsedTime();
     }
 
-    public void init(@Nullable IntakeSubsystem intakeSubsystem, ArmSubsystem3 armSubsystem, MecanumDrive mecanumDrive) {
+    public void init(@Nullable IntakeSubsystem intakeSubsystem, ArmSubsystem5 armSubsystem, MecanumDrive mecanumDrive) {
         intake = intakeSubsystem;
         arm2 = armSubsystem;
         arm = null;
