@@ -24,6 +24,9 @@ public class V4BSubsystem2 {
     public V4BSubsystem2(HardwareMap hardwareMap) {
         rightVirtualBar = hardwareMap.get(Servo.class, "bar_right");
         leftVirtualBar = hardwareMap.get(Servo.class, "bar_left");
+
+        rightVirtualBar.setDirection(Servo.Direction.REVERSE);
+        leftVirtualBar.setDirection(Servo.Direction.REVERSE);
     }
 
     // Functions

@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.drive.subsystems.ArmSubsystem4;
+import org.firstinspires.ftc.teamcode.drive.subsystems.ArmSubsystem5;
 import org.firstinspires.ftc.teamcode.drive.subsystems.EndgameSubsystems;
 import org.firstinspires.ftc.teamcode.drive.subsystems.IntakeSubsystem;
 
@@ -19,12 +20,12 @@ public class ArmTest extends LinearOpMode {
         GamepadEx gamepadEx1 = new GamepadEx(gamepad1);
         GamepadEx gamepadEx2 = new GamepadEx(gamepad2);
 
-        ArmSubsystem4 armSubsystem = new ArmSubsystem4(hardwareMap, true);
+        ArmSubsystem5 armSubsystem = new ArmSubsystem5(hardwareMap);
         IntakeSubsystem intakeSubsystem = new IntakeSubsystem(hardwareMap);
         EndgameSubsystems endgameSubsystems = new EndgameSubsystems(hardwareMap);
 
         while (opModeInInit()) {
-            armSubsystem.initV4B(this);
+//            armSubsystem.initV4B(this);
             telemetry.addLine("Take the Stage");
             telemetry.update();
         }
@@ -62,8 +63,8 @@ public class ArmTest extends LinearOpMode {
             telemetry.addData("Intake Power", armSubsystem.intakePower);
             telemetry.addData("Hanging Power", armSubsystem.hangingMultiplier);
             telemetry.addData("Box Switch Pressed?", armSubsystem.touching());
-            telemetry.addData("Right Axon Error", armSubsystem.getV4BErrorRight());
-            telemetry.addData("Left Axon Error", armSubsystem.getV4BErrorLeft());
+//            telemetry.addData("Right Axon Error", armSubsystem.getV4BErrorRight());
+//            telemetry.addData("Left Axon Error", armSubsystem.getV4BErrorLeft());
             telemetry.update();
         }
     }
