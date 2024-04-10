@@ -167,7 +167,7 @@ public class ArmSubsystem4 {
                 break;
             case FIRST:
                 currentTarget = firstLvl;
-                liftMultiplier = 0.5;
+                liftMultiplier = 0.3;
                 if (gamepad1.wasJustReleased(GamepadKeys.Button.RIGHT_BUMPER)) {
                     currentTarget = secondLvl;
                     slideState = SlideState.SECOND;
@@ -181,7 +181,7 @@ public class ArmSubsystem4 {
                 }
                 break;
             case SECOND:
-                liftMultiplier = 0.4;
+                liftMultiplier = 0.3;
                 if (gamepad1.wasJustReleased(GamepadKeys.Button.RIGHT_BUMPER)) {
                     currentTarget = thirdLvl;
                     slideState = SlideState.THIRD;
@@ -195,7 +195,7 @@ public class ArmSubsystem4 {
                 }
                 break;
             case THIRD:
-                liftMultiplier = 0.3;
+                liftMultiplier = 0.2;
                 if (gamepad1.wasJustReleased(GamepadKeys.Button.RIGHT_BUMPER)) {
                     currentTarget = SLIDE_LIMIT;
                     slideState = SlideState.FOURTH;
