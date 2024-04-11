@@ -153,7 +153,7 @@ public class ArmSubsystem5 {
                     currentTarget = 1800;
                     slideState = SlideState.HANG;
                 }
-                if (timer.seconds() > 1) {
+                if (timer.seconds() > 0.5) {
                     currentTarget = 0;
                 }
                 break;
