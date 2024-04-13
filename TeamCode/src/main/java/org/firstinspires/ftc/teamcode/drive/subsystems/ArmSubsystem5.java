@@ -57,7 +57,7 @@ public class ArmSubsystem5 {
     // Linear Slides Positions
     private final int SLIDE_LIMIT = 1800;
     private final int firstLvl = SLIDE_LIMIT/4-20;
-    private final int secondLvl = SLIDE_LIMIT/4*2;
+    private final int secondLvl = SLIDE_LIMIT/4*2-20;
     private final int thirdLvl = SLIDE_LIMIT/4*3;
     /** @noinspection FieldCanBeLocal*/
 
