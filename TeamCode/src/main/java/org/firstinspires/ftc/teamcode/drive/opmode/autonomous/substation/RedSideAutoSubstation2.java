@@ -70,7 +70,7 @@ public class RedSideAutoSubstation2 extends LinearOpMode {
                 .build();
 
         Action runAcrossField = drive.actionBuilder(new Pose2d(coords.pixelStackPosFar, coords.ROTATED))
-                .splineTo(coords.toBackdropFromPixelStack, coords.ROTATED)
+                .splineTo(coords.toBackdropFromPixelStack, coords.ROTATED_CRINGE)
                 .build();
 
         CVMediator.init(hardwareMap, drive, octopusPipeline, false, this);
@@ -152,7 +152,7 @@ public class RedSideAutoSubstation2 extends LinearOpMode {
                         runToScoreWhite,
                         arm.ready4bar()
                 ),
-                arm.spinOuttake(-0.5, 0.5),
+                arm.spinOuttake(-0.5, functions.DURATION_WHITE),
                 new ParallelAction(
                         runToScoreYellow,
                         new SequentialAction(
@@ -160,7 +160,7 @@ public class RedSideAutoSubstation2 extends LinearOpMode {
                                 arm.readySlides(true)
                         )
                 ),
-                arm.spinOuttake(-1, 0.6),
+                arm.spinOuttake(-1, functions.DURATION_YELLOW),
                 new ParallelAction(
                         arm.reset4Bar(),
                         arm.resetSlides(),

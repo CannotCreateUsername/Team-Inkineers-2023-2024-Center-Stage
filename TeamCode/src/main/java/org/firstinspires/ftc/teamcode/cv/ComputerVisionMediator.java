@@ -241,7 +241,7 @@ public class ComputerVisionMediator {
                     opMode.telemetry.update();
                 }
                 wasBlocked = blocked;
-                return !cleared && clearTimer.seconds() < 6;
+                return !cleared && clearTimer.seconds() < 8;
             }
         };
     }

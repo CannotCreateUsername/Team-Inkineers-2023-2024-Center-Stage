@@ -134,7 +134,7 @@ public class RedSideAutoSubstation3 extends LinearOpMode {
                 .strafeToLinearHeading(dropYellowPos, coords.ROTATED)
                 .build();
         Action runBackToPixelStack = drive.actionBuilder(new Pose2d(dropYellowPos, coords.ROTATED))
-                .splineTo(coords.pixelStackPosFar, coords.ROTATED)
+                .strafeToLinearHeading(coords.pixelStackPosFar, coords.ROTATED)
                 .splineTo(coords.toBackdropFromPixelStack, coords.ROTATED_AF)
                 .build();
         Action park = drive.actionBuilder(new Pose2d(dropWhitePos, coords.ROTATED))
@@ -155,10 +155,10 @@ public class RedSideAutoSubstation3 extends LinearOpMode {
                         arm.ready4bar()
                 ),
                 new SequentialAction(
-                        arm.spinOuttake(-0.5, 0.5),
+                        arm.spinOuttake(-0.5, functions.DURATION_WHITE),
                         new SequentialAction(
                                 runToScoreYellow,
-                                arm.spinOuttake(-1, 0.6)
+                                arm.spinOuttake(-1, functions.DURATION_YELLOW)
                         ),
                         arm.resetToRest()
                 )

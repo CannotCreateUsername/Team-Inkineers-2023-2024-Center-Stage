@@ -116,7 +116,7 @@ public class BlueSideAutoBackdrop3 extends LinearOpMode {
                 Actions.runBlocking(new ParallelAction(
                         runToCenterProp,
                         new SequentialAction(
-                                new SleepAction(3),
+                                new SleepAction(4),
                                 new ParallelAction(
                                         arm.readySlides(false),
                                         arm.ready4bar()
@@ -130,7 +130,7 @@ public class BlueSideAutoBackdrop3 extends LinearOpMode {
                 Actions.runBlocking(new ParallelAction(
                         runToLeftProp,
                         new SequentialAction(
-                                new SleepAction(4),
+                                new SleepAction(3),
                                 new ParallelAction(
                                         arm.readySlides(false),
                                         arm.ready4bar()
@@ -144,7 +144,7 @@ public class BlueSideAutoBackdrop3 extends LinearOpMode {
                 Actions.runBlocking(new ParallelAction(
                         runToRightProp,
                         new SequentialAction(
-                                new SleepAction(4),
+                                new SleepAction(5),
                                 new ParallelAction(
                                         arm.readySlides(false),
                                         arm.ready4bar()
@@ -159,6 +159,10 @@ public class BlueSideAutoBackdrop3 extends LinearOpMode {
                 .strafeToConstantHeading(coords.rotatedStartPos)
                 .strafeToConstantHeading(whiteDropoffPos)
                 .build();
+        Action park = drive.actionBuilder(new Pose2d(whiteDropoffPos, coords.ROTATED))
+                .strafeToLinearHeading(coords.parkOutsidePos, coords.ROTATED)
+                .build();
+
         Actions.runBlocking(new SequentialAction(
                 new ParallelAction(
                         arm.reset4Bar(),
@@ -174,6 +178,10 @@ public class BlueSideAutoBackdrop3 extends LinearOpMode {
                         arm.spinOuttake(0.8, 2),
                         whiteToBackdrop,
                         arm.dropWhitePixel()
+                ),
+                new ParallelAction(
+                        arm.resetToRest(),
+                        park
                 )
         ));
     }

@@ -151,10 +151,10 @@ public class RedSideAutoSubstation4 extends LinearOpMode {
                         runToScoreWhite,
                         arm.ready4bar()
                 ),
-                arm.spinOuttake(-0.5, 0.5),
+                arm.spinOuttake(-0.5, functions.DURATION_WHITE),
                 new SequentialAction(
                         runToScoreYellow,
-                        arm.spinOuttake(-1, 0.6)
+                        arm.spinOuttake(-1, functions.DURATION_YELLOW)
                 ),
                 new ParallelAction(
                         arm.reset4Bar(),

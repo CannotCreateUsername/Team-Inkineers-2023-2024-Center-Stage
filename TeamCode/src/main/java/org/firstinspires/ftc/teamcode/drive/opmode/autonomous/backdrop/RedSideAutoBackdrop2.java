@@ -95,7 +95,7 @@ public class RedSideAutoBackdrop2 extends LinearOpMode {
         }
         // Build parking path for each position from backdrop
         Action runToPark = drive.actionBuilder(new Pose2d(beginParkPos, coords.ROTATED))
-                .strafeToConstantHeading(coords.parkOutsidePos)
+                .strafeToConstantHeading(coords.parkInsidePos)
                 .build();
 
         // Finish Scoring

@@ -19,8 +19,8 @@ import org.firstinspires.ftc.teamcode.drive.opmode.autonomous.AutoFunctions;
 import org.firstinspires.ftc.teamcode.drive.subsystems.ArmSubsystem5;
 import org.firstinspires.ftc.teamcode.drive.subsystems.IntakeSubsystem;
 
-@Autonomous(name = "BLUE Substation DELAYED", group = "Substation Side")
-public class BlueSideAutoSubstation2 extends LinearOpMode {
+@Autonomous(name = "BLUE Substation WAIT", group = "Substation Side")
+public class BlueSideAutoSubstation4 extends LinearOpMode {
 
     BlueOctopusPipeline octopusPipeline = new BlueOctopusPipeline();
 
@@ -33,7 +33,7 @@ public class BlueSideAutoSubstation2 extends LinearOpMode {
         // Initialize the drive
         Pose2d startPose = new Pose2d(0, 0, Math.toRadians(0));
         MecanumDrive drive = new MecanumDrive(hardwareMap, startPose);
-        ArmSubsystem5 arm = new ArmSubsystem5(hardwareMap);
+        ArmSubsystem5 arm = new ArmSubsystem5(hardwareMap, this);
         IntakeSubsystem intake = new IntakeSubsystem(hardwareMap);
         ComputerVisionMediator CVMediator = new ComputerVisionMediator();
 
@@ -70,10 +70,10 @@ public class BlueSideAutoSubstation2 extends LinearOpMode {
                 .build();
 
         Action runAcrossField = drive.actionBuilder(new Pose2d(coords.pixelStackPosFar, coords.ROTATED))
-                .splineTo(coords.toBackdropFromPixelStack, coords.ROTATED_CRINGE)
+                .splineTo(coords.toBackdropFromPixelStackSpline, coords.ROTATED_AF)
                 .build();
 
-        CVMediator.init(hardwareMap, drive, octopusPipeline, false, this);
+        CVMediator.init(hardwareMap, drive, octopusPipeline, true, this);
 
         // Display Telemetry
         while (!isStopRequested() && !opModeIsActive()) {
@@ -89,7 +89,7 @@ public class BlueSideAutoSubstation2 extends LinearOpMode {
         CVMediator.disableAprilTag();
 
         // Store which path to take (Default Middle)
-        Vector2d dropWhitePos = coords.subRightBackdrop;
+        Vector2d dropWhitePos = coords.subLeftBackdrop;
         Vector2d dropYellowPos = coords.subCenterBackdrop;
 
         switch (octopusPipeline.getLocation()) {
@@ -127,11 +127,10 @@ public class BlueSideAutoSubstation2 extends LinearOpMode {
                 break;
         }
 
-        Action runToScoreWhite = drive.actionBuilder(new Pose2d(coords.toBackdropFromPixelStack, coords.ROTATED))
+        Action runToScoreWhite = drive.actionBuilder(new Pose2d(coords.toBackdropFromPixelStackSpline, coords.ROTATED_AF))
                 .strafeToLinearHeading(dropWhitePos, coords.ROTATED)
                 .build();
         Action runToScoreYellow = drive.actionBuilder(new Pose2d(dropWhitePos, coords.ROTATED))
-                .strafeToLinearHeading(coords.betweenSubBackdrop, coords.ROTATED)
                 .strafeToLinearHeading(dropYellowPos, coords.ROTATED)
                 .build();
         Action park = drive.actionBuilder(new Pose2d(dropYellowPos, coords.ROTATED))
@@ -144,23 +143,19 @@ public class BlueSideAutoSubstation2 extends LinearOpMode {
                         intake.spinIntake(-0.8, 3),
                         new SequentialAction(
                                 new SleepAction(2),
-                                arm.readySlides(false)
+                                arm.readySlides(true)
                         )
                 ),
-                new SleepAction(6),
+                CVMediator.waitForClear(), // Insert wait function here
                 new ParallelAction(
                         runToScoreWhite,
                         arm.ready4bar()
                 ),
                 arm.spinOuttake(-0.5, functions.DURATION_WHITE),
-                new ParallelAction(
+                new SequentialAction(
                         runToScoreYellow,
-                        new SequentialAction(
-                                new SleepAction(1),
-                                arm.readySlides(true)
-                        )
+                        arm.spinOuttake(-1, functions.DURATION_YELLOW)
                 ),
-                arm.spinOuttake(-1, functions.DURATION_YELLOW),
                 new ParallelAction(
                         arm.reset4Bar(),
                         arm.resetSlides(),

@@ -25,6 +25,8 @@ public class AutoFunctions {
     private MecanumDrive drive;
     ElapsedTime moveTimer;
 
+    public final double DURATION_WHITE = 0.45;
+    public final double DURATION_YELLOW = 0.6;
 
     public void init(@Nullable IntakeSubsystem intakeSubsystem, ArmSubsystem4 armSubsystem, MecanumDrive mecanumDrive) {
         intake = intakeSubsystem;
@@ -72,7 +74,7 @@ public class AutoFunctions {
                     moveTimer.reset();
                     set = true;
                 }
-                if (!arm.touching() && moveTimer.seconds() < 2.5) {
+                if (!arm2.touching() && moveTimer.seconds() < 2.5) {
                     drive.setDrivePowers(new PoseVelocity2d(
                             new Vector2d(0.1, 0), Math.toRadians(0)
                     ));
@@ -84,7 +86,7 @@ public class AutoFunctions {
                 if (moveTimer.seconds() > 2.5) {
                     return false;
                 } else {
-                    return (!arm.touching());
+                    return (!arm2.touching());
                 }
             }
         };

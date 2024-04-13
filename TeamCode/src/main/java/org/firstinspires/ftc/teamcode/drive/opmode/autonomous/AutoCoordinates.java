@@ -6,6 +6,7 @@ import com.acmerobotics.roadrunner.Vector2d;
 
 public class AutoCoordinates {
     public double ROTATED = Math.toRadians(90);
+    public double ROTATED_CRINGE = Math.toRadians(92);
     public double STRAIGHT = Math.toRadians(0);
 
     public double LEFT_PROP = Math.toRadians(45);
@@ -17,6 +18,7 @@ public class AutoCoordinates {
     public AutoCoordinates(boolean isRedSide, boolean isFarSide) {
         if (isRedSide) {
             ROTATED = Math.toRadians(-90);
+            ROTATED_CRINGE = Math.toRadians(-92);
             ROTATED_AF = Math.toRadians(-135);
             ROTATED_AC = Math.toRadians(-45);
 
@@ -42,8 +44,8 @@ public class AutoCoordinates {
             pixelStackPosClose = new Vector2d(24, 62); // Rotated
             backIntoPixelPosClose = new Vector2d(24, 65); // Rotated
             backToIntakePixelClose = new Vector2d(24, 67); // Rotated
-            cringerBackdropCenterPos = new Vector2d(18, -49); // Rotated
-            cringerBackdropPosNotCenter = new Vector2d(13, -49); // Rotated
+            cringerBackdropCenterPos = new Vector2d(18, -51); // Rotated
+            cringerBackdropPosNotCenter = new Vector2d(13, -51); // Rotated
 
             // Substation Stuff
             beforePixelCrash = new Vector2d(16, 12); // Rotated
@@ -51,12 +53,12 @@ public class AutoCoordinates {
             backIntoPixelPosFar = new Vector2d(45, 18); // Rotated
             backToIntakePixelFar = new Vector2d(45, 20); // Rotated
 
-            toBackdropFromPixelStack = new Vector2d(42, -84); // Rotated
+            toBackdropFromPixelStack = new Vector2d(40, -84); // Rotated
             toBackdropFromPixelStackSpline = new Vector2d(32, -78); // Rotated
             betweenSubBackdrop = new Vector2d(15, -94); // Rotated
-            subLeftBackdrop = new Vector2d(20, -97); // Rotated
-            subCenterBackdrop = new Vector2d(14, -97); // Rotated
-            subRightBackdrop = new Vector2d(8, -97); // Rotated
+            subLeftBackdrop = new Vector2d(20, -98); // Rotated
+            subCenterBackdrop = new Vector2d(14, -98); // Rotated
+            subRightBackdrop = new Vector2d(7.5, -98); // Rotated
 
             subParkPos = new Vector2d(37,-90); // Rotated
         } else {
@@ -100,11 +102,11 @@ public class AutoCoordinates {
     // Going to pixel stack
     public Vector2d rotatedStartPos = new Vector2d(-4, 0); // Rotated
     public Vector2d crossTrussPos = new Vector2d(0, -44); // Rotated
-    public Vector2d pixelStackPosClose = new Vector2d(24, -62); // Rotated
-    public Vector2d backIntoPixelPosClose = new Vector2d(24, -65); // Rotated
-    public Vector2d backToIntakePixelClose = new Vector2d(24, -67); // Rotated
-    public Vector2d cringerBackdropCenterPos = new Vector2d(18, 49); // Rotated
-    public Vector2d cringerBackdropPosNotCenter = new Vector2d(13, 49); // Rotated
+    public Vector2d pixelStackPosClose = new Vector2d(23, -62); // Rotated
+    public Vector2d backIntoPixelPosClose = new Vector2d(23, -65); // Rotated
+    public Vector2d backToIntakePixelClose = new Vector2d(23, -67); // Rotated
+    public Vector2d cringerBackdropCenterPos = new Vector2d(18, 51); // Rotated
+    public Vector2d cringerBackdropPosNotCenter = new Vector2d(13, 51); // Rotated
 
 
     // Substation Specific
@@ -114,13 +116,13 @@ public class AutoCoordinates {
     public Vector2d backIntoPixelPosFar = new Vector2d(45, -18); // Rotated
     public Vector2d backToIntakePixelFar = new Vector2d(45, -20); // Rotated
 
-    public Vector2d toBackdropFromPixelStack = new Vector2d(42, 84); // Rotated
+    public Vector2d toBackdropFromPixelStack = new Vector2d(40, 84); // Rotated
     public Vector2d toBackdropFromPixelStackSpline = new Vector2d(32, 78); // Rotated
     public Vector2d betweenSubBackdrop = new Vector2d(15, 94); // Rotated
 
-    public Vector2d subLeftBackdrop = new Vector2d(8, 97); // Rotated
-    public Vector2d subCenterBackdrop = new Vector2d(14, 97); // Rotated
-    public Vector2d subRightBackdrop = new Vector2d(21, 97); // Rotated
+    public Vector2d subLeftBackdrop = new Vector2d(7.5, 98); // Rotated
+    public Vector2d subCenterBackdrop = new Vector2d(14, 98); // Rotated
+    public Vector2d subRightBackdrop = new Vector2d(21, 98); // Rotated
 
     public Vector2d subParkPos = new Vector2d(37,90); // Rotated
 }

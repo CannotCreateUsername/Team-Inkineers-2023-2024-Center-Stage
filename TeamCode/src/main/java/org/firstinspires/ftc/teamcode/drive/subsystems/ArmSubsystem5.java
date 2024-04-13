@@ -483,9 +483,7 @@ public class ArmSubsystem5 {
                         readySlides(600),
                         ready4bar()
                 ),
-                spinOuttake(-0.5, 2),
-                reset4Bar(),
-                resetSlides()
+                spinOuttake(-1, 1)
         );
     }
 }
