@@ -144,7 +144,7 @@ public class RedSideAutoBackdrop3 extends LinearOpMode {
                 Actions.runBlocking(new ParallelAction(
                         runToRightProp,
                         new SequentialAction(
-                                new SleepAction(3),
+                                new SleepAction(5),
                                 new ParallelAction(
                                         arm.readySlides(false),
                                         arm.ready4bar()

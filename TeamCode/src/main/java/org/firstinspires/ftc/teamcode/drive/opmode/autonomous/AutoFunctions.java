@@ -25,7 +25,7 @@ public class AutoFunctions {
     private MecanumDrive drive;
     ElapsedTime moveTimer;
 
-    public final double DURATION_WHITE = 0.45;
+    public final double DURATION_WHITE = 0.38;
     public final double DURATION_YELLOW = 0.6;
 
     public void init(@Nullable IntakeSubsystem intakeSubsystem, ArmSubsystem4 armSubsystem, MecanumDrive mecanumDrive) {

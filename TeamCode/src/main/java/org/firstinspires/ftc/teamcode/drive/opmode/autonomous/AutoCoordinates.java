@@ -28,9 +28,9 @@ public class AutoCoordinates {
             if (isFarSide) {
                 propLeftPos = new Vector2d(32, 12);
             }
-            backdropCenterPos = new Vector2d(18, -50);
-            backdropLeftPos = new Vector2d(23, -50);
-            backdropRightPos = new Vector2d(13, -50);
+            backdropCenterPos = new Vector2d(18, -52);
+            backdropLeftPos = new Vector2d(23, -52);
+            backdropRightPos = new Vector2d(13, -52);
 
             afterDropCenter = new Vector2d(18, -45);
             afterDropLeft = new Vector2d(23, -45);
@@ -41,9 +41,9 @@ public class AutoCoordinates {
             parkOutsideTuck = new Vector2d(-6, -58); // Rotated
 
             crossTrussPos = new Vector2d(0, 44); // Rotated
-            pixelStackPosClose = new Vector2d(24, 62); // Rotated
-            backIntoPixelPosClose = new Vector2d(24, 65); // Rotated
-            backToIntakePixelClose = new Vector2d(24, 67); // Rotated
+            pixelStackPosClose = new Vector2d(22, 62); // Rotated
+            backIntoPixelPosClose = new Vector2d(22, 65); // Rotated
+            backToIntakePixelClose = new Vector2d(22, 67); // Rotated
             cringerBackdropCenterPos = new Vector2d(18, -51); // Rotated
             cringerBackdropPosNotCenter = new Vector2d(13, -51); // Rotated
 
@@ -86,9 +86,9 @@ public class AutoCoordinates {
 
     // Backdrop Specific
     // Backdrop coordinates for BLUE side
-    public Vector2d backdropCenterPos = new Vector2d(18, 50); // Rotated
-    public Vector2d backdropLeftPos = new Vector2d(13, 50); // Rotated
-    public Vector2d backdropRightPos = new Vector2d(23, 50); // Rotated
+    public Vector2d backdropCenterPos = new Vector2d(18, 52); // Rotated
+    public Vector2d backdropLeftPos = new Vector2d(13, 52); // Rotated
+    public Vector2d backdropRightPos = new Vector2d(23, 52); // Rotated
 
     public Vector2d afterDropCenter = new Vector2d(18, 45); // Rotated
     public Vector2d afterDropLeft = new Vector2d(13, 45); // Rotated
@@ -102,9 +102,9 @@ public class AutoCoordinates {
     // Going to pixel stack
     public Vector2d rotatedStartPos = new Vector2d(-4, 0); // Rotated
     public Vector2d crossTrussPos = new Vector2d(0, -44); // Rotated
-    public Vector2d pixelStackPosClose = new Vector2d(23, -62); // Rotated
-    public Vector2d backIntoPixelPosClose = new Vector2d(23, -65); // Rotated
-    public Vector2d backToIntakePixelClose = new Vector2d(23, -67); // Rotated
+    public Vector2d pixelStackPosClose = new Vector2d(22, -62); // Rotated
+    public Vector2d backIntoPixelPosClose = new Vector2d(22, -65); // Rotated
+    public Vector2d backToIntakePixelClose = new Vector2d(22, -67); // Rotated
     public Vector2d cringerBackdropCenterPos = new Vector2d(18, 51); // Rotated
     public Vector2d cringerBackdropPosNotCenter = new Vector2d(13, 51); // Rotated
 

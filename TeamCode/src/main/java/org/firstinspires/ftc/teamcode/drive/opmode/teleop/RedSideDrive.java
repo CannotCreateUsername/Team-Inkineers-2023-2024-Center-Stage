@@ -82,7 +82,7 @@ public class RedSideDrive extends LinearOpMode {
 //                    }
 //                    break;
 //            }
-            leftXInput *= arm.getPowerMultiplier();
+            leftXInput *= arm.getPowerMultiplier()+.2;
             leftYInput *= arm.getPowerMultiplier();
             rightXInput*= arm.getPowerMultiplier();
 

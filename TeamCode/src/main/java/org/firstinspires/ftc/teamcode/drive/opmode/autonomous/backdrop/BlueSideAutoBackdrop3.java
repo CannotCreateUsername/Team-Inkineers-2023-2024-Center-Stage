@@ -130,7 +130,7 @@ public class BlueSideAutoBackdrop3 extends LinearOpMode {
                 Actions.runBlocking(new ParallelAction(
                         runToLeftProp,
                         new SequentialAction(
-                                new SleepAction(3),
+                                new SleepAction(5),
                                 new ParallelAction(
                                         arm.readySlides(false),
                                         arm.ready4bar()
