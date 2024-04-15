@@ -52,7 +52,7 @@ public class AutoFunctions {
                         arm == null ? arm2.spinOuttake(0.6, 3) : arm.spinOuttake(0.6, 3)
                 ),
                 intake.spinIntake(-0.8, 0.5),
-                arm == null ? arm2.spinOuttake(-0.05, 0.2) : arm.spinOuttake(-0.05, 0.2)
+                arm == null ? arm2.spinOuttake(-0.05, 0.2) : arm.spinOuttake(-0.05, 0.4)
         );
     }
 
@@ -62,7 +62,8 @@ public class AutoFunctions {
                 new ParallelAction(
                         intake.spinIntake(0.8, 4),
                         arm == null ? arm2.spinOuttake(0.8, 4) : arm.spinOuttake(0.8, 4)
-                )
+                ),
+                arm == null ? arm2.spinOuttake(-0.05, 0.2) : arm.spinOuttake(-0.05, 0.4)
         );
     }
 

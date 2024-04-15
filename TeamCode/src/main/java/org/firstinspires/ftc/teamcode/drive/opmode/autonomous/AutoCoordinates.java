@@ -30,7 +30,7 @@ public class AutoCoordinates {
                 propRightPos = new Vector2d(29, -12);
             }
             backdropCenterPos = new Vector2d(18, -52);
-            backdropLeftPos = new Vector2d(23, -52);
+            backdropLeftPos = new Vector2d(24, -52);
             backdropRightPos = new Vector2d(13, -52);
 
             afterDropCenter = new Vector2d(18, -45);
@@ -58,7 +58,7 @@ public class AutoCoordinates {
             toBackdropFromPixelStackSpline = new Vector2d(32, -78); // Rotated
             betweenSubBackdrop = new Vector2d(15, -94); // Rotated
             subLeftBackdrop = new Vector2d(20, -99); // Rotated
-            subCenterBackdrop = new Vector2d(14, -99); // Rotated
+            subCenterBackdrop = new Vector2d(14.5, -99); // Rotated
             subRightBackdrop = new Vector2d(8, -99); // Rotated
 
             subParkPos = new Vector2d(37,-90); // Rotated
@@ -89,7 +89,7 @@ public class AutoCoordinates {
     // Backdrop coordinates for BLUE side
     public Vector2d backdropCenterPos = new Vector2d(18, 52); // Rotated
     public Vector2d backdropLeftPos = new Vector2d(13, 52); // Rotated
-    public Vector2d backdropRightPos = new Vector2d(23, 52); // Rotated
+    public Vector2d backdropRightPos = new Vector2d(24, 52); // Rotated
 
     public Vector2d afterDropCenter = new Vector2d(18, 45); // Rotated
     public Vector2d afterDropLeft = new Vector2d(13, 45); // Rotated
@@ -122,7 +122,7 @@ public class AutoCoordinates {
     public Vector2d betweenSubBackdrop = new Vector2d(15, 94); // Rotated
 
     public Vector2d subLeftBackdrop = new Vector2d(8, 99); // Rotated
-    public Vector2d subCenterBackdrop = new Vector2d(14, 99); // Rotated
+    public Vector2d subCenterBackdrop = new Vector2d(14.5, 99); // Rotated
     public Vector2d subRightBackdrop = new Vector2d(21, 99); // Rotated
 
     public Vector2d subParkPos = new Vector2d(37,90); // Rotated
