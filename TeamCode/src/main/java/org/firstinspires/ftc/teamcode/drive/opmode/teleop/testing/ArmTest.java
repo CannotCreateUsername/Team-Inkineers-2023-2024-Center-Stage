@@ -38,6 +38,10 @@ public class ArmTest extends LinearOpMode {
                 armSubsystem.hangingMultiplier += 0.1;
             } else if (gamepadEx1.wasJustPressed(GamepadKeys.Button.B) && armSubsystem.intakePower >= -1) {
                 armSubsystem.hangingMultiplier -= 0.1;
+            } else if (gamepadEx1.wasJustPressed(GamepadKeys.Button.BACK)) {
+                Actions.runBlocking(
+                        intakeSubsystem.spinIntake(1, 6)
+                );
             }
 
             armSubsystem.runArm(gamepadEx1, gamepadEx2);

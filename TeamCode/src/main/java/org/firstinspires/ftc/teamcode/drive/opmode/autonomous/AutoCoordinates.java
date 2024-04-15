@@ -26,7 +26,8 @@ public class AutoCoordinates {
             RIGHT_PROP = Math.toRadians(45);
 
             if (isFarSide) {
-                propLeftPos = new Vector2d(32, 12);
+                propLeftPos = new Vector2d(32, 12.5);
+                propRightPos = new Vector2d(29, -12);
             }
             backdropCenterPos = new Vector2d(18, -52);
             backdropLeftPos = new Vector2d(23, -52);
@@ -41,9 +42,9 @@ public class AutoCoordinates {
             parkOutsideTuck = new Vector2d(-6, -58); // Rotated
 
             crossTrussPos = new Vector2d(0, 44); // Rotated
-            pixelStackPosClose = new Vector2d(22, 62); // Rotated
-            backIntoPixelPosClose = new Vector2d(22, 65); // Rotated
-            backToIntakePixelClose = new Vector2d(22, 67); // Rotated
+            pixelStackPosClose = new Vector2d(23, 62); // Rotated
+            backIntoPixelPosClose = new Vector2d(23, 65); // Rotated
+            backToIntakePixelClose = new Vector2d(23, 67); // Rotated
             cringerBackdropCenterPos = new Vector2d(18, -51); // Rotated
             cringerBackdropPosNotCenter = new Vector2d(13, -51); // Rotated
 
@@ -56,9 +57,9 @@ public class AutoCoordinates {
             toBackdropFromPixelStack = new Vector2d(40, -84); // Rotated
             toBackdropFromPixelStackSpline = new Vector2d(32, -78); // Rotated
             betweenSubBackdrop = new Vector2d(15, -94); // Rotated
-            subLeftBackdrop = new Vector2d(20, -98); // Rotated
-            subCenterBackdrop = new Vector2d(14, -98); // Rotated
-            subRightBackdrop = new Vector2d(7.5, -98); // Rotated
+            subLeftBackdrop = new Vector2d(20, -99); // Rotated
+            subCenterBackdrop = new Vector2d(14, -99); // Rotated
+            subRightBackdrop = new Vector2d(8, -99); // Rotated
 
             subParkPos = new Vector2d(37,-90); // Rotated
         } else {
@@ -75,10 +76,10 @@ public class AutoCoordinates {
     // Team prop exact coordinates
     public Vector2d propCenterPos = new Vector2d(32, 0); // Straight
     public Vector2d propLeftPos = new Vector2d(29, 12); // Straight
-    public Vector2d propRightPos = new Vector2d(29, -12); // Straight
+    public Vector2d propRightPos = new Vector2d(32, -12.5); // Straight
 
     // Around the team prop for side randomization
-    public Vector2d betweenSideProp = new Vector2d(29, 0); // Run between the spike marks to strafe Straight
+    public Vector2d betweenSideProp = new Vector2d(27, 0); // Run between the spike marks to strafe Straight
     public Vector2d backFromCenterProp = new Vector2d(25, 0); // Scoot back 8 inches from center prop Straight
     public Vector2d backFromLeftProp = new Vector2d(25, 12); // Scoot back 4 inches from left prop Straight
     public Vector2d backFromRightProp = new Vector2d(25, -12); // Scoot back 4 inches from right prop Straight
@@ -101,10 +102,10 @@ public class AutoCoordinates {
 
     // Going to pixel stack
     public Vector2d rotatedStartPos = new Vector2d(-4, 0); // Rotated
-    public Vector2d crossTrussPos = new Vector2d(0, -44); // Rotated
-    public Vector2d pixelStackPosClose = new Vector2d(22, -62); // Rotated
-    public Vector2d backIntoPixelPosClose = new Vector2d(22, -65); // Rotated
-    public Vector2d backToIntakePixelClose = new Vector2d(22, -67); // Rotated
+    public Vector2d crossTrussPos = new Vector2d(-2, -44); // Rotated
+    public Vector2d pixelStackPosClose = new Vector2d(23, -62); // Rotated
+    public Vector2d backIntoPixelPosClose = new Vector2d(23, -65); // Rotated
+    public Vector2d backToIntakePixelClose = new Vector2d(23, -65); // Rotated
     public Vector2d cringerBackdropCenterPos = new Vector2d(18, 51); // Rotated
     public Vector2d cringerBackdropPosNotCenter = new Vector2d(13, 51); // Rotated
 
@@ -120,9 +121,9 @@ public class AutoCoordinates {
     public Vector2d toBackdropFromPixelStackSpline = new Vector2d(32, 78); // Rotated
     public Vector2d betweenSubBackdrop = new Vector2d(15, 94); // Rotated
 
-    public Vector2d subLeftBackdrop = new Vector2d(7.5, 98); // Rotated
-    public Vector2d subCenterBackdrop = new Vector2d(14, 98); // Rotated
-    public Vector2d subRightBackdrop = new Vector2d(21, 98); // Rotated
+    public Vector2d subLeftBackdrop = new Vector2d(8, 99); // Rotated
+    public Vector2d subCenterBackdrop = new Vector2d(14, 99); // Rotated
+    public Vector2d subRightBackdrop = new Vector2d(21, 99); // Rotated
 
     public Vector2d subParkPos = new Vector2d(37,90); // Rotated
 }
