@@ -11,13 +11,13 @@ public class V4BSubsystem2 {
     // Right Servo Positions
     public final double rLOAD = 1;
     public final double rDROP = 0 + 0.08;
-    public final double rHANG = 1-0.6; // 220/360
+    public final double rHANG = 1-0.75;
     public final double rHANG2 = 1-0.4;
 
     // Left Servo Positions
     public final double lLOAD = 0;
     public final double lDROP = 1 - 0.08;
-    public final double lHANG = 0.6;
+    public final double lHANG = 0.75;
     public final double lHANG2 = 0.4;
 
     // Constructor
